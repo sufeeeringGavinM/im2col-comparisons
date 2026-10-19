@@ -1,0 +1,9 @@
+{
+  "mode": "tiled",
+  "implementation": "channel_last_centralized",
+  "layout": "swizzled",
+  "array_size": 10,
+  "cfg_width": 32,
+  "bit_width": 8,
+  "acc_width": 32
+}

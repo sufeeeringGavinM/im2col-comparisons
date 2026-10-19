@@ -1,0 +1,1463 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2026.1 (win64) Build 6511674 Tue Jun 16 11:02:23 MDT 2026
+| Date         : Sat Oct 17 20:54:33 2026
+| Host         : root running 64-bit major release  (build 9200)
+| Command      : report_timing_summary -report_unconstrained -file timing_1mhz.rpt
+| Design       : conv_core
+| Device       : 7a200t-fbg676
+| Speed File   : -2  PRODUCTION 1.23 2018-06-13
+| Design State : Synthesized
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Summary Report
+
+------------------------------------------------------------------------------------------------
+| Timer Settings
+| --------------
+------------------------------------------------------------------------------------------------
+
+  Enable Multi Corner Analysis               :  Yes
+  Enable Pessimism Removal                   :  Yes
+  Pessimism Removal Resolution               :  Nearest Common Node
+  Enable Input Delay Default Clock           :  No
+  Enable Preset / Clear Arcs                 :  No
+  Disable Flight Delays                      :  No
+  Ignore I/O Paths                           :  No
+  Timing Early Launch at Borrowing Latches   :  No
+  Borrow Time for Max Delay Exceptions       :  Yes
+  Merge Timing Exceptions                    :  Yes
+  Inter-SLR Compensation                     :  Conservative
+
+  Corner  Analyze    Analyze    
+  Name    Max Paths  Min Paths  
+  ------  ---------  ---------  
+  Slow    Yes        Yes        
+  Fast    Yes        Yes        
+
+
+------------------------------------------------------------------------------------------------
+| Report Methodology
+| ------------------
+------------------------------------------------------------------------------------------------
+
+No report available as report_methodology has not been run prior. Run report_methodology on the current design for the summary of methodology violations.
+
+
+
+check_timing report
+
+Table of Contents
+-----------------
+1. checking no_clock (0)
+2. checking constant_clock (0)
+3. checking pulse_width_clock (0)
+4. checking unconstrained_internal_endpoints (0)
+5. checking no_input_delay (0)
+6. checking no_output_delay (0)
+7. checking multiple_clock (0)
+8. checking generated_clocks (0)
+9. checking loops (0)
+10. checking partial_input_delay (0)
+11. checking partial_output_delay (0)
+12. checking latch_loops (0)
+
+1. checking no_clock (0)
+------------------------
+ There are 0 register/latch pins with no clock.
+
+
+2. checking constant_clock (0)
+------------------------------
+ There are 0 register/latch pins with constant_clock.
+
+
+3. checking pulse_width_clock (0)
+---------------------------------
+ There are 0 register/latch pins which need pulse_width check
+
+
+4. checking unconstrained_internal_endpoints (0)
+------------------------------------------------
+ There are 0 pins that are not constrained for maximum delay.
+
+ There are 0 pins that are not constrained for maximum delay due to constant clock.
+
+
+5. checking no_input_delay (0)
+------------------------------
+ There are 0 input ports with no input delay specified.
+
+ There are 0 input ports with no input delay but user has a false path constraint.
+
+
+6. checking no_output_delay (0)
+-------------------------------
+ There are 0 ports with no output delay specified.
+
+ There are 0 ports with no output delay but user has a false path constraint
+
+ There are 0 ports with no output delay but with a timing clock defined on it or propagating through it
+
+
+7. checking multiple_clock (0)
+------------------------------
+ There are 0 register/latch pins with multiple clocks.
+
+
+8. checking generated_clocks (0)
+--------------------------------
+ There are 0 generated clocks that are not connected to a clock source.
+
+
+9. checking loops (0)
+---------------------
+ There are 0 combinational loops in the design.
+
+
+10. checking partial_input_delay (0)
+------------------------------------
+ There are 0 input ports with partial input delay specified.
+
+
+11. checking partial_output_delay (0)
+-------------------------------------
+ There are 0 ports with partial output delay specified.
+
+
+12. checking latch_loops (0)
+----------------------------
+ There are 0 combinational latch loops in the design through latch input
+
+
+
+------------------------------------------------------------------------------------------------
+| Design Timing Summary
+| ---------------------
+------------------------------------------------------------------------------------------------
+
+    WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
+    -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
+    913.705        0.000                      0                33749        0.243        0.000                      0                33749      499.500        0.000                       0                  8236  
+
+
+All user specified timing constraints are met.
+
+
+------------------------------------------------------------------------------------------------
+| Clock Summary
+| -------------
+------------------------------------------------------------------------------------------------
+
+Clock  Waveform(ns)         Period(ns)      Frequency(MHz)
+-----  ------------         ----------      --------------
+clk    {0.000 500.000}      1000.000        1.000           
+
+
+------------------------------------------------------------------------------------------------
+| Intra Clock Table
+| -----------------
+------------------------------------------------------------------------------------------------
+
+Clock             WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
+-----             -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
+clk               913.705        0.000                      0                33749        0.243        0.000                      0                33749      499.500        0.000                       0                  8236  
+
+
+------------------------------------------------------------------------------------------------
+| Inter Clock Table
+| -----------------
+------------------------------------------------------------------------------------------------
+
+From Clock    To Clock          WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints  
+----------    --------          -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------  
+
+
+------------------------------------------------------------------------------------------------
+| Other Path Groups Table
+| -----------------------
+------------------------------------------------------------------------------------------------
+
+Path Group    From Clock    To Clock          WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints  
+----------    ----------    --------          -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------  
+
+
+------------------------------------------------------------------------------------------------
+| User Ignored Path Table
+| -----------------------
+------------------------------------------------------------------------------------------------
+
+Path Group    From Clock    To Clock    
+----------    ----------    --------    
+
+
+------------------------------------------------------------------------------------------------
+| Unconstrained Path Table
+| ------------------------
+------------------------------------------------------------------------------------------------
+
+Path Group    From Clock    To Clock    
+----------    ----------    --------    
+(none)                      clk           
+
+
+------------------------------------------------------------------------------------------------
+| Timing Details
+| --------------
+------------------------------------------------------------------------------------------------
+
+
+---------------------------------------------------------------------------------------------------
+From Clock:  clk
+  To Clock:  clk
+
+Setup :            0  Failing Endpoints,  Worst Slack      913.705ns,  Total Violation        0.000ns
+Hold  :            0  Failing Endpoints,  Worst Slack        0.243ns,  Total Violation        0.000ns
+PW    :            0  Failing Endpoints,  Worst Slack      499.500ns,  Total Violation        0.000ns
+---------------------------------------------------------------------------------------------------
+
+
+Max Delay Paths
+--------------------------------------------------------------------------------------
+Slack (MET) :             913.705ns  (required time - arrival time)
+  Source:                 N_reg[0]_rep/C
+                            (rising edge-triggered cell FDSE clocked by clk  {rise@0.000ns fall@500.000ns period=1000.000ns})
+  Destination:            u_mmu/g_c[0].u_bank/u_input_sram/mem_reg/ADDRBWRADDR[10]
+                            (rising edge-triggered cell RAMB18E1 clocked by clk  {rise@0.000ns fall@500.000ns period=1000.000ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            1000.000ns  (clk rise@1000.000ns - clk rise@0.000ns)
+  Data Path Delay:        85.731ns  (logic 59.920ns (69.893%)  route 25.811ns (30.107%))
+  Logic Levels:           344  (CARRY4=298 DSP48E1=2 LUT2=5 LUT3=1 LUT4=32 LUT6=6)
+  Clock Path Skew:        -0.039ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.748ns = ( 1000.748 - 1000.000 ) 
+    Source Clock Delay      (SCD):    0.787ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  <hidden>
+                                                      0.000     0.000 r  clk
+                         net (fo=8479, unset)         0.787     0.787    clk
+                         FDSE                                         r  N_reg[0]_rep/C
+  -------------------------------------------------------------------    -------------------
+                         FDSE (Prop_fdse_C_Q)         0.379     1.166 r  N_reg[0]_rep/Q
+                         net (fo=129, unplaced)       0.468     1.634    u_mmu/g_c[0].u_bank/u_im2col_writer/N[0]
+                         LUT2 (Prop_lut2_I0_O)        0.232     1.866 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___5_rep/O
+                         net (fo=1, unplaced)         0.000     1.866    u_mmu/g_c[0].u_bank/u_im2col_writer/i___5_rep_n_0
+                         CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.423     2.289 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___1_i_65/CO[3]
+                         net (fo=1, unplaced)         0.008     2.297    u_mmu/g_c[0].u_bank/u_im2col_writer/i___1_i_65_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     2.397 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___1_i_56/CO[3]
+                         net (fo=1, unplaced)         0.000     2.397    u_mmu/g_c[0].u_bank/u_im2col_writer/i___1_i_56_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     2.497 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___1_i_47/CO[3]
+                         net (fo=1, unplaced)         0.000     2.497    u_mmu/g_c[0].u_bank/u_im2col_writer/i___1_i_47_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     2.597 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___1_i_38/CO[3]
+                         net (fo=1, unplaced)         0.000     2.597    u_mmu/g_c[0].u_bank/u_im2col_writer/i___1_i_38_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     2.697 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___1_i_29/CO[3]
+                         net (fo=1, unplaced)         0.000     2.697    u_mmu/g_c[0].u_bank/u_im2col_writer/i___1_i_29_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     2.797 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___1_i_20/CO[3]
+                         net (fo=1, unplaced)         0.000     2.797    u_mmu/g_c[0].u_bank/u_im2col_writer/i___1_i_20_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     2.897 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___1_i_6/CO[3]
+                         net (fo=1, unplaced)         0.000     2.897    u_mmu/g_c[0].u_bank/u_im2col_writer/i___1_i_6_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     2.997 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___1_i_3/CO[3]
+                         net (fo=1, unplaced)         0.000     2.997    u_mmu/g_c[0].u_bank/u_im2col_writer/i___1_i_3_n_0
+                         CARRY4 (Prop_carry4_CI_CO[0])
+                                                      0.238     3.235 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___1_i_1/CO[0]
+                         net (fo=39, unplaced)        0.316     3.551    u_mmu/g_c[0].u_bank/u_im2col_writer/i___1_i_1_n_3
+                         LUT2 (Prop_lut2_I1_O)        0.297     3.848 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1426/O
+                         net (fo=1, unplaced)         0.000     3.848    u_mmu/g_c[0].u_bank/u_im2col_writer/pix_idx[31]
+                         CARRY4 (Prop_carry4_DI[0]_CO[3])
+                                                      0.477     4.325 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1361/CO[3]
+                         net (fo=1, unplaced)         0.008     4.333    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1361_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     4.433 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1356/CO[3]
+                         net (fo=1, unplaced)         0.000     4.433    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1356_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     4.533 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1351/CO[3]
+                         net (fo=1, unplaced)         0.000     4.533    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1351_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     4.633 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1346/CO[3]
+                         net (fo=1, unplaced)         0.000     4.633    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1346_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     4.733 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1341/CO[3]
+                         net (fo=1, unplaced)         0.000     4.733    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1341_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     4.833 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1340/CO[3]
+                         net (fo=1, unplaced)         0.000     4.833    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1340_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     4.933 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1374/CO[3]
+                         net (fo=1, unplaced)         0.000     4.933    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1374_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     5.033 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1371/CO[3]
+                         net (fo=1, unplaced)         0.000     5.033    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1371_n_0
+                         CARRY4 (Prop_carry4_CI_CO[0])
+                                                      0.238     5.271 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1366/CO[0]
+                         net (fo=35, unplaced)        0.435     5.706    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1366_n_3
+                         LUT4 (Prop_lut4_I0_O)        0.297     6.003 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1370/O
+                         net (fo=1, unplaced)         0.000     6.003    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1370_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444     6.447 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1318/CO[3]
+                         net (fo=1, unplaced)         0.008     6.455    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1318_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     6.555 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1313/CO[3]
+                         net (fo=1, unplaced)         0.000     6.555    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1313_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     6.655 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1308/CO[3]
+                         net (fo=1, unplaced)         0.000     6.655    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1308_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     6.755 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1303/CO[3]
+                         net (fo=1, unplaced)         0.000     6.755    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1303_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     6.855 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1298/CO[3]
+                         net (fo=1, unplaced)         0.000     6.855    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1298_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     6.955 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1297/CO[3]
+                         net (fo=1, unplaced)         0.000     6.955    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1297_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     7.055 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1331/CO[3]
+                         net (fo=1, unplaced)         0.000     7.055    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1331_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     7.155 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1328/CO[3]
+                         net (fo=1, unplaced)         0.000     7.155    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1328_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150     7.305 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1323/CO[1]
+                         net (fo=35, unplaced)        0.545     7.850    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1323_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277     8.127 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1327/O
+                         net (fo=1, unplaced)         0.000     8.127    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1327_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444     8.571 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1275/CO[3]
+                         net (fo=1, unplaced)         0.008     8.579    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1275_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     8.679 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1270/CO[3]
+                         net (fo=1, unplaced)         0.000     8.679    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1270_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     8.779 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1265/CO[3]
+                         net (fo=1, unplaced)         0.000     8.779    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1265_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     8.879 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1260/CO[3]
+                         net (fo=1, unplaced)         0.000     8.879    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1260_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     8.979 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1255/CO[3]
+                         net (fo=1, unplaced)         0.000     8.979    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1255_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     9.079 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1254/CO[3]
+                         net (fo=1, unplaced)         0.000     9.079    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1254_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     9.179 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1288/CO[3]
+                         net (fo=1, unplaced)         0.000     9.179    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1288_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     9.279 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1285/CO[3]
+                         net (fo=1, unplaced)         0.000     9.279    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1285_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150     9.429 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1280/CO[1]
+                         net (fo=35, unplaced)        0.545     9.974    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1280_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    10.251 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1284/O
+                         net (fo=1, unplaced)         0.000    10.251    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1284_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    10.695 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1232/CO[3]
+                         net (fo=1, unplaced)         0.008    10.703    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1232_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    10.803 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1227/CO[3]
+                         net (fo=1, unplaced)         0.000    10.803    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1227_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    10.903 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1222/CO[3]
+                         net (fo=1, unplaced)         0.000    10.903    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1222_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    11.003 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1217/CO[3]
+                         net (fo=1, unplaced)         0.000    11.003    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1217_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    11.103 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1212/CO[3]
+                         net (fo=1, unplaced)         0.000    11.103    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1212_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    11.203 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1211/CO[3]
+                         net (fo=1, unplaced)         0.000    11.203    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1211_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    11.303 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1245/CO[3]
+                         net (fo=1, unplaced)         0.000    11.303    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1245_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    11.403 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1242/CO[3]
+                         net (fo=1, unplaced)         0.000    11.403    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1242_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    11.553 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1237/CO[1]
+                         net (fo=35, unplaced)        0.545    12.098    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1237_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    12.375 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1241/O
+                         net (fo=1, unplaced)         0.000    12.375    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1241_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    12.819 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1189/CO[3]
+                         net (fo=1, unplaced)         0.008    12.827    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1189_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    12.927 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1184/CO[3]
+                         net (fo=1, unplaced)         0.000    12.927    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1184_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    13.027 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1179/CO[3]
+                         net (fo=1, unplaced)         0.000    13.027    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1179_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    13.127 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1174/CO[3]
+                         net (fo=1, unplaced)         0.000    13.127    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1174_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    13.227 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1169/CO[3]
+                         net (fo=1, unplaced)         0.000    13.227    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1169_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    13.327 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1168/CO[3]
+                         net (fo=1, unplaced)         0.000    13.327    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1168_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    13.427 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1202/CO[3]
+                         net (fo=1, unplaced)         0.000    13.427    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1202_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    13.527 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1199/CO[3]
+                         net (fo=1, unplaced)         0.000    13.527    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1199_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    13.677 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1194/CO[1]
+                         net (fo=35, unplaced)        0.545    14.222    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1194_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    14.499 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1198/O
+                         net (fo=1, unplaced)         0.000    14.499    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1198_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    14.943 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1146/CO[3]
+                         net (fo=1, unplaced)         0.008    14.951    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1146_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    15.051 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1141/CO[3]
+                         net (fo=1, unplaced)         0.000    15.051    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1141_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    15.151 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1136/CO[3]
+                         net (fo=1, unplaced)         0.000    15.151    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1136_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    15.251 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1131/CO[3]
+                         net (fo=1, unplaced)         0.000    15.251    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1131_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    15.351 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1126/CO[3]
+                         net (fo=1, unplaced)         0.000    15.351    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1126_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    15.451 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1125/CO[3]
+                         net (fo=1, unplaced)         0.000    15.451    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1125_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    15.551 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1159/CO[3]
+                         net (fo=1, unplaced)         0.000    15.551    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1159_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    15.651 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1156/CO[3]
+                         net (fo=1, unplaced)         0.000    15.651    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1156_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    15.801 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1151/CO[1]
+                         net (fo=35, unplaced)        0.545    16.346    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1151_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    16.623 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1155/O
+                         net (fo=1, unplaced)         0.000    16.623    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1155_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    17.067 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1103/CO[3]
+                         net (fo=1, unplaced)         0.008    17.075    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1103_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    17.175 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1098/CO[3]
+                         net (fo=1, unplaced)         0.000    17.175    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1098_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    17.275 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1093/CO[3]
+                         net (fo=1, unplaced)         0.000    17.275    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1093_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    17.375 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1088/CO[3]
+                         net (fo=1, unplaced)         0.000    17.375    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1088_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    17.475 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1083/CO[3]
+                         net (fo=1, unplaced)         0.000    17.475    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1083_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    17.575 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1082/CO[3]
+                         net (fo=1, unplaced)         0.000    17.575    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1082_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    17.675 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1116/CO[3]
+                         net (fo=1, unplaced)         0.000    17.675    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1116_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    17.775 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1113/CO[3]
+                         net (fo=1, unplaced)         0.000    17.775    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1113_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    17.925 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1108/CO[1]
+                         net (fo=35, unplaced)        0.545    18.470    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1108_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    18.747 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1112/O
+                         net (fo=1, unplaced)         0.000    18.747    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1112_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    19.191 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1060/CO[3]
+                         net (fo=1, unplaced)         0.008    19.199    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1060_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    19.299 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1055/CO[3]
+                         net (fo=1, unplaced)         0.000    19.299    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1055_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    19.399 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1050/CO[3]
+                         net (fo=1, unplaced)         0.000    19.399    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1050_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    19.499 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1045/CO[3]
+                         net (fo=1, unplaced)         0.000    19.499    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1045_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    19.599 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1040/CO[3]
+                         net (fo=1, unplaced)         0.000    19.599    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1040_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    19.699 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1039/CO[3]
+                         net (fo=1, unplaced)         0.000    19.699    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1039_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    19.799 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1073/CO[3]
+                         net (fo=1, unplaced)         0.000    19.799    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1073_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    19.899 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1070/CO[3]
+                         net (fo=1, unplaced)         0.000    19.899    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1070_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    20.049 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1065/CO[1]
+                         net (fo=35, unplaced)        0.545    20.594    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1065_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    20.871 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1069/O
+                         net (fo=1, unplaced)         0.000    20.871    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1069_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    21.315 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1017/CO[3]
+                         net (fo=1, unplaced)         0.008    21.323    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1017_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    21.423 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1012/CO[3]
+                         net (fo=1, unplaced)         0.000    21.423    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1012_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    21.523 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1007/CO[3]
+                         net (fo=1, unplaced)         0.000    21.523    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1007_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    21.623 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1002/CO[3]
+                         net (fo=1, unplaced)         0.000    21.623    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1002_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    21.723 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_997/CO[3]
+                         net (fo=1, unplaced)         0.000    21.723    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_997_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    21.823 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_996/CO[3]
+                         net (fo=1, unplaced)         0.000    21.823    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_996_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    21.923 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1030/CO[3]
+                         net (fo=1, unplaced)         0.000    21.923    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1030_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    22.023 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1027/CO[3]
+                         net (fo=1, unplaced)         0.000    22.023    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1027_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    22.173 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1022/CO[1]
+                         net (fo=35, unplaced)        0.545    22.718    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1022_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    22.995 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1026/O
+                         net (fo=1, unplaced)         0.000    22.995    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_1026_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    23.439 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_974/CO[3]
+                         net (fo=1, unplaced)         0.008    23.447    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_974_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    23.547 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_969/CO[3]
+                         net (fo=1, unplaced)         0.000    23.547    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_969_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    23.647 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_964/CO[3]
+                         net (fo=1, unplaced)         0.000    23.647    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_964_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    23.747 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_959/CO[3]
+                         net (fo=1, unplaced)         0.000    23.747    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_959_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    23.847 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_954/CO[3]
+                         net (fo=1, unplaced)         0.000    23.847    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_954_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    23.947 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_953/CO[3]
+                         net (fo=1, unplaced)         0.000    23.947    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_953_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    24.047 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_987/CO[3]
+                         net (fo=1, unplaced)         0.000    24.047    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_987_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    24.147 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_984/CO[3]
+                         net (fo=1, unplaced)         0.000    24.147    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_984_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    24.297 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_979/CO[1]
+                         net (fo=35, unplaced)        0.545    24.842    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_979_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    25.119 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_983/O
+                         net (fo=1, unplaced)         0.000    25.119    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_983_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    25.563 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_931/CO[3]
+                         net (fo=1, unplaced)         0.008    25.571    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_931_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    25.671 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_926/CO[3]
+                         net (fo=1, unplaced)         0.000    25.671    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_926_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    25.771 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_921/CO[3]
+                         net (fo=1, unplaced)         0.000    25.771    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_921_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    25.871 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_916/CO[3]
+                         net (fo=1, unplaced)         0.000    25.871    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_916_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    25.971 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_911/CO[3]
+                         net (fo=1, unplaced)         0.000    25.971    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_911_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    26.071 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_910/CO[3]
+                         net (fo=1, unplaced)         0.000    26.071    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_910_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    26.171 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_944/CO[3]
+                         net (fo=1, unplaced)         0.000    26.171    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_944_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    26.271 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_941/CO[3]
+                         net (fo=1, unplaced)         0.000    26.271    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_941_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    26.421 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_936/CO[1]
+                         net (fo=35, unplaced)        0.545    26.966    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_936_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    27.243 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_940/O
+                         net (fo=1, unplaced)         0.000    27.243    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_940_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    27.687 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_888/CO[3]
+                         net (fo=1, unplaced)         0.008    27.695    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_888_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    27.795 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_883/CO[3]
+                         net (fo=1, unplaced)         0.000    27.795    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_883_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    27.895 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_878/CO[3]
+                         net (fo=1, unplaced)         0.000    27.895    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_878_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    27.995 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_873/CO[3]
+                         net (fo=1, unplaced)         0.000    27.995    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_873_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    28.095 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_868/CO[3]
+                         net (fo=1, unplaced)         0.000    28.095    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_868_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    28.195 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_867/CO[3]
+                         net (fo=1, unplaced)         0.000    28.195    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_867_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    28.295 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_901/CO[3]
+                         net (fo=1, unplaced)         0.000    28.295    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_901_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    28.395 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_898/CO[3]
+                         net (fo=1, unplaced)         0.000    28.395    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_898_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    28.545 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_893/CO[1]
+                         net (fo=35, unplaced)        0.545    29.090    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_893_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    29.367 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_897/O
+                         net (fo=1, unplaced)         0.000    29.367    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_897_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    29.811 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_842/CO[3]
+                         net (fo=1, unplaced)         0.008    29.819    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_842_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    29.919 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_837/CO[3]
+                         net (fo=1, unplaced)         0.000    29.919    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_837_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    30.019 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_832/CO[3]
+                         net (fo=1, unplaced)         0.000    30.019    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_832_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    30.119 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_827/CO[3]
+                         net (fo=1, unplaced)         0.000    30.119    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_827_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    30.219 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_822/CO[3]
+                         net (fo=1, unplaced)         0.000    30.219    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_822_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    30.319 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_821/CO[3]
+                         net (fo=1, unplaced)         0.000    30.319    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_821_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    30.419 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_855/CO[3]
+                         net (fo=1, unplaced)         0.000    30.419    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_855_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    30.519 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_852/CO[3]
+                         net (fo=1, unplaced)         0.000    30.519    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_852_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    30.669 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_847/CO[1]
+                         net (fo=35, unplaced)        0.545    31.214    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_847_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    31.491 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_851/O
+                         net (fo=1, unplaced)         0.000    31.491    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_851_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    31.935 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_791/CO[3]
+                         net (fo=1, unplaced)         0.008    31.943    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_791_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    32.043 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_786/CO[3]
+                         net (fo=1, unplaced)         0.000    32.043    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_786_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    32.143 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_781/CO[3]
+                         net (fo=1, unplaced)         0.000    32.143    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_781_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    32.243 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_776/CO[3]
+                         net (fo=1, unplaced)         0.000    32.243    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_776_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    32.343 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_771/CO[3]
+                         net (fo=1, unplaced)         0.000    32.343    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_771_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    32.443 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_770/CO[3]
+                         net (fo=1, unplaced)         0.000    32.443    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_770_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    32.543 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_804/CO[3]
+                         net (fo=1, unplaced)         0.000    32.543    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_804_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    32.643 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_801/CO[3]
+                         net (fo=1, unplaced)         0.000    32.643    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_801_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    32.793 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_796/CO[1]
+                         net (fo=35, unplaced)        0.545    33.338    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_796_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    33.615 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_800/O
+                         net (fo=1, unplaced)         0.000    33.615    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_800_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    34.059 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_735/CO[3]
+                         net (fo=1, unplaced)         0.008    34.067    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_735_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    34.167 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_730/CO[3]
+                         net (fo=1, unplaced)         0.000    34.167    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_730_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    34.267 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_725/CO[3]
+                         net (fo=1, unplaced)         0.000    34.267    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_725_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    34.367 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_720/CO[3]
+                         net (fo=1, unplaced)         0.000    34.367    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_720_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    34.467 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_715/CO[3]
+                         net (fo=1, unplaced)         0.000    34.467    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_715_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    34.567 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_714/CO[3]
+                         net (fo=1, unplaced)         0.000    34.567    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_714_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    34.667 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_748/CO[3]
+                         net (fo=1, unplaced)         0.000    34.667    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_748_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    34.767 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_745/CO[3]
+                         net (fo=1, unplaced)         0.000    34.767    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_745_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    34.917 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_740/CO[1]
+                         net (fo=35, unplaced)        0.545    35.462    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_740_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    35.739 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_744/O
+                         net (fo=1, unplaced)         0.000    35.739    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_744_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    36.183 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_674/CO[3]
+                         net (fo=1, unplaced)         0.008    36.191    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_674_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    36.291 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_669/CO[3]
+                         net (fo=1, unplaced)         0.000    36.291    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_669_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    36.391 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_664/CO[3]
+                         net (fo=1, unplaced)         0.000    36.391    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_664_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    36.491 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_659/CO[3]
+                         net (fo=1, unplaced)         0.000    36.491    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_659_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    36.591 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_654/CO[3]
+                         net (fo=1, unplaced)         0.000    36.591    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_654_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    36.691 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_653/CO[3]
+                         net (fo=1, unplaced)         0.000    36.691    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_653_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    36.791 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_687/CO[3]
+                         net (fo=1, unplaced)         0.000    36.791    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_687_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    36.891 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_684/CO[3]
+                         net (fo=1, unplaced)         0.000    36.891    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_684_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    37.041 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_679/CO[1]
+                         net (fo=35, unplaced)        0.545    37.586    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_679_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    37.863 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_683/O
+                         net (fo=1, unplaced)         0.000    37.863    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_683_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    38.307 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_611/CO[3]
+                         net (fo=1, unplaced)         0.008    38.315    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_611_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    38.415 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_606/CO[3]
+                         net (fo=1, unplaced)         0.000    38.415    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_606_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    38.515 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_601/CO[3]
+                         net (fo=1, unplaced)         0.000    38.515    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_601_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    38.615 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_596/CO[3]
+                         net (fo=1, unplaced)         0.000    38.615    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_596_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    38.715 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_591/CO[3]
+                         net (fo=1, unplaced)         0.000    38.715    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_591_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    38.815 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_590/CO[3]
+                         net (fo=1, unplaced)         0.000    38.815    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_590_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    38.915 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_624/CO[3]
+                         net (fo=1, unplaced)         0.000    38.915    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_624_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    39.015 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_621/CO[3]
+                         net (fo=1, unplaced)         0.000    39.015    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_621_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    39.165 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_616/CO[1]
+                         net (fo=35, unplaced)        0.545    39.710    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_616_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    39.987 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_620/O
+                         net (fo=1, unplaced)         0.000    39.987    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_620_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    40.431 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_548/CO[3]
+                         net (fo=1, unplaced)         0.008    40.439    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_548_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    40.539 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_543/CO[3]
+                         net (fo=1, unplaced)         0.000    40.539    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_543_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    40.639 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_538/CO[3]
+                         net (fo=1, unplaced)         0.000    40.639    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_538_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    40.739 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_533/CO[3]
+                         net (fo=1, unplaced)         0.000    40.739    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_533_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    40.839 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_528/CO[3]
+                         net (fo=1, unplaced)         0.000    40.839    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_528_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    40.939 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_527/CO[3]
+                         net (fo=1, unplaced)         0.000    40.939    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_527_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    41.039 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_561/CO[3]
+                         net (fo=1, unplaced)         0.000    41.039    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_561_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    41.139 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_558/CO[3]
+                         net (fo=1, unplaced)         0.000    41.139    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_558_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    41.289 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_553/CO[1]
+                         net (fo=35, unplaced)        0.545    41.834    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_553_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    42.111 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_557/O
+                         net (fo=1, unplaced)         0.000    42.111    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_557_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    42.555 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_485/CO[3]
+                         net (fo=1, unplaced)         0.008    42.563    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_485_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    42.663 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_480/CO[3]
+                         net (fo=1, unplaced)         0.000    42.663    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_480_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    42.763 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_475/CO[3]
+                         net (fo=1, unplaced)         0.000    42.763    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_475_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    42.863 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_470/CO[3]
+                         net (fo=1, unplaced)         0.000    42.863    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_470_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    42.963 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_465/CO[3]
+                         net (fo=1, unplaced)         0.000    42.963    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_465_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    43.063 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_464/CO[3]
+                         net (fo=1, unplaced)         0.000    43.063    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_464_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    43.163 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_498/CO[3]
+                         net (fo=1, unplaced)         0.000    43.163    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_498_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    43.263 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_495/CO[3]
+                         net (fo=1, unplaced)         0.000    43.263    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_495_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    43.413 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_490/CO[1]
+                         net (fo=35, unplaced)        0.545    43.958    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_490_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    44.235 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_494/O
+                         net (fo=1, unplaced)         0.000    44.235    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_494_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    44.679 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_422/CO[3]
+                         net (fo=1, unplaced)         0.008    44.687    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_422_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    44.787 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_417/CO[3]
+                         net (fo=1, unplaced)         0.000    44.787    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_417_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    44.887 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_412/CO[3]
+                         net (fo=1, unplaced)         0.000    44.887    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_412_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    44.987 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_407/CO[3]
+                         net (fo=1, unplaced)         0.000    44.987    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_407_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    45.087 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_402/CO[3]
+                         net (fo=1, unplaced)         0.000    45.087    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_402_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    45.187 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_401/CO[3]
+                         net (fo=1, unplaced)         0.000    45.187    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_401_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    45.287 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_435/CO[3]
+                         net (fo=1, unplaced)         0.000    45.287    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_435_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    45.387 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_432/CO[3]
+                         net (fo=1, unplaced)         0.000    45.387    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_432_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    45.537 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_427/CO[1]
+                         net (fo=35, unplaced)        0.545    46.082    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_427_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    46.359 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_431/O
+                         net (fo=1, unplaced)         0.000    46.359    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_431_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    46.803 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_361/CO[3]
+                         net (fo=1, unplaced)         0.008    46.811    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_361_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    46.911 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_356/CO[3]
+                         net (fo=1, unplaced)         0.000    46.911    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_356_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    47.011 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_351/CO[3]
+                         net (fo=1, unplaced)         0.000    47.011    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_351_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    47.111 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_346/CO[3]
+                         net (fo=1, unplaced)         0.000    47.111    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_346_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    47.211 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_341/CO[3]
+                         net (fo=1, unplaced)         0.000    47.211    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_341_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    47.311 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_340/CO[3]
+                         net (fo=1, unplaced)         0.000    47.311    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_340_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    47.411 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_374/CO[3]
+                         net (fo=1, unplaced)         0.000    47.411    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_374_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    47.511 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_371/CO[3]
+                         net (fo=1, unplaced)         0.000    47.511    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_371_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    47.661 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_366/CO[1]
+                         net (fo=35, unplaced)        0.545    48.206    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_366_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    48.483 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_370/O
+                         net (fo=1, unplaced)         0.000    48.483    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_370_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    48.927 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_304/CO[3]
+                         net (fo=1, unplaced)         0.008    48.935    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_304_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    49.035 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_299/CO[3]
+                         net (fo=1, unplaced)         0.000    49.035    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_299_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    49.135 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_294/CO[3]
+                         net (fo=1, unplaced)         0.000    49.135    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_294_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    49.235 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_289/CO[3]
+                         net (fo=1, unplaced)         0.000    49.235    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_289_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    49.335 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_284/CO[3]
+                         net (fo=1, unplaced)         0.000    49.335    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_284_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    49.435 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_283/CO[3]
+                         net (fo=1, unplaced)         0.000    49.435    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_283_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    49.535 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_318/CO[3]
+                         net (fo=1, unplaced)         0.000    49.535    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_318_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    49.635 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_314/CO[3]
+                         net (fo=1, unplaced)         0.000    49.635    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_314_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    49.785 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_309/CO[1]
+                         net (fo=35, unplaced)        0.545    50.330    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_309_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    50.607 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_313/O
+                         net (fo=1, unplaced)         0.000    50.607    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_313_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    51.051 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_252/CO[3]
+                         net (fo=1, unplaced)         0.008    51.059    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_252_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    51.159 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_247/CO[3]
+                         net (fo=1, unplaced)         0.000    51.159    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_247_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    51.259 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_242/CO[3]
+                         net (fo=1, unplaced)         0.000    51.259    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_242_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    51.359 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_237/CO[3]
+                         net (fo=1, unplaced)         0.000    51.359    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_237_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    51.459 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_232/CO[3]
+                         net (fo=1, unplaced)         0.000    51.459    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_232_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    51.559 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_231/CO[3]
+                         net (fo=1, unplaced)         0.000    51.559    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_231_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    51.659 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_266/CO[3]
+                         net (fo=1, unplaced)         0.000    51.659    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_266_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    51.759 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_262/CO[3]
+                         net (fo=1, unplaced)         0.000    51.759    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_262_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    51.909 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_257/CO[1]
+                         net (fo=35, unplaced)        0.545    52.454    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_257_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    52.731 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_261/O
+                         net (fo=1, unplaced)         0.000    52.731    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_261_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    53.175 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_205/CO[3]
+                         net (fo=1, unplaced)         0.008    53.183    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_205_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    53.283 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_200/CO[3]
+                         net (fo=1, unplaced)         0.000    53.283    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_200_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    53.383 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_195/CO[3]
+                         net (fo=1, unplaced)         0.000    53.383    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_195_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    53.483 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_190/CO[3]
+                         net (fo=1, unplaced)         0.000    53.483    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_190_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    53.583 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_185/CO[3]
+                         net (fo=1, unplaced)         0.000    53.583    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_185_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    53.683 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_184/CO[3]
+                         net (fo=1, unplaced)         0.000    53.683    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_184_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    53.783 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_219/CO[3]
+                         net (fo=1, unplaced)         0.000    53.783    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_219_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    53.883 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_215/CO[3]
+                         net (fo=1, unplaced)         0.000    53.883    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_215_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    54.033 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_210/CO[1]
+                         net (fo=35, unplaced)        0.545    54.578    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_210_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    54.855 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_214/O
+                         net (fo=1, unplaced)         0.000    54.855    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_214_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    55.299 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_165/CO[3]
+                         net (fo=1, unplaced)         0.008    55.307    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_165_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    55.407 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_160/CO[3]
+                         net (fo=1, unplaced)         0.000    55.407    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_160_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    55.507 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_155/CO[3]
+                         net (fo=1, unplaced)         0.000    55.507    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_155_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    55.607 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_150/CO[3]
+                         net (fo=1, unplaced)         0.000    55.607    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_150_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    55.707 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_145/CO[3]
+                         net (fo=1, unplaced)         0.000    55.707    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_145_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    55.807 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_144/CO[3]
+                         net (fo=1, unplaced)         0.000    55.807    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_144_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    55.907 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_179/CO[3]
+                         net (fo=1, unplaced)         0.000    55.907    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_179_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    56.007 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_175/CO[3]
+                         net (fo=1, unplaced)         0.000    56.007    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_175_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    56.157 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_170/CO[1]
+                         net (fo=35, unplaced)        0.545    56.702    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_170_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    56.979 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_174/O
+                         net (fo=1, unplaced)         0.000    56.979    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_174_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    57.423 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_129/CO[3]
+                         net (fo=1, unplaced)         0.008    57.431    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_129_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    57.531 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_124/CO[3]
+                         net (fo=1, unplaced)         0.000    57.531    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_124_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    57.631 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_119/CO[3]
+                         net (fo=1, unplaced)         0.000    57.631    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_119_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    57.731 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_114/CO[3]
+                         net (fo=1, unplaced)         0.000    57.731    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_114_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    57.831 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_109/CO[3]
+                         net (fo=1, unplaced)         0.000    57.831    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_109_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    57.931 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_108/CO[3]
+                         net (fo=1, unplaced)         0.000    57.931    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_108_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    58.031 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_139/CO[3]
+                         net (fo=1, unplaced)         0.000    58.031    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_139_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    58.131 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_122/CO[3]
+                         net (fo=1, unplaced)         0.000    58.131    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_122_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    58.281 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_134/CO[1]
+                         net (fo=35, unplaced)        0.545    58.826    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_134_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    59.103 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_138/O
+                         net (fo=1, unplaced)         0.000    59.103    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_138_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    59.547 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_98/CO[3]
+                         net (fo=1, unplaced)         0.008    59.555    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_98_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    59.655 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_93/CO[3]
+                         net (fo=1, unplaced)         0.000    59.655    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_93_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    59.755 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_88/CO[3]
+                         net (fo=1, unplaced)         0.000    59.755    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_88_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    59.855 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_83/CO[3]
+                         net (fo=1, unplaced)         0.000    59.855    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_83_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    59.955 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_78/CO[3]
+                         net (fo=1, unplaced)         0.000    59.955    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_78_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    60.055 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_77/CO[3]
+                         net (fo=1, unplaced)         0.000    60.055    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_77_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    60.155 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_103/CO[3]
+                         net (fo=1, unplaced)         0.000    60.155    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_103_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    60.255 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_111/CO[3]
+                         net (fo=1, unplaced)         0.000    60.255    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_111_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    60.405 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_110/CO[1]
+                         net (fo=35, unplaced)        0.545    60.950    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_110_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    61.227 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_121/O
+                         net (fo=1, unplaced)         0.000    61.227    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_121_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    61.671 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_105/CO[3]
+                         net (fo=1, unplaced)         0.008    61.679    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_105_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    61.779 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_67/CO[3]
+                         net (fo=1, unplaced)         0.000    61.779    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_67_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    61.879 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_62/CO[3]
+                         net (fo=1, unplaced)         0.000    61.879    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_62_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    61.979 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_57/CO[3]
+                         net (fo=1, unplaced)         0.000    61.979    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_57_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    62.079 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_52/CO[3]
+                         net (fo=1, unplaced)         0.000    62.079    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_52_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    62.179 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_51/CO[3]
+                         net (fo=1, unplaced)         0.000    62.179    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_51_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    62.279 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_72/CO[3]
+                         net (fo=1, unplaced)         0.000    62.279    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_72_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    62.379 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_98/CO[3]
+                         net (fo=1, unplaced)         0.000    62.379    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_98_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    62.529 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_97/CO[1]
+                         net (fo=35, unplaced)        0.545    63.074    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_97_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    63.351 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_104/O
+                         net (fo=1, unplaced)         0.000    63.351    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_104_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    63.795 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_89/CO[3]
+                         net (fo=1, unplaced)         0.008    63.803    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_89_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    63.903 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_92/CO[3]
+                         net (fo=1, unplaced)         0.000    63.903    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_92_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    64.003 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_41/CO[3]
+                         net (fo=1, unplaced)         0.000    64.003    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_41_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    64.103 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_36/CO[3]
+                         net (fo=1, unplaced)         0.000    64.103    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_36_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    64.203 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_31/CO[3]
+                         net (fo=1, unplaced)         0.000    64.203    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_31_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    64.303 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_30/CO[3]
+                         net (fo=1, unplaced)         0.000    64.303    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_30_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    64.403 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_46/CO[3]
+                         net (fo=1, unplaced)         0.000    64.403    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_46_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    64.503 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_85/CO[3]
+                         net (fo=1, unplaced)         0.000    64.503    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_85_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    64.653 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_84/CO[1]
+                         net (fo=35, unplaced)        0.545    65.198    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_84_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    65.475 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_97/O
+                         net (fo=1, unplaced)         0.000    65.475    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_97_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    65.919 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_79/CO[3]
+                         net (fo=1, unplaced)         0.008    65.927    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_79_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    66.027 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_74/CO[3]
+                         net (fo=1, unplaced)         0.000    66.027    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_74_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    66.127 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_79/CO[3]
+                         net (fo=1, unplaced)         0.000    66.127    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_79_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    66.227 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_20/CO[3]
+                         net (fo=1, unplaced)         0.000    66.227    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_20_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    66.327 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_15/CO[3]
+                         net (fo=1, unplaced)         0.000    66.327    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_15_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    66.427 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_14/CO[3]
+                         net (fo=1, unplaced)         0.000    66.427    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_14_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    66.527 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_25/CO[3]
+                         net (fo=1, unplaced)         0.000    66.527    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_25_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    66.627 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_68/CO[3]
+                         net (fo=1, unplaced)         0.000    66.627    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_68_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    66.777 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_67/CO[1]
+                         net (fo=35, unplaced)        0.545    67.322    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_67_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    67.599 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_87/O
+                         net (fo=1, unplaced)         0.000    67.599    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_87_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    68.043 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_59/CO[3]
+                         net (fo=1, unplaced)         0.008    68.051    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_59_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    68.151 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_52/CO[3]
+                         net (fo=1, unplaced)         0.000    68.151    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_52_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    68.251 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_46/CO[3]
+                         net (fo=1, unplaced)         0.000    68.251    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_46_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    68.351 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_62/CO[3]
+                         net (fo=1, unplaced)         0.000    68.351    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_62_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    68.451 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_4/CO[3]
+                         net (fo=1, unplaced)         0.000    68.451    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_4_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    68.551 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_3/CO[3]
+                         net (fo=1, unplaced)         0.000    68.551    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_3_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    68.651 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_9/CO[3]
+                         net (fo=1, unplaced)         0.000    68.651    u_mmu/g_c[0].u_bank/u_im2col_writer/i__i_9_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    68.751 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_42/CO[3]
+                         net (fo=1, unplaced)         0.000    68.751    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_42_n_0
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    68.901 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_41/CO[1]
+                         net (fo=35, unplaced)        0.545    69.446    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_41_n_2
+                         LUT4 (Prop_lut4_I0_O)        0.277    69.723 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_67/O
+                         net (fo=1, unplaced)         0.000    69.723    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_67_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    70.167 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_37/CO[3]
+                         net (fo=1, unplaced)         0.008    70.175    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_37_n_0
+                         CARRY4 (Prop_carry4_CI_O[2])
+                                                      0.214    70.389 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_31/O[2]
+                         net (fo=4, unplaced)         0.373    70.762    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_31_n_5
+                         LUT2 (Prop_lut2_I1_O)        0.244    71.006 f  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_58/O
+                         net (fo=2, unplaced)         0.949    71.955    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_58_n_0
+                         LUT6 (Prop_lut6_I0_O)        0.105    72.060 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_40/O
+                         net (fo=1, unplaced)         0.938    72.998    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_40_n_0
+                         LUT6 (Prop_lut6_I1_O)        0.105    73.103 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_18/O
+                         net (fo=7, unplaced)         0.973    74.076    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_i_18_n_0
+                         LUT6 (Prop_lut6_I2_O)        0.105    74.181 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_22/O
+                         net (fo=4, unplaced)         0.371    74.552    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_22_n_0
+                         LUT6 (Prop_lut6_I5_O)        0.105    74.657 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_17/O
+                         net (fo=1, unplaced)         0.347    75.004    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_17_n_0
+                         LUT6 (Prop_lut6_I3_O)        0.105    75.109 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_1/O
+                         net (fo=2, unplaced)         0.646    75.754    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_i_1_n_0
+                         DSP48E1 (Prop_dsp48e1_B[14]_PCOUT[47])
+                                                      3.244    78.998 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3/PCOUT[47]
+                         net (fo=1, unplaced)         0.055    79.053    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__3_n_106
+                         DSP48E1 (Prop_dsp48e1_PCIN[47]_P[3])
+                                                      1.271    80.324 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__4/P[3]
+                         net (fo=1, unplaced)         0.646    80.970    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__4_n_102
+                         LUT2 (Prop_lut2_I1_O)        0.105    81.075 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_376/O
+                         net (fo=1, unplaced)         0.000    81.075    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_376_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    81.519 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_286/CO[3]
+                         net (fo=1, unplaced)         0.000    81.519    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_286_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    81.619 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_284/CO[3]
+                         net (fo=1, unplaced)         0.000    81.619    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_284_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    81.719 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_210/CO[3]
+                         net (fo=1, unplaced)         0.000    81.719    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_210_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    81.819 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_173/CO[3]
+                         net (fo=1, unplaced)         0.000    81.819    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_173_n_0
+                         CARRY4 (Prop_carry4_CI_O[0])
+                                                      0.189    82.008 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_115/O[0]
+                         net (fo=3, unplaced)         0.617    82.625    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_115_n_7
+                         LUT4 (Prop_lut4_I1_O)        0.238    82.863 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_113/O
+                         net (fo=1, unplaced)         0.000    82.863    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_113_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    83.307 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_56/CO[3]
+                         net (fo=1, unplaced)         0.000    83.307    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_56_n_0
+                         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.269    83.576 f  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_25/O[1]
+                         net (fo=1, unplaced)         0.472    84.048    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_25_n_6
+                         LUT2 (Prop_lut2_I0_O)        0.245    84.293 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_11__0/O
+                         net (fo=1, unplaced)         0.000    84.293    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_11__0_n_0
+                         CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.423    84.716 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_3/CO[3]
+                         net (fo=1, unplaced)         0.577    85.293    u_mmu/g_c[0].u_bank/u_im2col_writer/access_valid0
+                         LUT6 (Prop_lut6_I1_O)        0.105    85.398 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_1/O
+                         net (fo=9, unplaced)         0.369    85.767    u_mmu/g_c[0].u_bank/u_im2col_writer/p_1_in
+                         LUT3 (Prop_lut3_I1_O)        0.105    85.872 r  u_mmu/g_c[0].u_bank/u_im2col_writer/mem_reg_i_3__10/O
+                         net (fo=1, unplaced)         0.646    86.518    u_mmu/g_c[0].u_bank/u_input_sram/ADDRBWRADDR[6]
+                         RAMB18E1                                     r  u_mmu/g_c[0].u_bank/u_input_sram/mem_reg/ADDRBWRADDR[10]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)     1000.000  1000.000 r  <hidden>
+                                                      0.000  1000.000 r  clk
+                         net (fo=8479, unset)         0.748  1000.748    u_mmu/g_c[0].u_bank/u_input_sram/clk
+                         RAMB18E1                                     r  u_mmu/g_c[0].u_bank/u_input_sram/mem_reg/CLKBWRCLK
+                         clock pessimism              0.000  1000.748    <hidden>
+                         clock uncertainty           -0.035  1000.712    <hidden>
+                         RAMB18E1 (Setup_ramb18e1_CLKBWRCLK_ADDRBWRADDR[10])
+                                                     -0.490  1000.222    u_mmu/g_c[0].u_bank/u_input_sram/mem_reg
+  -------------------------------------------------------------------
+                         required time                       1000.222    <hidden>
+                         arrival time                         -86.518    <hidden>
+  -------------------------------------------------------------------
+                         slack                                913.705    <hidden>
+
+
+
+
+
+Min Delay Paths
+--------------------------------------------------------------------------------------
+Slack (MET) :             0.243ns  (arrival time - required time)
+  Source:                 u_mmu/g_c[0].u_bank/u_im2col_writer/saved_col_addr_reg/CLK
+                            (rising edge-triggered cell DSP48E1 clocked by clk  {rise@0.000ns fall@500.000ns period=1000.000ns})
+  Destination:            u_mmu/g_c[0].u_bank/u_col_sram/mem_reg_0_0/ADDRARDADDR[0]
+                            (rising edge-triggered cell RAMB36E1 clocked by clk  {rise@0.000ns fall@500.000ns period=1000.000ns})
+  Path Group:             clk
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (clk rise@0.000ns - clk rise@0.000ns)
+  Data Path Delay:        0.446ns  (logic 0.126ns (28.242%)  route 0.320ns (71.758%))
+  Logic Levels:           0  
+  Clock Path Skew:        0.021ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.411ns
+    Source Clock Delay      (SCD):    0.390ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  <hidden>
+                                                      0.000     0.000 r  clk
+                         net (fo=8479, unset)         0.390     0.390    u_mmu/g_c[0].u_bank/u_im2col_writer/clk
+                         DSP48E1                                      r  u_mmu/g_c[0].u_bank/u_im2col_writer/saved_col_addr_reg/CLK
+  -------------------------------------------------------------------    -------------------
+                         DSP48E1 (Prop_dsp48e1_CLK_P[0])
+                                                      0.126     0.516 r  u_mmu/g_c[0].u_bank/u_im2col_writer/saved_col_addr_reg/P[0]
+                         net (fo=16, unplaced)        0.320     0.836    u_mmu/g_c[0].u_bank/u_col_sram/mem_reg_1_7_0[0]
+                         RAMB36E1                                     r  u_mmu/g_c[0].u_bank/u_col_sram/mem_reg_0_0/ADDRARDADDR[0]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        0.000     0.000 r  <hidden>
+                                                      0.000     0.000 r  clk
+                         net (fo=8479, unset)         0.411     0.411    u_mmu/g_c[0].u_bank/u_col_sram/clk
+                         RAMB36E1                                     r  u_mmu/g_c[0].u_bank/u_col_sram/mem_reg_0_0/CLKARDCLK
+                         clock pessimism              0.000     0.411    <hidden>
+                         RAMB36E1 (Hold_ramb36e1_CLKARDCLK_ADDRARDADDR[0])
+                                                      0.183     0.594    u_mmu/g_c[0].u_bank/u_col_sram/mem_reg_0_0
+  -------------------------------------------------------------------
+                         required time                         -0.594    <hidden>
+                         arrival time                           0.836    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.243    <hidden>
+
+
+
+
+
+Pulse Width Checks
+--------------------------------------------------------------------------------------
+Clock Name:         clk
+Waveform(ns):       { 0.000 500.000 }
+Period(ns):         1000.000
+Sources:            { clk }
+
+Check Type        Corner  Lib Pin             Reference Pin  Required(ns)  Actual(ns)  Slack(ns)  Location  Pin
+Min Period        n/a     RAMB36E1/CLKARDCLK  n/a            2.761         1000.000    997.239              u_mmu/g_c[0].u_bank/u_col_sram/mem_reg_0_0/CLKARDCLK
+Low Pulse Width   Slow    FDRE/C              n/a            0.500         500.000     499.500              C_reg[0]/C
+High Pulse Width  Slow    FDRE/C              n/a            0.500         500.000     499.500              C_reg[0]/C
+
+
+
+--------------------------------------------------------------------------------------
+Path Group:  (none)
+From Clock:  
+  To Clock:  clk
+
+Max Delay           201 Endpoints
+Min Delay           201 Endpoints
+--------------------------------------------------------------------------------------
+
+
+Max Delay Paths
+--------------------------------------------------------------------------------------
+Slack:                    inf
+  Source:                 u_mmu/g_c[0].u_bank/u_im2col_writer/h_coord1__5/ACOUT[29]
+                            (internal pin)
+  Destination:            u_mmu/g_c[0].u_bank/u_input_sram/mem_reg/ADDRBWRADDR[10]
+                            (rising edge-triggered cell RAMB18E1 clocked by clk  {rise@0.000ns fall@500.000ns period=1000.000ns})
+  Path Group:             (none)
+  Path Type:              Setup (Max at Slow Process Corner)
+  Data Path Delay:        10.285ns  (logic 6.403ns (62.255%)  route 3.882ns (37.745%))
+  Logic Levels:           19  (CARRY4=13 DSP48E1=1 LUT2=2 LUT3=2 LUT6=1)
+  Clock Uncertainty:      0.025ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.050ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         DSP48E1                      0.000     0.000 r  u_mmu/g_c[0].u_bank/u_im2col_writer/h_coord1__5/ACOUT[29]
+                         net (fo=1, unplaced)         0.055     0.055    u_mmu/g_c[0].u_bank/u_im2col_writer/h_coord1__5_n_24
+                         DSP48E1 (Prop_dsp48e1_ACIN[29]_P[0])
+                                                      3.050     3.105 r  u_mmu/g_c[0].u_bank/u_im2col_writer/h_coord1__6/P[0]
+                         net (fo=2, unplaced)         0.646     3.751    u_mmu/g_c[0].u_bank/u_im2col_writer/h_coord1__6_n_105
+                         LUT2 (Prop_lut2_I0_O)        0.105     3.856 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_597/O
+                         net (fo=1, unplaced)         0.000     3.856    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_597_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444     4.300 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_571/CO[3]
+                         net (fo=1, unplaced)         0.008     4.308    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_571_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     4.408 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_503/CO[3]
+                         net (fo=1, unplaced)         0.000     4.408    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_503_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     4.508 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_501/CO[3]
+                         net (fo=1, unplaced)         0.000     4.508    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_501_n_0
+                         CARRY4 (Prop_carry4_CI_O[0])
+                                                      0.189     4.697 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_411/O[0]
+                         net (fo=3, unplaced)         0.380     5.077    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_411_n_7
+                         LUT3 (Prop_lut3_I0_O)        0.238     5.315 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_395/O
+                         net (fo=1, unplaced)         0.537     5.852    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_395_n_0
+                         CARRY4 (Prop_carry4_DI[1]_CO[3])
+                                                      0.430     6.282 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_305/CO[3]
+                         net (fo=1, unplaced)         0.000     6.282    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_305_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     6.382 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_222/CO[3]
+                         net (fo=1, unplaced)         0.000     6.382    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_222_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     6.482 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_221/CO[3]
+                         net (fo=1, unplaced)         0.000     6.482    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_221_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     6.582 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_154/CO[3]
+                         net (fo=1, unplaced)         0.000     6.582    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_154_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     6.682 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_153/CO[3]
+                         net (fo=1, unplaced)         0.000     6.682    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_153_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     6.782 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_80/CO[3]
+                         net (fo=1, unplaced)         0.000     6.782    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_80_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     6.882 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_43/CO[3]
+                         net (fo=1, unplaced)         0.000     6.882    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_43_n_0
+                         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.269     7.151 f  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_17/O[1]
+                         net (fo=1, unplaced)         0.472     7.623    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_17_n_6
+                         LUT2 (Prop_lut2_I0_O)        0.245     7.868 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_16__0/O
+                         net (fo=1, unplaced)         0.000     7.868    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_16__0_n_0
+                         CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.423     8.291 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_4/CO[3]
+                         net (fo=1, unplaced)         0.770     9.061    u_mmu/g_c[0].u_bank/u_im2col_writer/access_valid2
+                         LUT6 (Prop_lut6_I2_O)        0.105     9.166 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_1/O
+                         net (fo=9, unplaced)         0.369     9.535    u_mmu/g_c[0].u_bank/u_im2col_writer/p_1_in
+                         LUT3 (Prop_lut3_I1_O)        0.105     9.640 r  u_mmu/g_c[0].u_bank/u_im2col_writer/mem_reg_i_3__10/O
+                         net (fo=1, unplaced)         0.646    10.285    u_mmu/g_c[0].u_bank/u_input_sram/ADDRBWRADDR[6]
+                         RAMB18E1                                     r  u_mmu/g_c[0].u_bank/u_input_sram/mem_reg/ADDRBWRADDR[10]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        0.000     0.000 r  <hidden>
+                                                      0.000     0.000 r  clk
+                         net (fo=8479, unset)         0.748     0.748    u_mmu/g_c[0].u_bank/u_input_sram/clk
+                         RAMB18E1                                     r  u_mmu/g_c[0].u_bank/u_input_sram/mem_reg/CLKBWRCLK
+
+
+
+
+
+Min Delay Paths
+--------------------------------------------------------------------------------------
+Slack:                    inf
+  Source:                 u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5/ACOUT[29]
+                            (internal pin)
+  Destination:            u_mmu/g_c[0].u_bank/u_im2col_writer/saved_valid_reg/D
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@500.000ns period=1000.000ns})
+  Path Group:             (none)
+  Path Type:              Hold (Min at Fast Process Corner)
+  Data Path Delay:        1.957ns  (logic 0.994ns (50.783%)  route 0.963ns (49.217%))
+  Logic Levels:           6  (CARRY4=2 DSP48E1=1 LUT4=2 LUT6=1)
+  Clock Uncertainty:      0.025ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.050ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         DSP48E1                      0.000     0.000 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5/ACOUT[29]
+                         net (fo=1, unplaced)         0.027     0.027    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__5_n_24
+                         DSP48E1 (Prop_dsp48e1_ACIN[29]_P[44])
+                                                      0.521     0.548 r  u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__6/P[44]
+                         net (fo=2, unplaced)         0.320     0.868    u_mmu/g_c[0].u_bank/u_im2col_writer/w_coord1__6_n_61
+                         CARRY4 (Prop_carry4_DI[1]_O[2])
+                                                      0.108     0.976 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_65/O[2]
+                         net (fo=2, unplaced)         0.179     1.155    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_65_n_5
+                         LUT4 (Prop_lut4_I3_O)        0.108     1.263 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_30/O
+                         net (fo=1, unplaced)         0.000     1.263    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_30_n_0
+                         CARRY4 (Prop_carry4_S[2]_O[3])
+                                                      0.101     1.364 f  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_6/O[3]
+                         net (fo=3, unplaced)         0.245     1.609    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_6_n_4
+                         LUT6 (Prop_lut6_I4_O)        0.111     1.720 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_i_1/O
+                         net (fo=9, unplaced)         0.192     1.912    u_mmu/g_c[0].u_bank/u_im2col_writer/p_1_in
+                         LUT4 (Prop_lut4_I2_O)        0.045     1.957 r  u_mmu/g_c[0].u_bank/u_im2col_writer/i___0/O
+                         net (fo=1, unplaced)         0.000     1.957    u_mmu/g_c[0].u_bank/u_im2col_writer/i___0_n_0
+                         FDRE                                         r  u_mmu/g_c[0].u_bank/u_im2col_writer/saved_valid_reg/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        0.000     0.000 r  <hidden>
+                                                      0.000     0.000 r  clk
+                         net (fo=8479, unset)         0.411     0.411    u_mmu/g_c[0].u_bank/u_im2col_writer/clk
+                         FDRE                                         r  u_mmu/g_c[0].u_bank/u_im2col_writer/saved_valid_reg/C
+
+
+
+
+

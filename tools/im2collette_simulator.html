@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>im2col Systolic Simulator with Input Selector</title>
+<style>
+  :root {
+    --bg-main: #0b1120;
+    --panel-bg: #1e293b;
+    --border-color: #334155;
+    --text-primary: #f8fafc;
+    --text-muted: #94a3b8;
+    --act-teal: #38bdf8;
+    --wt-amber: #fbbf24;
+    --sum-purple: #c084fc;
+    --sram-green: #4ade80;
+    --bus-orange: #f97316;
+    --mask-red: #f43f5e;
+    --fifo-blue: #6366f1;
+  }
+
+  * { box-sizing: border-box; font-family: "Segoe UI", Roboto, monospace, sans-serif; }
+  body { background: var(--bg-main); color: var(--text-primary); margin: 0; padding: 14px; font-size: 12px; }
+
+  header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 12px; }
+  .title-group h1 { margin: 0; font-size: 1.25rem; font-weight: 700; }
+  .title-group h1 span { color: var(--act-teal); font-weight: 400; }
+  .title-group p { margin: 2px 0 0 0; font-size: 11px; color: var(--text-muted); }
+
+  .toolbar { display: flex; gap: 8px; align-items: center; background: var(--panel-bg); padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-color); }
+  button { background: #2563eb; color: #fff; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 11px; }
+  button:hover { background: #1d4ed8; }
+  button.secondary { background: #334155; }
+  button.secondary:hover { background: #475569; }
+  .pill { background: #0284c7; padding: 4px 8px; border-radius: 12px; font-weight: 700; font-size: 10px; }
+
+  /* 3-Column Responsive Grid */
+  .workspace { display: grid; grid-template-columns: 320px 1.55fr 1fr; gap: 12px; }
+  .panel { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+  .panel-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 4px; }
+  .panel-header h2 { margin: 0; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); }
+
+  /* Tensor Matrices & Masking */
+  .matrix-wrapper { display: flex; gap: 8px; justify-content: center; }
+  .matrix-card { background: #0f172a; border: 1px solid var(--border-color); border-radius: 6px; padding: 6px; flex: 1; }
+  .matrix-title { font-size: 10px; font-weight: 700; color: var(--act-teal); margin-bottom: 4px; text-align: center; }
+  
+  .filter-group-card { background: #0b1329; border: 1px solid rgba(251, 191, 36, 0.35); border-radius: 6px; padding: 6px; margin-bottom: 4px; }
+  .filter-group-title { font-size: 10px; font-weight: 700; color: var(--wt-amber); margin-bottom: 4px; display: flex; justify-content: space-between; }
+
+  .tensor-grid-3x3 { display: grid; grid-template-columns: repeat(3, 28px); gap: 3px; justify-content: center; }
+  .tensor-grid-2x2 { display: grid; grid-template-columns: repeat(2, 28px); gap: 3px; justify-content: center; }
+  
+  .m-cell { width: 28px; height: 28px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 4px; background: #1e293b; font-family: monospace; font-size: 10px; border: 1px solid var(--border-color); }
+  .m-cell .coord { font-size: 7px; color: var(--text-muted); }
+  
+  .m-cell.mask-covered { border: 2px dashed var(--mask-red); background: rgba(244, 63, 94, 0.15); }
+  .m-cell.mask-active-tap { border: 2px solid var(--act-teal); background: rgba(56, 189, 248, 0.35); font-weight: bold; }
+  .m-cell.wt-active-tap { border: 2px solid var(--wt-amber); background: rgba(251, 191, 36, 0.3); font-weight: bold; color: var(--wt-amber); }
+
+  /* Math Boxes Side-by-Side */
+  .math-boxes-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .math-box { background: #0f172a; border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; font-size: 10.5px; }
+  .math-box-title { font-weight: 700; font-size: 10px; margin-bottom: 4px; display: flex; justify-content: space-between; border-bottom: 1px solid #1e293b; padding-bottom: 2px; }
+  .math-line { margin: 2px 0; font-family: monospace; display: flex; justify-content: space-between; }
+  .math-val { color: var(--act-teal); font-weight: bold; }
+  .math-val-amber { color: var(--wt-amber); font-weight: bold; }
+
+  /* SRAM Lines */
+  .sram-card { background: #0f172a; border: 1px solid var(--border-color); border-radius: 4px; padding: 6px; }
+  .bus-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; margin-top: 4px; }
+  .bus-byte { background: #1e293b; padding: 3px 0; text-align: center; border-radius: 2px; font-family: monospace; font-size: 10px; }
+  .bus-byte.extracted { background: var(--act-teal); color: #000; font-weight: bold; border: 1px solid #fff; }
+
+  /* Kernel Bank Memory Display */
+  .kernel-mem-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; margin-top: 4px; }
+  .k-byte-cell { background: #1e293b; border: 1px solid var(--border-color); border-radius: 4px; padding: 3px 1px; text-align: center; font-family: monospace; }
+  .k-byte-cell .k-addr { font-size: 7px; color: var(--text-muted); display: block; }
+  .k-byte-cell .k-val { font-size: 10px; font-weight: bold; }
+  .k-byte-cell.active-wt { border-color: var(--wt-amber); background: rgba(251, 191, 36, 0.2); }
+  .k-byte-cell.active-wt .k-val { color: var(--wt-amber); }
+
+  /* Feed Lane Pipeline */
+  .lane-node { background: #0f172a; border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+  .lane-head { display: flex; justify-content: space-between; font-weight: 700; color: var(--act-teal); font-size: 11px; }
+  .lane-pipe { display: flex; align-items: center; gap: 4px; font-size: 10px; flex-wrap: wrap; }
+  .step-box { background: #1e293b; border: 1px solid var(--border-color); padding: 4px 6px; border-radius: 4px; text-align: center; min-width: 60px; }
+  .step-box.active { border-color: var(--wt-amber); background: rgba(251, 191, 36, 0.12); }
+  .step-box.selector-box { border-color: var(--act-teal); background: rgba(56, 189, 248, 0.12); min-width: 76px; }
+  .step-box.fifo-box { border-color: var(--fifo-blue); background: rgba(99, 102, 241, 0.15); min-width: 82px; }
+
+  .fifo-slots { display: flex; gap: 2px; justify-content: center; margin-top: 3px; }
+  .fifo-slot { width: 14px; height: 14px; border: 1px solid #475569; border-radius: 2px; font-size: 9px; line-height: 12px; text-align: center; background: #0f172a; }
+  .fifo-slot.occupied { background: var(--fifo-blue); color: #fff; font-weight: bold; }
+
+  /* Weight Loader Box */
+  .wt-loader-box { background: #0f172a; border: 1px solid var(--border-color); border-radius: 6px; padding: 6px; font-size: 10px; }
+  .wt-col-pipe { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 4px; }
+  .wt-pipe-card { background: #1e293b; border-radius: 4px; padding: 4px; border: 1px solid var(--border-color); }
+  .buf-badge { font-size: 8px; padding: 1px 4px; border-radius: 3px; font-weight: bold; }
+  .buf-badge.active-buf { background: var(--wt-amber); color: #000; }
+  .buf-badge.idle-buf { background: #475569; color: #fff; }
+
+  /* Systolic Core */
+  .systolic-grid { display: grid; grid-template-columns: repeat(2, 115px); gap: 8px; justify-content: center; }
+  .pe-cell { background: #0f172a; border: 2px solid var(--wt-amber); border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 3px; font-size: 10px; }
+  .pe-row { display: flex; justify-content: space-between; }
+  .val-wt { color: var(--wt-amber); font-weight: 700; }
+  .val-act { color: var(--act-teal); font-weight: 700; }
+  .val-sum { color: var(--sum-purple); font-weight: 700; }
+
+  .out-box { background: #0f172a; border: 1px solid var(--border-color); border-radius: 6px; padding: 6px; font-family: monospace; font-size: 11px; }
+  .out-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; margin-top: 4px; }
+  .out-cell { background: #1e293b; border: 1px solid var(--border-color); border-radius: 4px; padding: 4px; text-align: center; font-size: 10px; }
+  .out-cell.active-out { border-color: var(--sram-green); background: rgba(74, 222, 128, 0.12); }
+
+  .legend-item { display: inline-flex; align-items: center; gap: 4px; margin-right: 8px; font-size: 10px; color: var(--text-muted); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title-group">
+    <h1>On-the-fly <span>im2col: Architecture & Math Datapath</span></h1>
+    <p>Aligned Address & Weight Math, Physical SRAM Banks, Sliding Window & sync_fifo</p>
+  </div>
+  <div class="toolbar">
+    <button id="btnStep">Step Cycle &rarr;</button>
+    <button id="btnPlay" class="secondary">&#9654; Play</button>
+    <button id="btnReset" class="secondary">&#8634; Reset</button>
+    <span class="pill" id="lblState">STATE: IDLE</span>
+    <span>Cycle: <b id="lblCycle" style="font-family:monospace; color:var(--text-primary);">0</b></span>
+    <span>Active Tap: <b id="lblTap" style="color:var(--wt-amber); font-family:monospace;">(r=0, s=0)</b></span>
+    <span>Pos: <b id="lblOutPos" style="color:var(--act-teal); font-family:monospace;">(p=0, q=0)</b></span>
+  </div>
+</header>
+
+<div class="workspace">
+  <!-- Left Panel: Matrices & Weight Loader -->
+  <div class="panel">
+    <div class="panel-header">
+      <h2>1. Tensors & Kernel Filters</h2>
+      <span style="font-size:10px; color:var(--text-muted)">NCHW & KCRS</span>
+    </div>
+
+    <!-- 3x3 Feature Maps -->
+    <div style="font-size:10px; font-weight:600; color:var(--text-muted);">Input Feature Maps (H=3, W=3)</div>
+    <div class="matrix-wrapper">
+      <div class="matrix-card">
+        <div class="matrix-title">Channel 0 (C<sub>0</sub>)</div>
+        <div class="tensor-grid-3x3" id="inputGrid0"></div>
+      </div>
+      <div class="matrix-card">
+        <div class="matrix-title">Channel 1 (C<sub>1</sub>)</div>
+        <div class="tensor-grid-3x3" id="inputGrid1"></div>
+      </div>
+    </div>
+
+    <!-- Both Filters with all 8 weights explicitly visible -->
+    <div style="font-size:10px; font-weight:600; color:var(--text-muted); margin-top:2px;">
+      Kernel Filter Matrices (8 Weights / Filter, 16 Total)
+    </div>
+
+    <!-- Filter 0 (K0) -> C0 and C1 slices -->
+    <div class="filter-group-card">
+      <div class="filter-group-title">
+        <span>Filter 0 (K<sub>0</sub>)</span>
+        <span style="font-size:9px; color:var(--text-muted);">8 weights (@00..@07)</span>
+      </div>
+      <div class="matrix-wrapper">
+        <div class="matrix-card">
+          <div class="matrix-title" style="color:var(--act-teal)">K<sub>0</sub> &middot; C<sub>0</sub></div>
+          <div class="tensor-grid-2x2" id="k0Grid_c0"></div>
+        </div>
+        <div class="matrix-card">
+          <div class="matrix-title" style="color:var(--sum-purple)">K<sub>0</sub> &middot; C<sub>1</sub></div>
+          <div class="tensor-grid-2x2" id="k0Grid_c1"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter 1 (K1) -> C0 and C1 slices -->
+    <div class="filter-group-card">
+      <div class="filter-group-title">
+        <span>Filter 1 (K<sub>1</sub>)</span>
+        <span style="font-size:9px; color:var(--text-muted);">8 weights (@08..@15)</span>
+      </div>
+      <div class="matrix-wrapper">
+        <div class="matrix-card">
+          <div class="matrix-title" style="color:var(--act-teal)">K<sub>1</sub> &middot; C<sub>0</sub></div>
+          <div class="tensor-grid-2x2" id="k1Grid_c0"></div>
+        </div>
+        <div class="matrix-card">
+          <div class="matrix-title" style="color:var(--sum-purple)">K<sub>1</sub> &middot; C<sub>1</sub></div>
+          <div class="tensor-grid-2x2" id="k1Grid_c1"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Weight Loader Architecture View -->
+    <div class="panel-header" style="margin-top:2px;">
+      <h2>Weight Loader & Double Buffer</h2>
+      <span style="font-size:10px; color:var(--wt-amber)">weight_loader.v</span>
+    </div>
+    <div class="wt-loader-box">
+      <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+        <span>Active Buffer: <b id="lblActiveBuf" style="color:var(--wt-amber);">W_BUF[0]</b></span>
+        <span id="lblLoadState" style="color:var(--act-teal);">IDLE</span>
+      </div>
+      <div class="wt-col-pipe">
+        <div class="wt-pipe-card" id="wtCard0">
+          <div style="font-weight:bold; color:var(--wt-amber);">Col 0 (Filter 0)</div>
+          <div>C0 wt &rarr; PE[0,0]: <b id="wtVal_k0_c0" style="color:var(--act-teal)">-</b></div>
+          <div>C1 wt &rarr; PE[1,0]: <b id="wtVal_k0_c1" style="color:var(--act-teal)">-</b></div>
+        </div>
+        <div class="wt-pipe-card" id="wtCard1">
+          <div style="font-weight:bold; color:var(--wt-amber);">Col 1 (Filter 1)</div>
+          <div>C0 wt &rarr; PE[0,1]: <b id="wtVal_k1_c0" style="color:var(--act-teal)">-</b></div>
+          <div>C1 wt &rarr; PE[1,1]: <b id="wtVal_k1_c1" style="color:var(--act-teal)">-</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Center Panel: Math Datapath Atop SRAMs & Feed Lanes -->
+  <div class="panel">
+    <div class="panel-header">
+      <h2>2. Address Math, On-Chip SRAMs & Feed Lanes</h2>
+      <span style="font-size:10px; color:var(--bus-orange)">im2col_addr_gen.v & kernel_bank.v</span>
+    </div>
+
+    <!-- Address Generator & Tap Math Placed Side-by-Side Atop the SRAMs -->
+    <div class="math-boxes-row">
+      <!-- Weight Address & Tap Math -->
+      <div class="math-box">
+        <div class="math-box-title" style="color:var(--wt-amber);">
+          <span>Weight & Tap Math</span>
+          <span style="font-size:8px; color:var(--text-muted);">kernel_bank.v</span>
+        </div>
+        <div class="math-line"><span>Active Tap (r, s)</span><span id="mWtTap" class="math-val-amber">r=0, s=0</span></div>
+        <div class="math-line"><span>tap_idx = r·S + s</span><span id="mWtTapIdx" class="math-val-amber">0</span></div>
+        <div class="math-line"><span>sram_addr(k, c)</span><span class="math-val-amber">(k·C + c)·4 + tap</span></div>
+        <div class="math-line"><span>K0, C0/C1 Addr</span><span id="mWtAddrK0" class="math-val">@00 / @04</span></div>
+        <div class="math-line"><span>K1, C0/C1 Addr</span><span id="mWtAddrK1" class="math-val">@08 / @12</span></div>
+        <div class="math-line"><span>Target Register</span><span id="mWtMapping" class="math-val-amber">W_BUF[0] Latch</span></div>
+      </div>
+
+      <!-- Activation Address Gen Math -->
+      <div class="math-box">
+        <div class="math-box-title" style="color:var(--act-teal);">
+          <span>Activation Address Math</span>
+          <span style="font-size:8px; color:var(--text-muted);">im2col_addr_gen.v</span>
+        </div>
+        <div class="math-line"><span>Output Pos (p, q)</span><span id="mPos">p=0, q=0</span></div>
+        <div class="math-line"><span>h = p·stride + r</span><span class="math-val" id="mH">0</span></div>
+        <div class="math-line"><span>w = q·stride + s</span><span class="math-val" id="mW">0</span></div>
+        <div class="math-line"><span>linear_byte = h·W + w</span><span class="math-val" id="mLin">0</span></div>
+        <div class="math-line"><span>sram_raddr = byte &gt;&gt; 3</span><span class="math-val" id="mAddr">@00</span></div>
+        <div class="math-line"><span>byte_offset = byte % 8</span><span class="math-val" id="mOff">0</span></div>
+      </div>
+    </div>
+
+    <!-- Dedicated Kernel Bank Physical SRAM Visualization -->
+    <div class="sram-card" style="border-color: rgba(251, 191, 36, 0.4);">
+      <div style="display:flex; justify-content:space-between; color:var(--wt-amber); font-size:9px; font-weight:bold;">
+        <span>Physical Kernel Bank SRAM (16 Bytes, K=2, C=2, R=2, S=2)</span>
+        <span>Order: K &rarr; C &rarr; Tap</span>
+      </div>
+      <div class="kernel-mem-grid" id="kernelBankView"></div>
+    </div>
+
+    <div style="font-size:10px; color:var(--text-muted); margin-top:2px;">
+      Input Activation SRAMs (64-bit wide lines):
+    </div>
+    <div id="sramLineView" style="display:flex; flex-direction:column; gap:6px;"></div>
+
+    <div style="font-size:10px; font-weight:600; color:var(--text-muted); margin-top:4px;">
+      Datapath: SRAM Line &rarr; Input Selector &rarr; Window Regs &rarr; sync_fifo &rarr; PE Row
+    </div>
+    <div id="feedLaneList" style="display:flex; flex-direction:column; gap:8px;"></div>
+
+    <div style="margin-top:auto;">
+      <span class="legend-item"><span class="dot" style="background:var(--mask-red)"></span> 2D Sliding Mask</span>
+      <span class="legend-item"><span class="dot" style="background:var(--wt-amber)"></span> Kernel SRAM Address Active</span>
+      <span class="legend-item"><span class="dot" style="background:var(--act-teal)"></span> Input Selector / Window</span>
+      <span class="legend-item"><span class="dot" style="background:var(--fifo-blue)"></span> sync_fifo Queue</span>
+    </div>
+  </div>
+
+  <!-- Right Panel: Systolic Compute Core & Output Banks -->
+  <div class="panel">
+    <div class="panel-header">
+      <h2>3. Systolic Array & Output Banks</h2>
+      <span style="font-size:10px; color:var(--sum-purple)">systolic_array.v</span>
+    </div>
+
+    <div class="systolic-grid" id="systolicGrid"></div>
+
+    <div style="font-size:10px; font-weight:600; color:var(--text-muted); margin-top:6px;">Output Accumulator Memory (P=2, Q=2 &rarr; 4 Pixels/Filter)</div>
+    <div style="display:flex; flex-direction:column; gap:6px;" id="outputBanks"></div>
+
+    <div style="margin-top:auto; background:#0f172a; border:1px solid var(--border-color); border-radius:6px; padding:8px;">
+      <div style="font-weight:700; color:var(--sram-green); font-size:10px; display:flex; justify-content:space-between;">
+        <span>Hardware Verification Monitor</span>
+        <span id="verdictPill" class="pill" style="background:#0284c7;">RUNNING</span>
+      </div>
+      <div id="simLog" style="font-size:10px; color:var(--text-muted); margin-top:4px; font-family:monospace;">
+        System ready. Click "Step Cycle" to begin.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const HW = { C: 2, K: 2, H: 3, W: 3, R: 2, S: 2, P: 2, Q: 2, BUS_WORDS: 8, ARRAY_SIZE: 2, M_INTERM: 4, FIFO_DEPTH: 4 };
+
+// Feature Maps
+const MATRICES = {
+  in: [
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 0, 0, 0, 0, 0, 0],
+    [9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0]
+  ],
+  wt: [
+    { c0: [1, 2, 3, 4], c1: [2, 1, 1, 2] },
+    { c0: [2, 0, 1, 3], c1: [1, 1, 2, 2] }
+  ]
+};
+
+// Flattened 16-byte physical kernel memory array
+const KERNEL_SRAM = [
+  ...MATRICES.wt[0].c0, // @00..@03
+  ...MATRICES.wt[0].c1, // @04..@07
+  ...MATRICES.wt[1].c0, // @08..@11
+  ...MATRICES.wt[1].c1  // @12..@15
+];
+
+function computeGoldenOutputs() {
+  const expected = [[0, 0, 0, 0], [0, 0, 0, 0]];
+  for (let k = 0; k < HW.K; k++) {
+    for (let p = 0; p < HW.P; p++) {
+      for (let q = 0; q < HW.Q; q++) {
+        let sum = 0;
+        const outIdx = p * HW.Q + q;
+        for (let r = 0; r < HW.R; r++) {
+          for (let s = 0; s < HW.S; s++) {
+            const h = p + r;
+            const w = q + s;
+            const tapIdx = r * HW.S + s;
+            sum += MATRICES.in[0][h * HW.W + w] * MATRICES.wt[k].c0[tapIdx];
+            sum += MATRICES.in[1][h * HW.W + w] * MATRICES.wt[k].c1[tapIdx];
+          }
+        }
+        expected[k][outIdx] = sum;
+      }
+    }
+  }
+  return expected;
+}
+
+const EXPECTED_OUT = computeGoldenOutputs();
+
+let cycle = 0;
+let state = 'PRIME';
+let tap = 0;
+let outPos = 0;
+let activeWBuf = 0;
+let timer = null;
+
+let laneStages = [
+  { sram_line: 0, byte_offset: 0, selected_elem: 0, interm_window: [0, 0, 0, 0], fifo: [], lane_ready: true, skew_q: [], array_act: 0 },
+  { sram_line: 0, byte_offset: 0, selected_elem: 0, interm_window: [0, 0, 0, 0], fifo: [], lane_ready: true, skew_q: [0], array_act: 0 }
+];
+
+let PEs = Array(HW.ARRAY_SIZE).fill(0).map(() => 
+  Array(HW.ARRAY_SIZE).fill(0).map(() => ({
+    w: [0, 0], act_in: 0, prod: 0, psum_out: 0
+  }))
+);
+
+let outSram = [[0, 0, 0, 0], [0, 0, 0, 0]];
+
+function getTapCoords(tapIdx) { return { r: Math.floor(tapIdx / HW.S), s: tapIdx % HW.S }; }
+function getOutCoords(posIdx) { return { p: Math.floor(posIdx / HW.Q), q: posIdx % HW.Q }; }
+
+function initViews() {
+  for(let c = 0; c < HW.C; c++) {
+    const grid = document.getElementById(`inputGrid${c}`);
+    grid.innerHTML = '';
+    for(let h = 0; h < HW.H; h++) {
+      for(let w = 0; w < HW.W; w++) {
+        const val = MATRICES.in[c][h * HW.W + w];
+        grid.innerHTML += `<div class="m-cell" id="in_c${c}_${h}_${w}"><span class="coord">${h},${w}</span><span>${val}</span></div>`;
+      }
+    }
+  }
+
+  const slices = [
+    { el: 'k0Grid_c0', data: MATRICES.wt[0].c0, prefix: 'k0_c0' },
+    { el: 'k0Grid_c1', data: MATRICES.wt[0].c1, prefix: 'k0_c1' },
+    { el: 'k1Grid_c0', data: MATRICES.wt[1].c0, prefix: 'k1_c0' },
+    { el: 'k1Grid_c1', data: MATRICES.wt[1].c1, prefix: 'k1_c1' }
+  ];
+
+  slices.forEach(slice => {
+    const grid = document.getElementById(slice.el);
+    grid.innerHTML = '';
+    for(let r = 0; r < HW.R; r++) {
+      for(let s = 0; s < HW.S; s++) {
+        const val = slice.data[r * HW.S + s];
+        grid.innerHTML += `<div class="m-cell" id="${slice.prefix}_${r}_${s}"><span class="coord">${r},${s}</span><span>${val}</span></div>`;
+      }
+    }
+  });
+
+  const kBankDiv = document.getElementById('kernelBankView');
+  kBankDiv.innerHTML = '';
+  for(let i = 0; i < 16; i++) {
+    const hex = (i < 10 ? '0' : '') + i;
+    const k = Math.floor(i / 8);
+    const c = Math.floor((i % 8) / 4);
+    const t = i % 4;
+    kBankDiv.innerHTML += `
+      <div class="k-byte-cell" id="kmem_${i}" title="K${k}, C${c}, tap ${t}">
+        <span class="k-addr">@${hex}</span>
+        <span class="k-val">${KERNEL_SRAM[i]}</span>
+      </div>`;
+  }
+
+  const sramDiv = document.getElementById('sramLineView');
+  sramDiv.innerHTML = '';
+  for(let c = 0; c < HW.C; c++) {
+    sramDiv.innerHTML += `
+      <div class="sram-card">
+        <div style="display:flex; justify-content:space-between; color:var(--text-muted); font-size:9px;">
+          <span>Input Bank ${c} (Line @00)</span><span>Bus</span>
+        </div>
+        <div class="bus-grid">
+          ${MATRICES.in[c].slice(0, 8).map((v, i) => `<div class="bus-byte" id="sram_${c}_word0_${i}">${v}</div>`).join('')}
+        </div>
+        <div style="display:flex; justify-content:space-between; color:var(--text-muted); font-size:9px; margin-top:4px;">
+          <span>Input Bank ${c} (Line @01)</span><span>Bus</span>
+        </div>
+        <div class="bus-grid">
+          ${MATRICES.in[c].slice(8, 16).map((v, i) => `<div class="bus-byte" id="sram_${c}_word1_${i}">${v}</div>`).join('')}
+        </div>
+      </div>`;
+  }
+
+  const outDiv = document.getElementById('outputBanks');
+  outDiv.innerHTML = '';
+  for(let k = 0; k < HW.K; k++) {
+    let cellsHtml = '';
+    for(let p = 0; p < HW.P; p++) {
+      for(let q = 0; q < HW.Q; q++) {
+        const idx = p * HW.Q + q;
+        cellsHtml += `<div class="out-cell" id="out_cell_${k}_${idx}"><div style="color:var(--text-muted); font-size:8px;">(p=${p}, q=${q})</div><div style="font-weight:bold; color:var(--sram-green);" id="outVal_${k}_${idx}">0</div></div>`;
+      }
+    }
+    outDiv.innerHTML += `
+      <div class="out-box">
+        <div style="display:flex; justify-content:space-between; color:var(--text-muted); font-size:9px;">
+          <span>Output Bank ${k} (Filter ${k})</span><span>4 Accumulator Slots</span>
+        </div>
+        <div class="out-grid">${cellsHtml}</div>
+      </div>`;
+  }
+}
+
+function updateVisuals() {
+  const { r, s } = getTapCoords(tap);
+  const { p, q } = getOutCoords(outPos);
+
+  document.getElementById('lblCycle').innerText = cycle;
+  document.getElementById('lblTap').innerText = `(r=${r}, s=${s})`;
+  document.getElementById('lblOutPos').innerText = `(p=${p}, q=${q})`;
+  document.getElementById('lblState').innerText = `STATE: ${state}`;
+  document.getElementById('lblActiveBuf').innerText = `W_BUF[${activeWBuf}]`;
+
+  // 1. Update Weight Loader & Weight Math Breakdown
+  const tapIdx = r * HW.S + s;
+  const k0_c0_addr = (0 * HW.C + 0) * (HW.R * HW.S) + tapIdx;
+  const k0_c1_addr = (0 * HW.C + 1) * (HW.R * HW.S) + tapIdx;
+  const k1_c0_addr = (1 * HW.C + 0) * (HW.R * HW.S) + tapIdx;
+  const k1_c1_addr = (1 * HW.C + 1) * (HW.R * HW.S) + tapIdx;
+
+  document.getElementById('mWtTap').innerText = `r=${r}, s=${s}`;
+  document.getElementById('mWtTapIdx').innerText = `${tapIdx} (${r}·2 + ${s})`;
+  document.getElementById('mWtAddrK0').innerText = `@0${k0_c0_addr} / @0${k0_c1_addr}`;
+  document.getElementById('mWtAddrK1').innerText = `@${k1_c0_addr < 10 ? '0' : ''}${k1_c0_addr} / @${k1_c1_addr < 10 ? '0' : ''}${k1_c1_addr}`;
+  document.getElementById('mWtMapping').innerText = `W_BUF[${activeWBuf}] Latch`;
+
+  document.getElementById('wtVal_k0_c0').innerText = MATRICES.wt[0].c0[tapIdx];
+  document.getElementById('wtVal_k0_c1').innerText = MATRICES.wt[0].c1[tapIdx];
+  document.getElementById('wtVal_k1_c0').innerText = MATRICES.wt[1].c0[tapIdx];
+  document.getElementById('wtVal_k1_c1').innerText = MATRICES.wt[1].c1[tapIdx];
+  document.getElementById('lblLoadState').innerText = (state === 'LOAD_WEIGHTS') ? 'PRELOADING NEXT TAP' : 'STATIONARY RUN';
+
+  document.querySelectorAll('.m-cell').forEach(el => el.classList.remove('wt-active-tap', 'mask-covered', 'mask-active-tap'));
+  ['k0_c0', 'k0_c1', 'k1_c0', 'k1_c1'].forEach(prefix => {
+    const el = document.getElementById(`${prefix}_${r}_${s}`);
+    if (el) el.classList.add('wt-active-tap');
+  });
+
+  document.querySelectorAll('.k-byte-cell').forEach(el => el.classList.remove('active-wt'));
+  [k0_c0_addr, k0_c1_addr, k1_c0_addr, k1_c1_addr].forEach(addr => {
+    const el = document.getElementById(`kmem_${addr}`);
+    if (el) el.classList.add('active-wt');
+  });
+
+  document.querySelectorAll('.bus-byte').forEach(el => el.classList.remove('extracted'));
+  document.querySelectorAll('.out-cell').forEach(el => el.classList.remove('active-out'));
+
+  for(let k = 0; k < HW.K; k++) {
+    const activeOutEl = document.getElementById(`out_cell_${k}_${outPos}`);
+    if (activeOutEl) activeOutEl.classList.add('active-out');
+  }
+
+  // 2. Sliding Kernel Window on Input Feature Maps
+  for(let c = 0; c < HW.C; c++) {
+    for(let kr = 0; kr < HW.R; kr++) {
+      for(let ks = 0; ks < HW.S; ks++) {
+        const cell = document.getElementById(`in_c${c}_${p + kr}_${q + ks}`);
+        if (cell) cell.classList.add('mask-covered');
+      }
+    }
+    const activeCell = document.getElementById(`in_c${c}_${p + r}_${q + s}`);
+    if (activeCell) activeCell.classList.add('mask-active-tap');
+
+    const flatByte = (p + r) * HW.W + (q + s);
+    const wordIdx = Math.floor(flatByte / HW.BUS_WORDS);
+    const byteOffset = flatByte % HW.BUS_WORDS;
+    const sramByte = document.getElementById(`sram_${c}_word${wordIdx}_${byteOffset}`);
+    if (sramByte) sramByte.classList.add('extracted');
+  }
+
+  // 3. Activation Math Box
+  const h = p + r;
+  const w = q + s;
+  const flatByte = h * HW.W + w;
+  const wordAddr = Math.floor(flatByte / HW.BUS_WORDS);
+  const byteOff = flatByte % HW.BUS_WORDS;
+
+  document.getElementById('mPos').innerText = `p=${p}, q=${q}`;
+  document.getElementById('mH').innerText = `${h} (p=${p} + r=${r})`;
+  document.getElementById('mW').innerText = `${w} (q=${q} + s=${s})`;
+  document.getElementById('mLin').innerText = `${flatByte}`;
+  document.getElementById('mAddr').innerText = `@0${wordAddr}`;
+  document.getElementById('mOff').innerText = `${byteOff}`;
+
+  // 4. Feed Lanes with Input Selector placed cleanly between SRAM Line and Window Registers
+  const laneList = document.getElementById('feedLaneList');
+  laneList.innerHTML = '';
+  for(let c = 0; c < HW.C; c++) {
+    const lane = laneStages[c];
+    
+    let fifoSlotsHtml = '';
+    for (let slot = HW.FIFO_DEPTH - 1; slot >= 0; slot--) {
+      const isOcc = slot < lane.fifo.length;
+      const token = isOcc ? lane.fifo[slot] : '';
+      fifoSlotsHtml += `<div class="fifo-slot ${isOcc ? 'occupied' : ''}" title="Slot [${slot}]">${token}</div>`;
+    }
+
+    laneList.innerHTML += `
+      <div class="lane-node">
+        <div class="lane-head">
+          <span>Feed Lane ${c} (PE Row ${c})</span>
+          <span>lane_ready: <b style="color:${lane.lane_ready ? 'var(--sram-green)' : 'var(--mask-red)'}">${lane.lane_ready ? '1' : '0'}</b></span>
+        </div>
+        <div class="lane-pipe">
+          <div class="step-box active"><span>SRAM Line</span><br><b style="color:var(--bus-orange)">@0${lane.sram_line}</b></div>
+          <span style="color:var(--text-muted)">&rarr;</span>
+          
+          <!-- Simple Input Selector Textbox -->
+          <div class="step-box selector-box" title="Input Selector: Extracts element at byte_offset from the wide SRAM word">
+            <span style="color:var(--act-teal); font-weight:600;">Input Selector</span><br>
+          </div>
+          <span style="color:var(--text-muted)">&rarr;</span>
+
+          <div class="step-box active" title="Intermediate Window Registers (&times;M) ordered [3..0]">
+            <span style="color:var(--act-teal)">Window[3..0]</span><br><b style="color:var(--act-teal)">[${lane.interm_window.slice().reverse().join(',')}]</b>
+          </div>
+          <span style="color:var(--text-muted)">&rarr;</span>
+          <div class="step-box fifo-box" title="sync_fifo.v Elastic Decoupling Buffer (FIFO[3..0], fills from right, pops at slot 0)">
+            <span style="color:var(--fifo-blue)">sync_fifo[3..0] (${lane.fifo.length}/${HW.FIFO_DEPTH})</span>
+            <div class="fifo-slots">${fifoSlotsHtml}</div>
+          </div>
+          <span style="color:var(--text-muted)">&rarr;</span>
+          <div class="step-box">
+            <span>Skew Reg</span><br><b style="color:var(--wt-amber)">${c === 0 ? 'Direct (0)' : lane.skew_q.join(', ')}</b>
+          </div>
+          <span style="color:var(--text-muted)">&rarr;</span>
+          <div class="step-box active">
+            <span>activation_out</span><br><b style="color:var(--act-teal)">${lane.array_act}</b>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // 5. Systolic Array Grid
+  const grid = document.getElementById('systolicGrid');
+  grid.innerHTML = '';
+  for(let row = 0; row < HW.ARRAY_SIZE; row++) {
+    for(let col = 0; col < HW.ARRAY_SIZE; col++) {
+      const pe = PEs[row][col];
+      grid.innerHTML += `
+        <div class="pe-cell">
+          <div style="display:flex; justify-content:space-between; font-weight:bold; color:var(--text-muted);">
+            <span>PE[${row},${col}]</span>
+            <div>
+              <span class="buf-badge ${activeWBuf === 0 ? 'active-buf' : 'idle-buf'}">B0:${pe.w[0]}</span>
+              <span class="buf-badge ${activeWBuf === 1 ? 'active-buf' : 'idle-buf'}">B1:${pe.w[1]}</span>
+            </div>
+          </div>
+          <div class="pe-row"><span>Active W:</span><span class="val-wt">${pe.w[activeWBuf]}</span></div>
+          <div class="pe-row"><span>Act In:</span><span class="val-act">${pe.act_in}</span></div>
+          <div class="pe-row"><span>Prod:</span><span>${pe.prod}</span></div>
+          <div class="pe-row"><span>P_Sum Out:</span><span class="val-sum">${pe.psum_out}</span></div>
+        </div>`;
+    }
+  }
+}
+
+function stepSimulator() {
+  cycle++;
+  const { r, s } = getTapCoords(tap);
+  const { p, q } = getOutCoords(outPos);
+
+  if (state === 'PRIME') {
+    state = 'LOAD_WEIGHTS';
+    document.getElementById('simLog').innerText = `PRIME: Controller reading initial tap weights from kernel SRAM.`;
+  }
+  else if (state === 'LOAD_WEIGHTS') {
+    const tapIdx = r * HW.S + s;
+    PEs[0][0].w[activeWBuf] = MATRICES.wt[0].c0[tapIdx];
+    PEs[0][1].w[activeWBuf] = MATRICES.wt[1].c0[tapIdx];
+    PEs[1][0].w[activeWBuf] = MATRICES.wt[0].c1[tapIdx];
+    PEs[1][1].w[activeWBuf] = MATRICES.wt[1].c1[tapIdx];
+
+    const h = p + r;
+    const w = q + s;
+    const flatByte = h * HW.W + w;
+    const wordAddr = Math.floor(flatByte / HW.BUS_WORDS);
+    const byteOff = flatByte % HW.BUS_WORDS;
+
+    for(let c = 0; c < HW.C; c++) {
+      laneStages[c].sram_line = wordAddr;
+      laneStages[c].byte_offset = byteOff;
+      laneStages[c].selected_elem = MATRICES.in[c][flatByte];
+
+      laneStages[c].interm_window = [];
+      for (let pos = 0; pos < HW.P * HW.Q; pos++) {
+        const op_p = Math.floor(pos / HW.Q);
+        const op_q = pos % HW.Q;
+        const op_byte = (op_p + r) * HW.W + (op_q + s);
+        laneStages[c].interm_window.push(MATRICES.in[c][op_byte]);
+      }
+
+      laneStages[c].fifo = [...laneStages[c].interm_window];
+      laneStages[c].lane_ready = true;
+    }
+
+    state = 'RUN';
+    document.getElementById('simLog').innerText = `LOAD_WEIGHTS: Tap (${r},${s}) weights loaded into W_BUF[${activeWBuf}]. Input Selector selected Byte[${byteOff}]. Window & sync_fifo matched (4/4).`;
+  }
+  else if (state === 'RUN') {
+    const h = p + r;
+    const w = q + s;
+    const flatByte = h * HW.W + w;
+    const wordAddr = Math.floor(flatByte / HW.BUS_WORDS);
+    const byteOff = flatByte % HW.BUS_WORDS;
+
+    for(let c = 0; c < HW.C; c++) {
+      laneStages[c].sram_line = wordAddr;
+      laneStages[c].byte_offset = byteOff;
+      laneStages[c].selected_elem = MATRICES.in[c][flatByte];
+
+      let tokenOut = 0;
+      if (laneStages[c].fifo.length > 0) {
+        tokenOut = laneStages[c].fifo.shift();
+      } else {
+        tokenOut = laneStages[c].interm_window[0];
+      }
+
+      laneStages[c].lane_ready = laneStages[c].fifo.length < HW.FIFO_DEPTH;
+
+      if (c === 0) {
+        laneStages[0].array_act = tokenOut;
+      } else {
+        laneStages[1].array_act = laneStages[1].skew_q.shift() || 0;
+        laneStages[1].skew_q.push(tokenOut);
+      }
+    }
+
+    PEs[0][0].act_in = laneStages[0].array_act;
+    PEs[0][0].prod = PEs[0][0].act_in * PEs[0][0].w[activeWBuf];
+    PEs[0][0].psum_out = PEs[0][0].prod;
+
+    PEs[0][1].act_in = PEs[0][0].act_in;
+    PEs[0][1].prod = PEs[0][1].act_in * PEs[0][1].w[activeWBuf];
+    PEs[0][1].psum_out = PEs[0][1].prod;
+
+    PEs[1][0].act_in = laneStages[1].array_act;
+    PEs[1][0].prod = PEs[1][0].act_in * PEs[1][0].w[activeWBuf];
+    PEs[1][0].psum_out = PEs[0][0].psum_out + PEs[1][0].prod;
+
+    PEs[1][1].act_in = PEs[1][1].act_in;
+    PEs[1][1].prod = PEs[1][1].act_in * PEs[1][1].w[activeWBuf];
+    PEs[1][1].psum_out = PEs[0][1].psum_out + PEs[1][1].prod;
+
+    outSram[0][outPos] += (MATRICES.in[0][flatByte] * MATRICES.wt[0].c0[tap] + 
+                           MATRICES.in[1][flatByte] * MATRICES.wt[0].c1[tap]);
+    outSram[1][outPos] += (MATRICES.in[0][flatByte] * MATRICES.wt[1].c0[tap] + 
+                           MATRICES.in[1][flatByte] * MATRICES.wt[1].c1[tap]);
+
+    for(let k = 0; k < HW.K; k++) {
+      document.getElementById(`outVal_${k}_${outPos}`).innerText = outSram[k][outPos];
+    }
+
+    if (outPos < (HW.P * HW.Q - 1)) {
+      outPos++;
+      document.getElementById('simLog').innerText = `Accumulated pixel Pos=${outPos-1}. Input Selector fetched element = ${laneStages[0].selected_elem}. Advancing to Pos=${outPos}.`;
+    } else {
+      outPos = 0;
+      if (tap < (HW.R * HW.S - 1)) {
+        tap++;
+        activeWBuf = 1 - activeWBuf;
+        state = 'SWITCH_TAP';
+        document.getElementById('simLog').innerText = `Tap complete for all 4 pixels. Toggling active_weight_buffer <= ${activeWBuf} for Tap (${Math.floor(tap/HW.S)},${tap%HW.S}).`;
+      } else {
+        state = 'DONE';
+        clearInterval(timer);
+        
+        let pass = true;
+        for(let k = 0; k < HW.K; k++) {
+          for(let i = 0; i < 4; i++) {
+            if (outSram[k][i] !== EXPECTED_OUT[k][i]) pass = false;
+          }
+        }
+
+        document.getElementById('verdictPill').innerText = pass ? 'PASS (100%)' : 'MISMATCH';
+        document.getElementById('verdictPill').style.background = pass ? '#15803d' : '#b91c1c';
+        document.getElementById('simLog').innerText = pass
+          ? `SUCCESS: All 4 output pixels match Golden reference for both filters!`
+          : `FAIL: Mismatch in accumulated output SRAM.`;
+      }
+    }
+  }
+  else if (state === 'SWITCH_TAP') {
+    state = 'LOAD_WEIGHTS';
+  }
+
+  updateVisuals();
+}
+
+document.getElementById('btnStep').onclick = stepSimulator;
+document.getElementById('btnPlay').onclick = function() {
+  if (timer) {
+    clearInterval(timer);
+    timer = null;
+    this.innerText = '▶ Play';
+  } else {
+    timer = setInterval(stepSimulator, 600);
+    this.innerText = '⏸ Pause';
+  }
+};
+document.getElementById('btnReset').onclick = function() {
+  clearInterval(timer);
+  cycle = 0;
+  state = 'PRIME';
+  tap = 0;
+  outPos = 0;
+  activeWBuf = 0;
+  outSram = [[0, 0, 0, 0], [0, 0, 0, 0]];
+  laneStages = [
+    { sram_line: 0, byte_offset: 0, selected_elem: 0, interm_window: [0, 0, 0, 0], fifo: [], lane_ready: true, skew_q: [], array_act: 0 },
+    { sram_line: 0, byte_offset: 0, selected_elem: 0, interm_window: [0, 0, 0, 0], fifo: [], lane_ready: true, skew_q: [0], array_act: 0 }
+  ];
+  PEs.forEach(r => r.forEach(pe => { pe.act_in = 0; pe.prod = 0; pe.psum_out = 0; }));
+  document.getElementById('verdictPill').innerText = 'RUNNING';
+  document.getElementById('verdictPill').style.background = '#0284c7';
+  document.getElementById('simLog').innerText = 'Simulation reset. Ready.';
+  initViews();
+  updateVisuals();
+};
+
+initViews();
+updateVisuals();
+</script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>conv_core simulator</title>
+<style>
+:root{--bg:#fff;--fg:#1c1c1e;--mut:#6b6b70;--card:#f5f5f7;--bd:#d8d8de;--ac:#2563eb;--acbg:#dbe7ff;--gr:#d7f3df;--hl:#fff1b8;--bad:#fecaca}
+@media (prefers-color-scheme:dark){:root{--bg:#16161a;--fg:#ececf0;--mut:#9a9aa3;--card:#212127;--bd:#3a3a44;--ac:#7aa2ff;--acbg:#26385f;--gr:#1d4a2e;--hl:#4a4220;--bad:#6b2222}}
+*{box-sizing:border-box}body{margin:0;padding:14px;background:var(--bg);color:var(--fg);font:14px/1.45 system-ui,sans-serif;max-width:1100px;margin-inline:auto}
+h1{font-size:20px;margin:0}h2{font-size:14px;margin:0}.sub{color:var(--mut);margin:2px 0 10px}
+.cfg{display:flex;flex-wrap:wrap;gap:8px;align-items:end;margin-bottom:8px}.cfg label{font-size:12px;color:var(--mut);display:flex;flex-direction:column}
+input,select{width:62px;padding:3px 5px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--fg);font-size:13px}select{width:auto}
+button{background:var(--ac);color:#fff;border:0;border-radius:7px;padding:6px 12px;font-size:13px;cursor:pointer}button.alt{background:var(--card);color:var(--fg);border:1px solid var(--bd)}
+.bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0;position:sticky;top:0;background:var(--bg);padding:6px 0;z-index:2}
+.clk{font:600 15px ui-monospace,monospace;margin-left:8px}.err{color:#c0392b;font-size:13px}
+.fsm{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}.fsm span{font:11px ui-monospace,monospace;padding:2px 8px;border:1px solid var(--bd);border-radius:10px;color:var(--mut)}.fsm span.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+details{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:8px 12px;margin-bottom:10px}summary{cursor:pointer;font-weight:600}
+.sc{overflow-x:auto;margin:6px 0}table{border-collapse:collapse;font:12px ui-monospace,monospace}td,th{border:1px solid var(--bd);padding:2px 6px;text-align:center;min-width:26px;white-space:nowrap}th{color:var(--mut);background:var(--bg)}
+td.hl{background:var(--hl)}td.pe{background:var(--acbg)}td.wr{background:var(--gr)}td.off{border-style:dashed;color:var(--mut)}td.bad{background:var(--bad)}
+.note{color:var(--mut);font-size:12px;margin:3px 0}.k{font:12px ui-monospace,monospace}.ok{color:#15803d;font-weight:700}
+</style></head><body>
+<h1>conv_core simulator</h1>
+<p class="sub">Cycle-level behavioral model of your RTL: controller, im2col writers, kernel banks, weight loader, feeders, PE array, output accumulators. Defaults match your testbench (ARRAY_SIZE=10, C=4, K=2, 6×6, 3×3).</p>
+<div class="cfg" id="cfg"></div><div class="err" id="err"></div>
+<div class="bar">
+ <button id="play">▶ Play</button><button class="alt" id="back">← Back</button><button class="alt" id="step">Step →</button>
+ <button class="alt" id="nstate">Next state</button><button class="alt" id="ntap">Next tile</button><button class="alt" id="fin">Finish layer</button><button class="alt" id="rst">Reset</button>
+ <select id="spd"><option value="300">Slow</option><option value="80" selected>Normal</option><option value="15">Fast</option></select>
+ <span class="clk">clock <span id="clk">0</span> / <span id="mx"></span></span>
+</div>
+<div id="out"></div>
+<script>
+const $=id=>document.getElementById(id);
+const DEF={N:1,C:4,H:6,W:6,K:2,R:3,S:3,pad:0,stride:1,dil:1,A:10};
+const NAMES={N:'N',C:'C',H:'H',W:'W',K:'K',R:'R',S:'S',pad:'pad',stride:'stride',dil:'dilation',A:'ARRAY_SIZE'};
+$('cfg').innerHTML=Object.keys(DEF).map(k=>`<label>${NAMES[k]}<input id="i_${k}" type="number" min="${k=='pad'?0:1}" value="${DEF[k]}"></label>`).join('')+'<button class="alt" id="rand">Randomize data</button>';
+let cfg,inp,ker,part,outAfter,golden,segs,maxClk,clock=0,timer=null,seed=7,sel=0;
+const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
+const STATES=['IDLE','IM2COL_START','WAIT_IM2COL','PRIME','LOAD_WEIGHTS','RUN','SWITCH_TAP'];
+const fx=v=>v===null||v===undefined?'x':v;
+function tb(head,rows){return'<table>'+(head?'<tr>'+head.map(x=>`<th>${x}</th>`).join('')+'</tr>':'')+rows.map(r=>'<tr>'+r.map(c=>c!==null&&typeof c==='object'?`<td class="${c.c||''}">${c.v}</td>`:`<td>${c}</td>`).join('')+'</tr>').join('')+'</table>'}
+const sc=h=>`<div class="sc">${h}</div>`;
+
+function build(newData){
+  const g=k=>parseInt($('i_'+k).value);const c={};for(const k in DEF)c[k]=g(k);
+  if(Object.values(c).some(isNaN)){$('err').textContent='Enter numbers in every field.';return}
+  const{N,C,H,W,K,R,S,pad,stride,dil,A}=c;
+  c.P=Math.floor((H+2*pad-dil*(R-1)-1)/stride)+1;c.Q=Math.floor((W+2*pad-dil*(S-1)-1)/stride)+1;
+  c.T=R*S;c.pix=N*c.P*c.Q;
+  let e='';
+  if(C>A||K>A)e='C and K must be ≤ ARRAY_SIZE.';
+  else if(c.P<1||c.Q<1)e='Kernel is larger than the padded image.';
+  else if(N*H*W>256||c.pix>256||C*c.T>256||c.T*c.pix>65536)e='Exceeds SRAM depth (ADDR_WIDTH=8 / COL_ADDR_WIDTH=16).';
+  else if(A>16||N*H*W*0!==0)e='ARRAY_SIZE ≤ 16 here.';
+  $('err').textContent=e;if(e)return;
+  cfg=c;
+  if(newData||!inp){inp=[...Array(C)].map(()=>[...Array(N*H*W)].map(()=>Math.floor(rnd()*9)-4));
+    ker=[...Array(K)].map(()=>[...Array(C)].map(()=>[...Array(c.T)].map(()=>Math.floor(rnd()*7)-3)))}
+  else{inp=[...Array(C)].map((_,i)=>[...Array(N*H*W)].map((_,j)=>(inp[i]&&inp[i][j]!==undefined)?inp[i][j]:Math.floor(rnd()*9)-4));
+    ker=[...Array(K)].map((_,k)=>[...Array(C)].map((_,i)=>[...Array(c.T)].map((_,t)=>(ker[k]&&ker[k][i]&&ker[k][i][t]!==undefined)?ker[k][i][t]:Math.floor(rnd()*7)-3)))}
+  part=[...Array(c.T)].map((_,t)=>[...Array(K)].map((_,k)=>[...Array(c.pix)].map((_,pos)=>{let x=0;for(let i=0;i<C;i++)x+=(colv(i,t,pos)||0)*ker[k][i][t];return x})));
+  outAfter=[];let prev=null;
+  for(let t=0;t<c.T;t++){const nx=part[t].map((row,k)=>row.map((v,p)=>prev?prev[k][p]+v:v));outAfter.push(nx);prev=nx}
+  golden=[...Array(K)].map((_,k)=>[...Array(c.pix)].map((_,pos)=>{let x=0;for(let i=0;i<C;i++)for(let t=0;t<c.T;t++)x+=(colv(i,t,pos)||0)*ker[k][i][t];return x}));
+  segs=[];let t0=0;const add=(s,len,tap,done)=>{segs.push({s,t0,len,tap,done});t0+=len};
+  add('IDLE',1,0);add('IM2COL_START',1,0);add('WAIT_IM2COL',2*c.T*c.pix+2,0);add('PRIME',1,0);add('LOAD_WEIGHTS',A,0);
+  for(let t=0;t<c.T;t++){add('RUN',c.pix+2*A,t);if(t<c.T-1)add('SWITCH_TAP',1,t+1)}
+  add('IDLE',1,c.T-1,true);maxClk=t0-1;clock=0;sel=Math.min(sel,C-1);$('mx').textContent=maxClk;draw()}
+
+function coords(tt,pos){const{N,Q,S,W,H,stride,dil,pad}=cfg;const n=pos%N,pq=Math.floor(pos/N),p=Math.floor(pq/Q),q=pq%Q,r=Math.floor(tt/S),s=tt%S;
+  const h=p*stride+r*dil-pad,w=q*stride+s*dil-pad;return{n,p,q,r,s,h,w,ok:h>=0&&h<H&&w>=0&&w<W}}
+function colv(c,tt,pos){const o=coords(tt,pos);return o.ok?inp[c][(o.h*cfg.W+o.w)*cfg.N+o.n]:null}
+const segAt=ck=>{let s=segs[0];for(const g of segs)if(g.t0<=ck)s=g;return s};
+const wv=(k,c,tt)=>(tt>=0&&c>=0&&c<cfg.C&&k<cfg.K)?ker[k][c][tt]:0;
+// weight buffer: p pushes of tap tt on top of old tap oldTt. row i<p holds channel A-p+i
+function buf(tt,p,oldTt){const A=cfg.A;return[...Array(A)].map((_,i)=>[...Array(A)].map((_,k)=>i<p?wv(k,A-p+i,tt):(oldTt>=0?wv(k,i,oldTt):null)))}
+
+function draw(){
+  const{A,C,K,T,pix,N,P,Q}=cfg;const g=segAt(clock),e=clock-g.t0,st=g.s,tap=g.tap;
+  $('clk').textContent=clock;
+  const inRun=st==='RUN';
+  const hasRun=segs.findIndex(x=>x.s==='RUN')<=segs.indexOf(g);
+  // ---- 01 controller
+  const sig=[['im2col_start',st==='IM2COL_START'],['prime',st==='PRIME'],['initial_load',st==='LOAD_WEIGHTS'],['running',inRun],['preload_next',inRun&&tap<T-1],['accumulate',tap!==0&&(inRun||st==='SWITCH_TAP')],['done',!!g.done]];
+  const m1=`<div class="fsm">${STATES.map(s=>`<span class="${s===st?'on':''}">${s}</span>`).join('')}</div>`+
+   sc(tb(['reg / signal','value'],[['state',(g.done?'IDLE (done)':st)+` (cycle ${e+1} of ${g.len})`],['tap (r,s)',`(${Math.floor(tap/cfg.S)},${tap%cfg.S})  [${tap+1} of ${T}]`],['run_count',inRun?`${e} / ${pix+2*A-1}`:0],['active_weight_buffer',inRun||st==='SWITCH_TAP'?tap%2:0],...sig.map(([n,v])=>[n,v?{v:1,c:'hl'}:0])]))+
+   `<p class="note">Config captured on start: P=${P}, Q=${Q}, output_pixels=${pix}, run_cycles/tap = N·P·Q + 2·ARRAY = ${pix+2*A}.</p>`;
+  // ---- 02 im2col
+  let imE=0,wst='—',cur=null;
+  if(st==='WAIT_IM2COL'){imE=Math.min(Math.floor((e+1)/2),T*pix);if(e<2*T*pix){const i=Math.floor(e/2);cur=i;wst=e%2?'WRITE':'ISSUE'}else wst='FINISH'}
+  else if(segs.indexOf(g)>2)imE=T*pix;
+  let curTxt='writer idle';
+  if(cur!==null){const tt=Math.floor(cur/pix),pos=cur%pix,o=coords(tt,pos);curTxt=`${wst}: tap ${tt} pos ${pos} → (n,p,q)=(${o.n},${o.p},${o.q}), h=${o.h}, w=${o.w}, ${o.ok?'valid':'padding → write 0'}, col addr = ${tt*pix+pos}`}
+  const selOpts=[...Array(C)].map((_,c)=>`<option ${c===sel?'selected':''}>${c}</option>`).join('');
+  const ctt=cur!==null?Math.floor(cur/pix):-1,cpos=cur!==null?cur%pix:-1,co=cur!==null?coords(ctt,cpos):null;
+  const inTbl=tb(['h\\w',...[...Array(cfg.W)].map((_,w)=>w)],[...Array(cfg.H)].map((_,h)=>[h,...[...Array(cfg.W)].map((_,w)=>({v:[...Array(N)].map((_,n)=>inp[sel][(h*cfg.W+w)*N+n]).join('/'),c:co&&co.ok&&co.h===h&&co.w===w?'hl':''}))]));
+  const colTbl=tb(['tap\\pos',...[...Array(pix)].map((_,p)=>p)],[...Array(T)].map((_,tt)=>[`(${Math.floor(tt/cfg.S)},${tt%cfg.S})`,...[...Array(pix)].map((_,pos)=>{const i=tt*pix+pos;return{v:i<imE?fx(colv(sel,tt,pos)===null?0:colv(sel,tt,pos)):'·',c:i===cur?'hl':(i<imE?'wr':'')}})]));
+  const m2=`<p class="k">${curTxt}</p><p class="note">All ${C} channel writers run in parallel (inactive channels report done immediately). 2 cycles per entry. im2col_done = ${imE>=T*pix?1:0}. Showing channel <select id="sel">${selOpts}</select></p>`+
+   `<div class="note">Input SRAM (addr=(h·W+w)·N+n; N values joined by /)</div>${sc(inTbl)}<div class="note">im2col SRAM: row = tap, column = position n·(p·Q+q)</div>${sc(colTbl)}`;
+  // ---- 03 kernel banks + weight loader
+  let ph='idle',cl='—',pushed=-1,ktap=0;
+  if(st==='PRIME')ph='PRIME (first kernel read)';
+  if(st==='LOAD_WEIGHTS'){ph='initial_load / SHIFT';cl=A-1-e;pushed=A-1-e;ktap=0}
+  if(inRun&&tap<T-1){ktap=tap+1;if(e===0)ph='PREFETCH';else if(e<=A){ph='SHIFT_WEIGHTS';cl=A-e;pushed=A-e}else ph='WEIGHTS_READY'}
+  const kTbl=tb(['bank k\\addr (c·R·S + tap)',...[...Array(C*T)].map((_,a)=>a)],[...Array(K)].map((_,k)=>[`k=${k}`,...[...Array(C*T)].map((_,a)=>({v:ker[k][Math.floor(a/T)][a%T],c:pushed>=0&&pushed<C&&a===pushed*T+ktap?'hl':''}))]));
+  const m3=`<p class="k">weight_phase = ${ph}; c_load = ${cl}${pushed>=0?`; pushing input-channel row c=${pushed}${pushed>=C?' (zero, masked)':''} of tap ${ktap}`:''}</p>`+sc(kTbl)+`<p class="note">Rows shift down the array one per cycle, first-pushed row ends at the bottom. The next tap's weights go into the idle buffer during RUN, so tap switches never stall.</p>`;
+  // ---- 04 feeders + PE array
+  let B=[buf(-1,0,-1),buf(-1,0,-1)],act=0;
+  if(st==='LOAD_WEIGHTS')B[0]=buf(0,e+1,-1);
+  else if(inRun||st==='SWITCH_TAP'||g.done){const t=g.done?T-1:tap;act=t%2;B[t%2]=buf(t,A,-1);
+    if(inRun&&t<T-1)B[(t+1)%2]=buf(t+1,Math.min(Math.max(e,0),A),t>0?t-1:-1);
+    else if(t>0)B[(t+1)%2]=buf(t-1,A,-1);}
+  else if(segs.indexOf(g)>=3){}
+  const detail=true;
+  const rows=[...Array(A)].map((_,c)=>{
+    const posF=e-c,fv=inRun&&posF>=0&&posF<pix&&c<C;const a=fv?(colv(c,tap,posF)||0):0;
+    return[{v:inRun?(fv?a:0):'',c:fv?'hl':''},...[...Array(A)].map((_,k)=>{
+      const pos=e-c-k,valid=inRun&&pos>=0&&pos<pix&&c<C&&k<K;
+      const w0=B[0][c][k],w1=B[1][c][k];const wa=act?w1:w0;
+      let body=`w=<b>${fx(wa)}</b>`;
+      if(valid){let ai=0;for(let i=0;i<c;i++)ai+=(colv(i,tap,pos)||0)*wv(k,i,tap);
+        const a=colv(c,tap,pos)||0,pr=a*wa;
+        body=`pos ${pos}<br>a=<b>${a}</b> w=<b>${wa}</b><br>${ai} + ${a}×${wa}<br>= <b>${ai+pr}</b>`}
+      else body+=`<br><span class="note">[${fx(w0)}|${fx(w1)}]</span>`;
+      return{v:body,c:c>=C||k>=K?'off':(valid?'pe':'')}})]});
+  const drain=[...Array(A)].map((_,k)=>{const pos=e-A-1-k,v=inRun&&k<K&&pos>=0&&pos<pix;return{v:v?part[tap][k][pos]:'',c:v?'wr':(k>=K?'off':'')}});
+  const m4=`<p class="note">Feature → flows right, one PE per cycle. Weight ↓ preloaded. A computing PE shows the output position it is handling (cycle − row − col), its current activation <b>a</b>, its stationary weight <b>w</b>, and the MAC: <b>acc_in + a×w = acc_out</b>, where acc_in is the sum arriving from the PE above. Idle PEs show their active weight and [buffer0|buffer1]. Left column = activation_out of each feeder (row c delayed c cycles). Dashed = masked (c ≥ C or k ≥ K). Blue = computing.</p>`+
+   sc(tb(['act ↓ / k →',...[...Array(A)].map((_,k)=>`k=${k}`)],[...rows.map((r,c)=>[`c=${c}`].length?[{v:`row ${c}: `+r[0].v,c:r[0].c},...r.slice(1)]:r),[{v:'acc_col_out',c:''},...drain]]));
+  // ---- 05 output
+  const doneTaps=g.done?T:(inRun?tap:(st==='SWITCH_TAP'?tap:0));
+  let wr=[];
+  const outRows=[...Array(K)].map((_,k)=>{const nW=inRun?Math.min(Math.max(e-k-A,0),pix):0;
+    const cur=inRun&&e-k-A-1>=0&&e-k-A-1<pix?e-k-A-1:-1;if(cur>=0)wr.push(`k=${k}: wb_ptr=${cur}, ${tap?`old(${outAfter[tap-1][k][cur]}) + result(${part[tap][k][cur]}) = ${outAfter[tap][k][cur]}`:`result(${part[tap][k][cur]}) written (accumulate=0)`}`);
+    return[`k=${k}`,...[...Array(pix)].map((_,pos)=>{let v,c='';
+      if(g.done||doneTaps>0&&!inRun)v=outAfter[doneTaps-1][k][pos];
+      if(inRun){v=pos<nW?outAfter[tap][k][pos]:(tap>0?outAfter[tap-1][k][pos]:null);if(pos===cur)c='hl';else if(pos<nW)c='wr'}
+      return{v:fx(v),c}})]});
+  const m5=`<p class="k">writeback_cnt = ${inRun?e:0}; channel k starts at cnt = k + OUT_LATENCY(${A+1}); ${wr.length?wr.join(' | '):'no write this cycle'}</p>`+sc(tb(['out SRAM k\\pos',...[...Array(pix)].map((_,p)=>p)],outRows))+`<p class="note">Output SRAM array k holds output channel k, address (p·Q+q)·N+n. Every tap read-modify-writes all ${pix} words (accumulate=1 after tap 0).</p>`;
+  // ---- 06 result
+  let m6='<p class="note">Available once the layer is done.</p>';
+  if(g.done){let bad=0;const rr=[...Array(K)].map((_,k)=>[`k=${k} sim`,...outAfter[T-1][k].map(v=>v)]);
+    const gg=[...Array(K)].map((_,k)=>[`k=${k} ref`,...golden[k].map((v,p)=>{const ok=v===outAfter[T-1][k][p];if(!ok)bad++;return{v,c:ok?'':'bad'}})]);
+    m6=`<p class="${bad?'':'ok'}">${bad?bad+' mismatches':'PASS: '+K*pix+' convolution outputs matched'}</p><p class="k">[METRIC] Run cycles (start to done): ${maxClk-1} · utilization ${(100*C*K/(A*A)).toFixed(2)}% (${C*K}/${A*A} PEs)</p>`+sc(tb(['',...[...Array(pix)].map((_,p)=>p)],[...rr,...gg]))}
+  const keep=Object.fromEntries([...document.querySelectorAll('details')].map(d=>[d.dataset.k,d.open]));
+  const sec=(k,t,h,def)=>`<details data-k="${k}" ${(keep[k]??def)?'open':''}><summary>${t}</summary>${h}</details>`;
+  $('out').innerHTML=sec('1','01 · Controller (conv_controller)',m1,true)+sec('2','02 · Input SRAM → explicit_im2col_writer → im2col SRAM',m2,true)+sec('3','03 · Kernel banks & weight_loader',m3,true)+sec('4','04 · Activation feeders & systolic array (MAC PEs)',m4,true)+sec('5','05 · output_accumulator & output SRAM',m5,true)+sec('6','06 · Result check',m6,true);
+  const s=$('sel');if(s)s.onchange=()=>{sel=+s.value;draw()};
+}
+const go=n=>{clock=Math.max(0,Math.min(maxClk,n));draw()};
+const stop=()=>{clearInterval(timer);timer=null;$('play').textContent='▶ Play'};
+function play(){if(timer){stop();return}if(clock>=maxClk)clock=0;$('play').textContent='❚❚ Pause';timer=setInterval(()=>{if(clock>=maxClk)stop();else go(clock+1)},+$('spd').value)}
+$('play').onclick=play;$('step').onclick=()=>{stop();go(clock+1)};$('back').onclick=()=>{stop();go(clock-1)};$('rst').onclick=()=>{stop();go(0)};
+$('fin').onclick=()=>{stop();go(maxClk)};
+$('nstate').onclick=()=>{stop();const n=segs.find(g=>g.t0>clock);go(n?n.t0:maxClk)};
+$('ntap').onclick=()=>{stop();const n=segs.find(g=>g.s==='RUN'&&g.t0>clock);go(n?n.t0:maxClk)};
+$('spd').onchange=()=>{if(timer){stop();play()}};
+$('rand').onclick=()=>{stop();build(true)};
+document.querySelectorAll('.cfg input').forEach(i=>i.onchange=()=>{stop();build(false)});
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;if(e.key===' '){e.preventDefault();play()}if(e.key==='ArrowRight'){stop();go(clock+1)}if(e.key==='ArrowLeft'){stop();go(clock-1)}});
+build(true);
+</script></body></html>

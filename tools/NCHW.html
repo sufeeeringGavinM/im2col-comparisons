@@ -1,0 +1,939 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Step through hardware tiling, DMA and the channel-last conv_core, from implicit im2col addresses to double-buffered PE weights and output SRAM."><title>NCHW · im2col tiling</title><style>
+:root{--paper:#f4f2eb;--ink:#233b44;--muted:#65767c;--line:#dce2df;--teal:#087e8b;--amber:#9c650b;--purple:#6952a1;--green:#27835b}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}header{background:#173c46;color:#fff;border-bottom:5px solid #d5b36b}.banner{max-width:1536px;margin:auto;padding:32px 32px 28px;display:flex;justify-content:space-between;gap:20px;align-items:center}h1{font-size:clamp(28px,3vw,44px);letter-spacing:-1.7px;margin:6px 0}h1 span{font-weight:400;color:#91d1ca}header p{color:#c3d5d8;margin:4px 0}.credit{font-size:11px;opacity:.8}.eyebrow{font-size:10px;letter-spacing:1.8px;font-weight:750}.header-tag{border:1px solid #52717a;border-radius:9px;padding:14px 19px;color:#efd6a4;font-weight:650}.header-tag small{font-weight:400;color:#b7cbcd}main{max-width:1536px;margin:auto;padding:0 28px 24px}h2{font-size:19px;letter-spacing:-.4px;margin:3px 0}h3{font-size:14px;margin:8px 0}p{margin:7px 0}code,.mono{font-family:ui-monospace,Consolas,monospace}button,select,input,textarea{font:inherit}button,select{background:white;border:1px solid #cad5d4;border-radius:6px;padding:8px 11px;color:var(--ink)}button{cursor:pointer;font-weight:600}button:hover{border-color:#6c979a;background:#f0f7f5}button:disabled{opacity:.4;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid #d4ad4e;outline-offset:2px}.primary{background:var(--teal);border-color:var(--teal);color:white}.primary:hover{background:#096875;color:white}input[type=number]{border:1px solid #ccd6d4;border-radius:5px;padding:7px;width:100%;color:var(--ink);background:white}input[type=checkbox]{accent-color:var(--teal)}.intro{display:flex;align-items:center;gap:8px;padding:17px 2px;color:var(--muted);font-size:12px}.intro>span:last-child{margin-left:auto}.dot{width:7px;height:7px;background:var(--green);border-radius:50%}.surface{background:#fff;border:1px solid var(--line);border-radius:11px;box-shadow:0 2px 4px #173c4603}.settings>summary{padding:17px 20px;cursor:pointer}.settings>summary span{float:right;color:var(--muted);font-size:12px}.settings-body{padding:0 20px 20px}.spread{display:flex;justify-content:space-between;gap:10px;align-items:center}.muted{color:var(--muted)}.small{font-size:12px}.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:10px;margin:15px 0}.fields label{font-size:11px;font-weight:650}.fields input{display:block;margin-top:4px}.capacity{display:flex;gap:10px;flex-wrap:wrap}.capacity span{background:#f0f5f3;padding:6px 9px;border-radius:5px;font:12px ui-monospace,monospace}.editors{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:14px;min-width:0}.tensor-editors{max-height:280px;overflow:auto;display:flex;flex-wrap:wrap;gap:12px;padding:2px}.tensor-card{border:1px solid var(--line);border-radius:7px;padding:10px;overflow:auto;max-width:100%}.tensor-card h4{font-size:11px;margin:0 0 7px;color:var(--muted)}.tensor-grid{display:grid;gap:3px}.tensor-grid input{width:51px;min-width:51px;font:12px ui-monospace,monospace;padding:6px 3px;text-align:center}.editors details{margin-top:10px}.editors textarea{display:block;width:100%;height:80px;margin:8px 0}.error{color:#b43f32;font-weight:600}.error:empty{display:none}.toolbar{display:flex;gap:7px;align-items:center;margin-top:15px;padding:13px 16px;flex-wrap:wrap}.speed{font-size:12px;margin-left:auto}.clock{display:flex;align-items:baseline;gap:7px;border-left:1px solid var(--line);padding-left:16px;margin-left:6px}.clock>span{font-size:9px;letter-spacing:.7px}.clock b{font:700 25px ui-monospace,monospace}.clock small{color:var(--muted)}.phasebar{display:flex;gap:5px;margin:13px 0 8px}.phasebar span{flex:1;background:#e6ebe7;padding:9px 5px;border-radius:5px;text-align:center;font:11px ui-monospace,monospace;color:#6d7c7e}.phasebar span.active{background:#173c46;color:white;box-shadow:inset 0 -3px #6ab9b2}.timeline-row{display:flex;align-items:center;gap:12px;font-size:11px;color:var(--muted);margin:0 2px 16px}.timeline-row input{flex:1;accent-color:var(--teal);min-width:60px}.workspace{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}.surface-head{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:19px 20px 13px}.surface-head p{font-size:12px;color:var(--muted)}.surface-head>label{font-size:11px;white-space:nowrap}.story{margin:0 20px 17px;background:#edf5f3;border-left:3px solid var(--teal);padding:12px 14px;border-radius:3px;min-height:79px}.story b{font-size:13px}.story p{color:#526b70;font-size:12px;margin-bottom:0}.array-scroll{overflow:auto;padding:2px 20px 20px;max-height:650px}#array{display:grid;gap:8px;width:max-content;min-width:100%;align-items:stretch}.axis{font-size:10px;color:var(--muted);text-align:center;align-self:end}.feeder{border:1px solid #a8d1cf;border-radius:7px;padding:8px;background:#edf7f6;display:flex;flex-direction:column;justify-content:center;font-size:11px;min-width:100px}.feeder b{font-size:19px;color:var(--teal)}.pe{border:1px solid #cbd8d8;position:relative;border-radius:8px;background:#fafcfb;text-align:left;min-width:124px;padding:10px 12px;transition:background .16s}.pe.selected{outline:2px solid var(--teal);outline-offset:1px}.pe.masked{border-style:dashed;opacity:.5}.pe.lit{background:#eef5f4}.pe .pe-id{display:block;font-size:9px;letter-spacing:.5px;color:var(--muted);margin-bottom:7px}.pe .equation{font:13px ui-monospace,monospace;display:block}.pe .sum{font:700 22px ui-monospace,monospace;color:var(--purple);display:block;margin-top:5px}.pe .regs{display:flex;gap:4px;margin-top:8px}.reg{border:1px solid #e2d8c2;border-radius:4px;font:10px ui-monospace,monospace;background:#fbf8f0;padding:3px 5px;color:var(--amber)}.reg.active{background:#efe1bd;border-color:#bb9552}.array-out{border:1px solid #c4dfce;border-radius:6px;background:#f0f7f1;padding:8px;font:11px ui-monospace,monospace;color:var(--green)}.legend{display:flex;flex-wrap:wrap;gap:13px;padding:0 20px 16px;font-size:10px;color:var(--muted)}.teal{color:var(--teal)}.amber{color:var(--amber)}.purple{color:var(--purple)}.green{color:var(--green)}.pe-inspect{border-top:1px solid var(--line);padding:16px 20px;font-size:12px;background:#fcfcf9;border-radius:0 0 11px 11px}.pe-inspect strong{font:600 15px ui-monospace,monospace}.badge{background:#edf2eb;border-radius:20px;padding:5px 9px;font-size:10px;white-space:nowrap}.output-options{display:flex;align-items:center;justify-content:space-between;padding:0 20px 12px;font-size:11px}.output-options select{padding:3px 8px}.outputs{padding:0 20px;max-height:530px;overflow:auto;resize:vertical;min-height:180px}.map{margin-bottom:18px;overflow:auto}.map h3{font-size:11px}.map-grid{display:grid;gap:4px;width:max-content}.cell{border:1px solid #d9e3de;background:#f7f9f6;padding:5px;min-width:57px;text-align:center;border-radius:4px;font:12px ui-monospace,monospace}.cell small{display:block;font:9px system-ui;color:var(--muted);margin-top:3px}.cell.written{background:#eaf5ed;color:#286744}.cell.fresh{outline:2px solid var(--green);outline-offset:-2px;background:#d8efdf}.cell .expected{display:block;color:#737492;font-size:10px}.meter{height:5px;background:#e6ede7;border-radius:9px;margin:15px 20px 8px;overflow:hidden}.meter div{height:100%;background:var(--green);width:0}.output-panel>p{margin:10px 20px 15px;font-size:11px}.module-panel{margin-top:18px;overflow:hidden}.module-tabs{display:flex;gap:0;overflow-x:auto;border-bottom:1px solid var(--line);background:#f7f8f4}.module-tabs button{border:0;border-radius:0;background:transparent;padding:16px 20px;font-size:12px;white-space:nowrap}.module-tabs button[aria-selected=true]{box-shadow:inset 0 -3px var(--teal);color:var(--teal);background:white}#moduleBody{padding:20px;min-height:190px}.module-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;min-width:0}.formula{font:12px/1.8 ui-monospace,monospace;background:#f4f5ef;padding:13px;border-radius:6px;margin:10px 0;overflow:auto}.scroll{overflow:auto;max-height:320px}table{border-collapse:collapse;width:100%;font-size:11px;text-align:left}th{color:var(--muted);font-weight:600;background:#f7f9f6}td,th{padding:7px 9px;border-bottom:1px solid #e7ebe5;white-space:nowrap}tr.current{background:#edf7f2}td code{color:var(--teal)}.taps{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.taps button{font-size:11px}.taps button.current{background:#173c46;color:white}.patch{display:grid;gap:4px;width:max-content;margin:12px 0}.patch span{min-width:37px;text-align:center;border:1px solid #d5e1da;padding:6px;border-radius:4px;font:12px ui-monospace,monospace}.patch span.active{background:#087e8b;color:white}.patch span.pad{border-style:dashed;color:#80908b}footer{color:var(--muted);font-size:11px;padding:22px 2px 10px}footer a{color:var(--teal)}footer button{font-size:11px;padding:5px 8px}.hidden-regs .regs,.hidden-regs .equation{display:none}@media(min-width:1500px){.pe{min-width:145px}}@media(max-width:1050px){.workspace{grid-template-columns:minmax(0,1fr)}.outputs{display:flex;gap:18px;max-height:350px}.output-panel{min-width:0}.module-grid{grid-template-columns:1fr}.toolbar .speed{margin-left:0}}@media(max-width:650px){main{padding:0 12px 20px}.banner{padding:24px 16px}.header-tag{display:none}.intro{flex-wrap:wrap}.intro>span:last-child{margin-left:0;width:100%}.settings>summary span{display:block;float:none;margin-top:6px}.editors{grid-template-columns:1fr}.surface-head{padding:15px}.surface-head>label{white-space:normal}.story{margin:0 15px 15px}.toolbar{padding:10px}.toolbar button{font-size:12px;padding:8px}.clock{margin-left:auto}.phasebar span{font-size:8px;padding:8px 2px}.timeline-row>span{display:none}.fields{grid-template-columns:repeat(3,1fr)}.spread{align-items:flex-start;flex-wrap:wrap}.spread select{max-width:240px}.pe-inspect{padding:15px}.array-scroll{padding:3px 15px 18px}}
+/* Stacked channel planes mirror the supplied DigiAI slides. */
+.tensor-panel{margin-bottom:18px;overflow:hidden}.tensor-panel .surface-head{padding-bottom:8px}.tensor-legend{display:flex;flex-wrap:wrap;gap:10px 20px;padding:0 20px 12px;font-size:11px;color:var(--muted)}.tensor-legend>span{display:flex;align-items:center;gap:6px}.swatch{display:inline-block;width:13px;height:13px;border:1px solid #647a7b}.plane-swatch{background:linear-gradient(135deg,#ffe270 50%,#4bc895 50%)}.pass-swatch{background:#d9dde0}.fed-swatch{background:#087e8b;outline:1px solid #023e49}.preload-swatch{background:#fff3cf;border:2px dashed #b77711}.tensor-select{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 20px 14px;border-top:1px solid #edf0ea;font-size:11px}#channelSelect{display:flex;gap:5px;flex-wrap:wrap}#channelSelect button{font-size:10px;padding:5px 8px;border-left:5px solid var(--channel)}#channelSelect button[aria-pressed=true]{outline:2px solid #173c46;outline-offset:1px;background:#eff5ef}.tensor-columns{display:grid;grid-template-columns:1.3fr 1fr;gap:22px;padding:0 20px 14px;min-width:0}.tensor-columns>div{min-width:0}.stack-gallery{display:flex;flex-wrap:wrap;gap:14px;max-height:355px;overflow:auto;padding:3px 3px 10px;align-content:start}.stack-card{border:1px solid #dde3d9;background:#f9faf5;border-radius:8px;padding:10px;max-width:100%;min-width:150px;flex:0 1 auto}.stack-card h4{margin:0 0 8px;font-size:12px}.stack-card h4 small{display:block;font-size:10px;color:var(--muted);font-weight:400}.stack-scroll{max-width:100%;overflow:auto}.tensor-stack{display:block;overflow:visible}.channel-plane{cursor:pointer}.channel-plane text{pointer-events:none}.input-fed{filter:drop-shadow(0 0 2px #087e8b66)}.feed-summary{display:flex;gap:7px;flex-wrap:wrap;background:#f5f8f4;border-top:1px solid var(--line);padding:12px 20px}.feed-chip{padding:5px 8px;background:white;border:1px solid #d6e3df;border-left:5px solid var(--channel);border-radius:4px;font:11px ui-monospace,monospace}.feed-chip.on{box-shadow:inset 0 -2px #087e8b}.weight-feed-note{align-self:center;font-size:11px;color:var(--muted);padding:4px}.array-canvas{position:relative;width:max-content;min-width:100%}#flowLayer{position:absolute;inset:0;pointer-events:none;z-index:5;overflow:hidden}.flow-wires{position:absolute;inset:0;opacity:.22}.activation-path{fill:none;stroke:#087e8b;stroke-width:2;stroke-dasharray:2 5}.weight-path{fill:none;stroke:#b77711;stroke-width:2;stroke-dasharray:2 5}.moving-token{position:absolute;left:0;top:0;display:flex;flex-direction:column;align-items:center;gap:1px;border-radius:6px;padding:4px 7px;box-shadow:0 2px 8px #173c4633;border:1px solid white;white-space:nowrap;min-width:37px}.moving-token b{font:700 18px ui-monospace,monospace}.moving-token small{font:9px ui-monospace,monospace}.activation-token{background:#087e8b;color:white}.weight-token{background:#f2c366;color:#493406}.operand-tag{display:block;font:9px ui-monospace,monospace;color:#80908f;margin-top:3px}.operand-tag.present{color:#087e8b;font-weight:700}.kernel-source{display:inline-block;min-height:20px;color:#9c650b}.tensor-panel .surface-head h2{font-size:20px}@media(max-width:800px){.tensor-columns{grid-template-columns:1fr}.stack-gallery{max-height:300px}.tensor-select .muted{width:100%}}@media(prefers-reduced-motion:reduce){.moving-token{display:none}.pe{transition:none}}
+/* Upcoming streams enter the array from the nearest end of each queue. */
+.queue-key{padding:14px 12px;border:1px solid #d8e3df;border-radius:7px;background:#f5f8f4;align-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:10px}.queue-key b{font-size:15px}.queue-key span{font-size:12px;color:#526b70}.queue-key small{font-size:10px;color:var(--muted)}.queue-label{display:flex;justify-content:space-between;gap:5px;font-size:10px;font-weight:650;margin-bottom:6px}.queue-label>span{color:var(--teal)}.input-queue{display:flex;align-items:center;justify-content:flex-end;gap:5px;min-height:61px}.queue-chip{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:0 0 auto;min-width:47px;min-height:44px;border:1px solid #b5d8d5;border-radius:5px;padding:4px 4px;background:#e7f4f2;font-family:ui-monospace,Consolas,monospace}.queue-chip b{font-size:17px;color:#075e6b}.queue-chip small{font-size:8px;white-space:nowrap;color:#527878}.queue-chip em{position:absolute;bottom:-11px;color:#087e8b;font:bold 8px system-ui;font-style:normal}.queue-chip.queue-head{border:2px solid #087e8b;background:#d2ece9;box-shadow:0 0 0 1px #fff}.queue-chip.queue-zero{border-style:dashed}.queue-more{font:9px ui-monospace,monospace;color:var(--muted);flex:0 0 auto}.queue-port{font-size:22px;font-weight:700;color:#087e8b;flex:0 0 17px;text-align:center}.queue-caption{display:flex;justify-content:space-between;gap:8px;color:#687d7b;font-size:9px;margin-top:8px;font-weight:400}.queue-caption>span{color:#4f6f72}.weight-source{border:1px solid #e5dcc8;background:#fcfaf4;border-radius:6px;align-self:stretch;padding:9px 6px}.weight-source .queue-label{justify-content:center;color:#876023;margin-bottom:8px}.weight-queue{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;min-height:225px}.weight-chip{background:#fcf0d4;border-color:#dac391;min-width:62px;min-height:37px}.weight-chip b{color:#80520d;font-size:15px}.weight-chip small{color:#947340}.weight-chip.queue-head{border-color:#ad7616;background:#f7db99}.weight-chip em{color:#80520d;bottom:auto;right:-26px;font-size:8px;top:50%;transform:translateY(-50%)}.weight-source .queue-port{color:#ad7616;line-height:22px;flex-basis:22px}.weight-source .queue-caption{display:block;line-height:1.6;text-align:center;min-height:28px}.queue-empty{font:10px system-ui;color:#7a8b86;text-align:center}.input-queue .queue-empty{flex:1}.feeder{padding:9px}.feeder .queue-chip b{font-size:17px}.weight-queue .queue-more{margin-bottom:1px}@media(max-width:650px){.queue-key{padding:12px}.queue-key span{font-size:11px}}
+
+.array-scroll{max-height:1050px}
+/* Desktop windows retain live panel content while geometry changes independently. */
+.layout-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 10px;color:var(--muted);font-size:11px}.desktop-toggle{font-weight:650;color:#294e55;white-space:nowrap}.layout-toolbar button{font-size:11px;padding:5px 9px;margin-left:auto}#panelHelp{flex:1;min-width:200px}#layoutStatus{flex-basis:100%;font-size:10px}#layoutStatus:empty{display:none}.window-taskbar{display:flex;gap:5px;flex-wrap:wrap;background:#e6eeea;border:1px solid #cbd9d2;border-radius:8px 8px 0 0;padding:8px}.window-taskbar button{font-size:11px;padding:7px 12px;font-weight:500}.window-taskbar button[aria-pressed=false]{border-style:dashed;opacity:.65}.window-taskbar .window-active{background:#173c46;border-color:#173c46;color:#fff}.panel-layout{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px;align-items:start}.panel-layout>[data-panel]{min-width:0;margin:0;position:relative}.panel-layout>[data-panel="tensors"],.panel-layout>[data-panel="modules"]{grid-column:span 12}.panel-layout>[data-panel="array"]{grid-column:span 9}.panel-layout>[data-panel="output"]{grid-column:span 3}.panel-movebar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex:0 0 36px;background:#e7efeb;border-bottom:1px solid #ccdcd3;border-radius:10px 10px 0 0;padding:3px 7px;touch-action:none;user-select:none}.panel-handle{display:flex;align-items:center;gap:7px;flex:1;min-width:0;background:transparent;border:0;padding:4px;font-size:11px;color:#536f74;text-align:left;touch-action:none;user-select:none}.panel-handle>span{font-size:19px;line-height:16px}.window-controls{display:none;gap:4px}.window-controls button{font:15px/1 system-ui;padding:3px 7px;min-width:29px;min-height:25px;border-color:#c2d2ca}.window-body{min-width:0}.window-resize{display:none}.panel-layout.desktop-mode{display:block;position:relative;isolation:isolate;border:1px solid #cbd9d2;border-top:0;border-radius:0 0 10px 10px;background-color:#e8eee8;background-image:radial-gradient(#bacac0 1px,transparent 1px);background-size:16px 16px;overflow:hidden}.desktop-mode>[data-panel]{position:absolute;display:flex;flex-direction:column;border-color:#b1c7bb;box-shadow:0 6px 18px #173c4629;overflow:visible}.desktop-mode>[data-panel].window-front{border-color:#478982;box-shadow:0 8px 24px #173c4640}.desktop-mode .window-front>.panel-movebar{background:#d6e8df}.desktop-mode .window-body{flex:1;min-height:0;overflow:auto;border-radius:0 0 10px 10px;background:white;overscroll-behavior:contain}.desktop-mode .panel-handle,.desktop-mode .panel-movebar{cursor:grab}.desktop-mode .window-maximized>.panel-movebar,.desktop-mode .window-maximized .panel-handle{cursor:default}.desktop-mode .window-controls{display:flex}.desktop-mode .window-resize{display:block;position:absolute;touch-action:none;z-index:3}.desktop-mode .resize-n{left:9px;right:9px;top:-4px;height:8px;cursor:n-resize}.desktop-mode .resize-s{left:9px;right:9px;bottom:-4px;height:8px;cursor:s-resize}.desktop-mode .resize-e{top:9px;bottom:9px;right:-4px;width:8px;cursor:e-resize}.desktop-mode .resize-w{top:9px;bottom:9px;left:-4px;width:8px;cursor:w-resize}.desktop-mode .resize-ne,.desktop-mode .resize-nw,.desktop-mode .resize-se,.desktop-mode .resize-sw{width:16px;height:16px}.desktop-mode .resize-ne{right:-4px;top:-4px;cursor:ne-resize}.desktop-mode .resize-nw{left:-4px;top:-4px;cursor:nw-resize}.desktop-mode .resize-se{right:-4px;bottom:-4px;cursor:se-resize;background:repeating-linear-gradient(135deg,transparent 0 3px,#76958b 3px 4px);clip-path:polygon(100% 0,100% 100%,0 100%)}.desktop-mode .resize-sw{left:-4px;bottom:-4px;cursor:sw-resize}.desktop-mode .window-maximized>.window-resize{display:none}.window-gesturing,.window-gesturing *{user-select:none!important}.window-gesturing .window-body{pointer-events:none}[hidden]{display:none!important}@media(max-width:1050px){.panel-layout:not(.desktop-mode)>[data-panel]{grid-column:span 12}}@media(max-width:650px){.layout-toolbar{font-size:10px}.window-taskbar button{font-size:10px;padding:7px 8px}.panel-movebar{min-height:40px}.window-controls button{min-height:30px}.window-taskbar{gap:4px}}
+
+.window-body{container-type:inline-size}@container(max-width:650px){.window-body .tensor-columns,.window-body .module-grid{grid-template-columns:1fr}.window-body .surface-head{flex-wrap:wrap}}
+.output-panel>.window-body>p{margin:10px 20px 15px;font-size:11px}
+/* Full-page workspace with a viewport-pinned simulation rail. */
+:root{--rail-width:144px;--header-h:48px}body{position:relative;padding-top:var(--header-h)}.app-header{position:fixed;inset:0 0 auto;z-index:2000;min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:6px 10px;background:#173c46;border-bottom:1px solid #527772}.app-header h1{font-size:20px;letter-spacing:-.6px;margin:0;white-space:nowrap}.app-header h1 span{color:#91d1ca}.header-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:11px}.header-actions button{font-size:11px;padding:6px 9px}.header-actions .desktop-toggle{color:#d7e8e4}.header-actions button[aria-pressed=true]{background:#d5ece5;border-color:#8fbbb0}.control-rail{position:fixed;left:0;top:var(--header-h);bottom:0;width:var(--rail-width);z-index:1900;background:#fff;border-right:1px solid #ccd9d4;padding:10px 8px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}.rail-heading{display:block;font-size:10px;letter-spacing:.5px;font-weight:650;color:#657c7b;margin:2px 0 8px}.control-rail .toolbar{display:flex;flex-direction:column;align-items:stretch;margin:0;padding:0;border:0;border-radius:0;box-shadow:none;gap:5px}.control-rail .toolbar>button{padding:6px 8px;min-height:31px;text-align:left;font-size:12px}.control-rail .speed{margin:8px 0 0;font-size:11px}.control-rail .speed select{display:block;width:100%;padding:5px;margin-top:4px}.control-rail .clock{margin:8px 0 0;padding:10px 0 2px;border:0;border-top:1px solid #e0e8e1;display:flex;flex-wrap:wrap;gap:3px 6px}.control-rail .clock>span{flex-basis:100%;font-size:9px}.control-rail .clock b{font-size:25px}.control-rail .phasebar{gap:3px;flex-wrap:wrap;margin:9px 0}.control-rail .phasebar span{flex:1 1 45%;font-size:8px;padding:5px 2px}.control-rail .timeline-row{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0 12px}.control-rail .timeline-row input{flex-basis:100%;min-width:0;width:100%}.control-rail .timeline-row>span{font-size:9px;display:block}.control-rail .window-taskbar{background:none;border:0;border-radius:0;padding:0;display:flex;flex-direction:column;gap:4px}.control-rail .window-taskbar button{font-size:11px;text-align:left;padding:6px 7px;min-height:29px}.control-rail .window-taskbar .window-active{color:white}main#pageWorkspace{position:static;max-width:none;margin:0 0 0 var(--rail-width);padding:8px}.intro{padding:2px 2px 8px;margin:0;font-size:10px;gap:6px}.intro>span:last-child{font-size:10px}.settings>summary{padding:10px 12px}.settings-body{padding:0 12px 12px}.layout-toolbar{padding:5px 2px;margin:3px 0;font-size:10px;min-height:18px}#panelHelp{min-width:0}.panel-layout.desktop-mode{position:static;isolation:auto;border:0;border-radius:0;background:none;overflow:visible}.desktop-mode>[data-panel]{scroll-margin-top:calc(var(--header-h) + 8px)}.window-body .surface-head{padding:10px 12px 8px}.window-body .surface-head h2{font-size:17px}.window-body .surface-head p{font-size:11px}.window-body .story{margin:0 10px 10px;padding:8px 10px;min-height:0}.window-body .legend{padding:0 10px 9px}.window-body .pe-inspect{padding:9px 12px;font-size:11px}.window-body .tensor-columns{padding:0 10px 10px;gap:12px}.window-body .tensor-select{padding:6px 10px 8px}.window-body .tensor-legend{padding:0 10px 9px;gap:6px 12px}.window-body .stack-gallery{max-height:none;overflow:visible;gap:8px;align-items:start}.window-body .stack-card{flex:1 1 140px;min-width:0;max-width:100%;padding:7px}.window-body .stack-scroll{overflow:visible;max-width:100%}.window-body .tensor-stack{width:100%;height:auto;max-height:300px}.window-body .feed-summary{padding:7px 10px;gap:4px}.window-body .feed-chip{padding:4px 5px;font-size:10px}.window-body .output-options{padding:0 12px 9px;flex-wrap:wrap;gap:5px}.window-body .outputs{padding:0 12px;resize:none;max-height:none;min-height:0;overflow:visible;display:flex;flex-wrap:wrap;gap:10px}.window-body .map{min-width:0;max-width:100%;margin-bottom:10px}.window-body .map-grid{max-width:100%;grid-template-columns:repeat(var(--map-cols,2),minmax(0,1fr))!important;width:100%}.window-body .cell{min-width:0;overflow-wrap:anywhere}.window-body #moduleBody{padding:12px}.window-body .module-tabs{flex-wrap:wrap;overflow:visible}.window-body .module-tabs button{font-size:11px;padding:8px 10px}.window-body .module-grid{grid-template-columns:1fr;gap:12px}.window-body .formula{font-size:11px;padding:8px}.window-body .scroll{max-height:none}.window-body .array-scroll{overflow:visible;max-height:none;padding:2px 8px 8px}.window-body .array-canvas{width:100%;min-width:0}.window-body #array{width:100%;min-width:0;gap:5px}.window-body .pe{min-width:0;padding:clamp(3px,.55cqw,9px);overflow:hidden}.window-body .pe .pe-id{font-size:9px;overflow-wrap:anywhere;letter-spacing:0;margin-bottom:4px}.window-body .pe .sum{font-size:clamp(18px,2.1cqw,23px);overflow-wrap:anywhere;line-height:1.1;margin-top:3px}.window-body .pe .equation{font-size:11px;overflow-wrap:anywhere}.window-body .regs{flex-wrap:wrap;gap:2px;margin-top:4px}.window-body .reg{font-size:9px;padding:2px}.window-body .reg b{font:inherit}.window-body .feeder{min-width:0;padding:5px}.window-body .input-queue{gap:3px;min-height:47px;flex-wrap:wrap}.window-body .queue-chip{min-width:28px;min-height:32px;padding:3px}.window-body .queue-chip b{font-size:14px}.window-body .queue-chip small{font-size:7px}.window-body .queue-port{font-size:18px;flex-basis:12px}.window-body .queue-more{font-size:8px}.window-body .queue-key{padding:6px;gap:4px}.window-body .queue-key b{font-size:11px}.window-body .queue-key span,.window-body .queue-key small{font-size:9px}.window-body .queue-label{font-size:9px;flex-wrap:wrap;margin-bottom:4px}.window-body .queue-caption{font-size:8px;flex-wrap:wrap;gap:3px}.window-body .weight-source{padding:5px 3px;min-width:0}.window-body .weight-queue{min-height:0;gap:4px}.window-body .weight-chip{min-width:32px;max-width:100%;min-height:29px}.window-body .weight-chip em{position:static;transform:none;font-size:7px;line-height:1}.window-body .array-out{font-size:9px;padding:5px;overflow-wrap:anywhere}.window-body .axis{font-size:9px}.fit-compact .tensor-columns{grid-template-columns:1fr}.fit-compact .surface-head{flex-wrap:wrap}.fit-compact .story p{font-size:10px}.fit-compact .pe .pe-id,.fit-compact .operand-tag{display:none}.fit-compact .regs{display:none}.fit-tight .story,.fit-tight .legend,.fit-tight .eyebrow,.fit-tight .surface-head p,.fit-tight .tensor-legend,.fit-tight .tensor-select>span,.fit-tight .weight-feed-note{display:none}.fit-tight .surface-head{padding:6px 9px;gap:4px}.fit-tight .surface-head h2{font-size:14px}.fit-tight .surface-head>label{font-size:10px}.fit-tight .pe-inspect>.muted{display:none}.fit-tight .tensor-stack{max-height:150px}.fit-tight .stack-card h4{font-size:10px}.fit-tight .queue-key span,.fit-tight .queue-key small,.fit-tight .queue-caption,.fit-tight .queue-chip small{display:none}.fit-tight .pe{padding:3px}.fit-tight .regs,.fit-tight .pe .pe-id,.fit-tight .operand-tag{display:none}.fit-tight .feed-summary{font-size:10px}.quiet-symbol{display:none}.minimal-text .eyebrow,.minimal-text .intro,.minimal-text #panelHelp,.minimal-text #layoutStatus,.minimal-text .story,.minimal-text .legend,.minimal-text .tensor-legend,.minimal-text .surface-head p,.minimal-text .tensor-select>span,.minimal-text .weight-feed-note,.minimal-text .annotation,.minimal-text .queue-caption,.minimal-text .queue-chip small,.minimal-text .pe-id,.minimal-text .operand-tag,.minimal-text .regs,.minimal-text .tensor-columns h3,.minimal-text .module-grid p,.minimal-text .module-grid .formula,.minimal-text .pe-inspect>.muted,.minimal-text .settings-body>p.muted{display:none}.minimal-text .queue-key>*{display:none}.minimal-text .queue-key .quiet-symbol{display:block;font-size:18px}.minimal-text .surface-head h2{font-size:14px}.minimal-text .pe .equation{font-size:10px}.minimal-text .phasebar span:not(.active){display:none}.minimal-text .control-rail .timeline-row>span{display:none}.minimal-text .stack-card h4 small{display:none}footer{padding:12px 2px;font-size:10px}footer .credit{display:block;color:#65767c;font-size:10px}@media(max-width:650px){:root{--rail-width:112px}.app-header{padding:5px 8px;gap:5px}.app-header h1{font-size:17px}.header-actions{font-size:10px;gap:4px}.header-actions button{padding:5px 7px;font-size:10px}.control-rail{padding:8px 5px}.control-rail .toolbar>button{font-size:11px}.control-rail .window-taskbar button{font-size:10px}.intro>span:last-child{width:auto;margin-left:0}.settings>summary{padding:9px;font-size:11px}.settings>summary span{font-size:10px}.fields{grid-template-columns:repeat(2,minmax(0,1fr))}.settings-body .spread select{max-width:100%}.window-body .surface-head h2{font-size:14px}.window-body .moving-token small{display:none}.window-body .moving-token{min-width:24px;padding:3px}.window-body .moving-token b{font-size:14px}}
+
+.minimal-text .module-grid h3,.minimal-text .module-grid .small,.minimal-text .output-panel>.window-body>p.muted,.minimal-text .moving-token small{display:none}.minimal-text .feed-chip .quiet-symbol{display:inline}
+
+.settings{scroll-margin-top:calc(var(--header-h) + 8px)}.settings[open]{position:relative;z-index:80;box-shadow:0 5px 25px #173c4633}.error:not(:empty){position:relative;z-index:90;background:var(--paper);padding:7px;border-radius:4px}@media(max-height:760px){.control-rail .toolbar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.control-rail .toolbar>button{font-size:10px;min-height:28px;padding:4px}.control-rail #finish,.control-rail .speed,.control-rail .clock{grid-column:span 2}.control-rail .phasebar span:not(.active){display:none}.control-rail .window-taskbar button{min-height:25px;padding:4px 6px}}
+
+/* Dense operand lanes retain the full preview at every text/window setting. */
+.window-body #array{gap:4px;margin:0;align-items:stretch}
+.window-body .pe{padding:4px;min-height:66px;border-radius:5px;display:flex;flex-direction:column;justify-content:center;gap:1px}
+.window-body .pe .pe-id,.window-body .pe .operand-tag{display:none}
+.window-body .pe .sum{font-size:17px;line-height:1.1;margin:1px 0}
+.window-body .pe .equation{font-size:10px;line-height:1.2}
+.window-body .pe .regs{display:flex;flex-wrap:nowrap;gap:2px;margin-top:2px;justify-content:center;width:100%}
+.window-body .pe .reg{flex:1;min-width:0;white-space:normal;overflow-wrap:anywhere;font-size:8px;line-height:1.2;padding:2px 1px;border-radius:3px}
+.window-body .pe .reg.loading{background:#ffe6ad;border-color:#b87810;box-shadow:0 0 0 1px #d59b30}
+.window-body .hidden-regs .pe .regs{display:none}
+.window-body .feeder{padding:3px;justify-content:center;gap:1px}
+.window-body .input-queue{min-height:26px;gap:2px;flex-wrap:nowrap;justify-content:flex-end}
+.window-body .queue-chip{min-width:20px;min-height:22px;padding:2px;border-radius:3px}
+.window-body .queue-chip b{font-size:11px;line-height:1.1}
+.window-body .queue-chip small,.window-body .queue-chip em{display:none}
+.window-body .queue-head{border-width:2px;background:#cff0e8}
+.window-body .weight-chip.queue-head{background:#ffe3a5}
+.window-body .queue-port{font-size:14px;flex:0 0 9px;line-height:1}
+.window-body .queue-label{font-size:8px;margin-bottom:2px;gap:2px}
+.window-body .queue-label .annotation,.window-body .queue-key span,.window-body .queue-key small{display:none}
+.window-body .queue-caption{font-size:8px;line-height:1.15;margin-top:2px}
+.window-body .weight-source{padding:3px 1px}
+.window-body .weight-queue{min-height:110px;gap:2px}
+.window-body .weight-chip{min-height:20px;min-width:24px}
+.window-body .array-out{font-size:8px;padding:3px;line-height:1.3}
+.window-body .moving-token{min-width:23px;padding:2px 4px;border-radius:4px}
+.window-body .moving-token b{font-size:12px}.window-body .moving-token small{display:none}
+/* A spacious stacked workspace, with optional desktop geometry kept separate. */
+body:not(.floating-layout) main#pageWorkspace{max-width:1512px;margin-left:var(--rail-width);padding:24px 32px 32px}
+body:not(.floating-layout) .panel-layout{gap:24px}
+body:not(.floating-layout) .panel-layout>[data-panel]{grid-column:span 12;margin-bottom:0}
+.stack-controls{display:flex;gap:4px}.stack-controls button{font-size:14px;padding:2px 9px;min-height:26px}
+.desktop-mode .stack-controls{display:none}
+.window-body .array-workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,1fr);align-items:start;gap:16px;padding:0 12px 12px}
+.window-body .array-scroll{min-width:0;padding:2px 0 8px;overflow:auto}
+.window-body #array{margin:0 auto}
+.input-sram{min-width:0;border:1px solid #cedbd4;border-radius:7px;background:#f9fbf9;padding:10px}
+.sram-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.sram-heading h3{margin:0}.sram-heading select{font-size:11px;padding:5px;max-width:100%}
+.buffer-note{font-size:11px;line-height:1.5;color:#526b70;margin:8px 0}
+.matrix-pager{font-size:10px;display:flex;gap:6px;flex-wrap:wrap;justify-content:space-between}.matrix-pager>div{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.matrix-pager button{font-size:12px;padding:1px 6px}
+.matrix-scroll{overflow:auto;max-height:430px;margin-top:8px}.lowered-matrix{border-collapse:separate;border-spacing:2px;width:max-content;min-width:100%;font:10px ui-monospace,Consolas,monospace}.lowered-matrix caption{text-align:left;font:10px/1.5 system-ui;padding:0 0 6px;color:#536f74}.lowered-matrix th{font-size:9px;font-weight:500;padding:3px;background:#edf3ef;white-space:nowrap}.lowered-matrix td{padding:0;border:0;background:transparent}.lowered-matrix .kernel-column{border-right:2px solid #bdcfc7;padding-right:3px}.matrix-value{display:block;width:100%;min-width:28px;padding:5px 3px;border:1px solid #ffffff;border-radius:3px;background:var(--source-color);font:11px ui-monospace,Consolas,monospace;color:#183d44}.matrix-value:hover,.matrix-value:focus-visible{background:var(--source-color);outline:2px solid #173c46;outline-offset:-2px}.current-tap-row>th{background:#d3e8e0;border-left:3px solid #087e8b}.matrix-padding{display:block;padding:5px;text-align:center;border:1px dashed #9bacab;color:#637678;background:#f1f2ef}.source-linked{stroke:#df3f84!important;stroke-width:4!important;outline:2px solid #df3f84;outline-offset:-2px}.source-readout{font:10px/1.5 ui-monospace,Consolas,monospace;margin-top:8px;min-height:30px}.source-mini svg{display:block;width:auto;height:76px;max-width:100%;margin-top:3px}
+@container(max-width:820px){.window-body .array-workspace{grid-template-columns:1fr}.input-sram{width:100%}}
+@media(max-width:650px){body:not(.floating-layout) main#pageWorkspace{padding:14px 12px 24px}.window-body .array-workspace{padding:0 7px 9px;gap:9px}.input-sram{padding:7px}}
+
+.tensor-cell.tap-used:not(.input-fed){filter:brightness(.88)}
+/* Each hardware bank has its own frame; virtual lowering stays inside input banks. */
+.memory-views{min-width:0}.kernel-sram{margin-top:14px;border:1px solid #d8cfb9;border-radius:7px;background:#fcfaf4;padding:10px}.kernel-address-note{font-size:11px;line-height:1.5;color:#6c6657}.sram-bank{border:1px solid #bdcdc6;border-top:4px solid var(--bank-color);border-radius:6px;padding:8px;margin:10px 0;background:white;min-width:0}.sram-bank:last-child{margin-bottom:0}.sram-bank h4{font-size:11px;margin:0 0 7px;color:#23464c}.bank-matrix-scroll{min-width:0;max-width:100%;overflow:auto}.input-sram .matrix-scroll{max-height:560px}.kernel-channel{padding:5px 0 7px;border-top:1px solid #e1e6df}.kernel-channel h5{display:inline-block;font-size:10px;font-weight:600;margin:2px 0 5px;padding:3px 6px;background:var(--source-color);border-radius:3px}.kernel-address{display:block;font:8px ui-monospace,monospace;text-align:center;color:#607473;margin:2px 0}.current-kernel-tap{outline:1px solid #a77829;border-radius:3px}.sram-output-bank{border:1px solid #bdcdc6;border-top:4px solid var(--bank-color);border-radius:6px;padding:9px;background:#fcfdfb}.sram-output-bank h3{font-size:11px}.bank-shape{font-size:10px;color:#587271;margin-bottom:7px}.feed-legend{display:flex;gap:6px 12px;flex-wrap:wrap;margin:7px 0;font-size:10px}.feed-now-key{border-bottom:3px solid #087e8b}.feed-next-key{border-bottom:3px dashed #bd7b08}.bank-feed-summary{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px}.feed-summary-item{display:flex;align-items:center;flex-wrap:wrap;gap:4px;min-width:0;border:1px solid #e1e8e2;border-radius:4px;padding:4px}.feed-summary-item>b{font:9px system-ui}.feed-summary-item .matrix-value{width:auto;min-width:25px;padding:3px}.feed-summary-item small{flex-basis:100%;font:9px/1.4 ui-monospace,monospace;color:#496368;overflow-wrap:anywhere}.feed-summary-item.feed-current{border:2px solid #087e8b}.feed-summary-item.feed-next{border:2px dashed #bd7b08}.lowered-matrix td.feed-current{outline:3px solid #087e8b;outline-offset:-2px;border-radius:3px;position:relative}.lowered-matrix td.feed-next{box-shadow:inset 0 0 0 3px #bd7b08;border-radius:3px;position:relative}.lowered-matrix td.feed-next>.matrix-value,.lowered-matrix td.feed-next>.matrix-padding{border:2px dashed #bd7b08;padding:4px 2px}.lowered-matrix td.feed-current>.matrix-value,.lowered-matrix td.feed-current>.matrix-padding{background:#087e8b;color:white}.lowered-matrix td.feed-current.feed-next>.matrix-value{border-color:#ffc354}.memory-views .source-readout{padding:0 4px}.kernel-sram #kernelBanks{max-height:560px;overflow:auto}
+/* SRAMs: one compact header, then just bank labels and numeric arrays in both modes. */
+.memory-views .input-sram,.memory-views .kernel-sram{padding:5px;border-radius:4px}.memory-views .kernel-sram{margin-top:6px}.memory-views .sram-heading{gap:4px}.memory-views .sram-heading h3{font-size:12px;line-height:1.2}.memory-views .sram-heading select{font-size:10px;padding:2px 4px}.memory-views .buffer-note,.memory-views .kernel-address-note{font-size:10px;line-height:1.3;margin:3px 0}.memory-views .feed-legend{font-size:9px;gap:8px;margin:3px 0}.memory-views .feed-legend>span{border-bottom-width:2px}.memory-views .matrix-pager{font-size:9px;gap:2px;align-items:center}.memory-views .matrix-pager>div{gap:3px}.memory-views .matrix-pager button{font-size:11px;padding:0 4px;line-height:1.4}.memory-views #inputMatrix,.memory-views #kernelBanks{display:flex;flex-wrap:wrap;align-items:flex-start;gap:4px;margin-top:3px;max-height:560px}.memory-views .sram-bank{width:max-content;max-width:100%;padding:3px;margin:0;border-radius:3px;border-top-width:3px}.memory-views .sram-bank h4{font-size:10px;line-height:1.2;margin:0 0 2px}.memory-views .lowered-matrix{width:max-content;min-width:0;border-spacing:1px;font-size:10px}.memory-views .lowered-matrix th{padding:1px 2px;font-size:9px;line-height:1.2}.memory-views .matrix-value{min-width:26px;padding:2px 1px;font-size:11px;line-height:1.2;border-radius:2px}.memory-views .matrix-padding{min-width:26px;padding:2px 1px;line-height:1.2}.memory-views .lowered-matrix td.feed-next>.matrix-value,.memory-views .lowered-matrix td.feed-next>.matrix-padding{padding:1px 0}.memory-views .kernel-channel{display:inline-block;vertical-align:top;border:0;padding:0;margin:0 3px 0 0}.memory-views .kernel-channel:last-child{margin-right:0}.memory-views .kernel-channel h5{font-size:9px;line-height:1.2;padding:1px 3px;margin:0 0 1px;border-radius:2px}.memory-views .bank-feeds{display:flex;flex-wrap:wrap;gap:3px 7px;margin:3px 0}.memory-views .bank-feed-summary{display:flex;align-items:center;gap:3px;margin:0;font-size:9px}.memory-views .feed-summary-item{display:inline-flex;gap:2px;flex-wrap:nowrap;padding:0 2px;border-width:1px;line-height:1.2}.memory-views .feed-summary-item>b{font-size:8px}.memory-views .feed-summary-item .matrix-value{font-size:10px;min-width:14px;padding:1px}.memory-views .source-tools{display:flex;align-items:center;gap:4px;height:24px;overflow:hidden}.memory-views .source-readout{flex:1;min-width:0;font-size:9px;line-height:1.2;margin:0;padding:0;min-height:0}.memory-views .source-mini{flex:0 0 36px}.memory-views .source-mini svg{height:22px;width:36px;margin:0}
+.window-body .output-options{font-size:10px;gap:5px;padding:0 7px 4px}.window-body .output-options select{font-size:10px;padding:2px 5px}.window-body .output-key{font-size:10px;margin:2px 7px 4px}.window-body #result{font-size:10px;margin:2px 7px 3px}.window-body .meter{height:3px;margin:0 7px 3px}.window-body .outputs{gap:4px;padding:0 7px 7px}.window-body .sram-output-bank{padding:3px;margin:0;border-radius:3px;border-top-width:3px}.window-body .sram-output-bank h3{font-size:10px;margin:0 0 2px;line-height:1.2}.window-body .sram-output-bank .map-grid{width:max-content;max-width:none;grid-template-columns:repeat(var(--map-cols,2),minmax(28px,max-content))!important;gap:1px}.window-body .sram-output-bank .cell{font-size:11px;padding:2px 3px;border-radius:2px;white-space:nowrap;overflow-wrap:normal;line-height:1.2}.window-body .sram-output-bank .cell small{display:none}.window-body .sram-output-bank .expected{font-size:9px}
+/* The outer schedule and inner convolution share controls and model state. */
+[hidden]{display:none!important}.view-tabs{display:flex;gap:8px;margin:16px 0;flex-wrap:wrap}.view-tabs button{padding:12px 18px}.view-tabs [aria-selected=true]{background:#173c46;color:white}#scheduleView{display:grid;gap:24px}#scheduleView>.surface{padding:22px;min-width:0}.tile-process{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}.process-card{border:1px solid #b9cbc9;border-radius:9px;padding:14px 10px;display:grid;gap:12px;align-content:start}.process-card.current{background:#e2f4ef;outline:2px solid #087e8b}.process-card span{font:12px/1.7 ui-monospace,monospace;overflow-wrap:anywhere}.tiling-overview{border-left:3px solid #087e8b;padding:10px 14px;background:#eef5f1;margin:12px 0;font-size:13px}.tiling-overview p{margin:6px 0}.global-grid-scroll{overflow:auto;max-width:100%}.global-grid{display:grid;gap:3px;min-width:max-content}.global-grid .cell{min-width:35px;min-height:35px;padding:6px;text-align:center;font:12px ui-monospace,monospace}.tile-source{outline:2px solid #b77711;outline-offset:-2px;background:#fff0b6}.tile-output{outline:2px solid #087e8b;outline-offset:-2px}.schedule-view .desktop-mode [data-panel]{display:none!important}.schedule-view #windowTaskbar{display:none}.schedule-view #scheduleView{display:grid}.schedule-view .rail-heading:last-of-type{display:none}#jobTimeline [aria-current]{background:#173c46;color:white}.minimal-text .tiling-overview p:last-child{display:none}.transfer-detail{overflow-wrap:anywhere}@media(max-width:900px){.tile-process{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:500px){#scheduleView>.surface{padding:12px}.tile-process{grid-template-columns:repeat(2,minmax(0,1fr))}.view-tabs button{padding:9px}.view-tabs{gap:5px}#scheduleView .module-grid{display:block}}
+.view-tabs{position:sticky;top:var(--header-h);z-index:95;background:var(--paper);padding:7px 0;scroll-margin-top:var(--header-h)}
+.settings .spread{flex-wrap:wrap}.settings .spread>label{min-width:0;max-width:100%;flex:1 1 220px}.settings .spread select{max-width:100%;width:100%}.editors>div{min-width:0}#scheduleView .surface-head{flex-wrap:wrap}
+/* Full tensors use the existing stacked-plane/tap-mask visual language. */
+.schedule-tensor-columns{display:grid;grid-template-columns:1fr 1fr;gap:22px;min-width:0}.schedule-tensor-columns>div{min-width:0}.schedule-tensors .stack-gallery{max-height:510px;align-items:flex-start}.schedule-tensors .stack-card{flex:1 1 200px;min-width:0;max-width:100%}.schedule-tensors .stack-scroll{max-height:430px}.schedule-tensors .tile-selected-card{border:2px solid #677a83}.schedule-channel-plane{cursor:pointer}.schedule-channel-plane text{pointer-events:none}.schedule-tensor-cell.tap-used{filter:brightness(.88)}.selection-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0 14px}.selection-controls>span{font-size:11px;color:var(--muted)}#scheduleChannels{display:flex;gap:5px;flex-wrap:wrap}#scheduleChannels button{font-size:10px;padding:5px 8px}#scheduleChannels .selected-channel{background:#d9dde0}#scheduleChannels [aria-pressed=true]{outline:2px solid #173c46;outline-offset:1px}.schedule-tensors .tensor-legend{padding:0 0 12px}.schedule-tensors .surface-head{padding:0 0 10px}.schedule-tensors .buffer-note{margin-top:12px}@media(max-width:850px){.schedule-tensor-columns{grid-template-columns:1fr}.schedule-tensors .stack-gallery{max-height:430px}}
+
+@media(min-width:1100px){.schedule-tensor-columns{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+.bank-arbitration{margin:0 12px 14px;padding:12px;border:1px solid #c9d9d5;border-radius:8px;background:#f5f8f6}.arb-head{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;font-size:12px}.arb-columns{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:12px}.arb-columns>div{min-width:0}.arb-columns h4{font-size:11px;margin:8px 0}.request-lane,.bank-port{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;border:1px solid #cedbd7;background:white;border-radius:4px;padding:5px;margin:4px 0;font:10px ui-monospace,monospace}.granted{border-color:#087e8b;background:#e1f2ef}.retrying{border-color:#b77711;background:#fff0d5}.vector-slot{border:1px solid #c9d9d5;padding:7px;border-radius:6px;margin:5px 0;font-size:10px}.vector-slot.ready{border:2px solid #087e8b;background:#e1f2ef}.vector-slot>span{margin-left:5px}.slot-value{display:inline-block;margin:3px 2px;padding:3px 5px;background:white;border:1px solid #c9d9d5;font:11px ui-monospace,monospace}.minimal-text .bank-arbitration p{display:none}.matrix-padding.feed-current{outline:2px solid #087e8b}@media(max-width:850px){.arb-columns{grid-template-columns:1fr}}
+
+.preset-lesson{padding:12px 14px;border-left:4px solid #087f8c;background:#edf7f7;color:#163c45;line-height:1.6;border-radius:4px;}.minimal-text .preset-lesson{display:block;}
+
+.minimal-text #tilingOverview{display:none;}
+
+/* Compact presentation; retain every tensor cell and control. */
+body{font-size:13px}
+body:not(.floating-layout) main#pageWorkspace{padding:10px 12px 16px}
+body:not(.floating-layout) .panel-layout,#scheduleView{gap:10px}
+.surface{border-radius:7px}.surface-head,.window-body .surface-head{padding:7px 9px;gap:6px}
+h2,.window-body .surface-head h2,.tensor-panel .surface-head h2{font-size:14px}
+h3{font-size:12px;margin:5px 0}p{margin:4px 0}
+button,select{padding:5px 7px;font-size:11px}.app-header h1{font-size:16px}
+.settings>summary{padding:9px 11px}.settings-body{padding:0 10px 10px}
+.fields{gap:6px;margin:9px 0;grid-template-columns:repeat(auto-fit,minmax(100px,1fr))}
+.fields label{font-size:10px}.fields input{padding:4px 5px;margin-top:2px}
+.capacity{gap:5px}.capacity span{padding:3px 5px;font-size:10px}
+.editors{gap:10px;margin-top:8px}.tensor-editors{max-height:190px;gap:6px}
+.tensor-card{padding:5px}.tensor-card h4{font-size:10px;margin-bottom:4px}
+.tensor-grid{gap:2px}.tensor-grid input{padding:3px 2px;font-size:11px}
+.preset-lesson{padding:7px 9px;font-size:11px;line-height:1.45}
+.intro{padding:7px 2px;font-size:10px}.view-tabs{padding:4px 0;gap:5px}
+#scheduleView>.surface{padding:10px}.process-card{padding:7px;gap:4px;border-radius:5px}
+.process-card b{font-size:11px}.process-card span{font-size:10px;line-height:1.45}
+.tile-process{gap:6px}.tiling-overview{margin:7px 0;padding:7px 9px;font-size:11px}
+.selection-controls{gap:5px;margin:5px 0 8px}.schedule-tensor-columns{gap:10px}
+.tensor-columns,.window-body .tensor-columns{gap:10px;padding:0 8px 8px}
+.stack-gallery,.window-body .stack-gallery{gap:6px}
+.stack-card,.window-body .stack-card,.schedule-tensors .stack-card{padding:5px;flex:0 1 auto;min-width:0}
+.stack-card h4{font-size:10px;margin-bottom:4px}
+.window-body .tensor-stack,.fit-tight .tensor-stack,.schedule-tensors .tensor-stack{width:auto;height:auto;max-width:100%;max-height:150px}
+.window-body .tensor-select{padding:4px 8px}.window-body .tensor-legend{padding:0 8px 5px}
+.window-body .story{margin:0 8px 7px;padding:6px 8px}.story b{font-size:11px}.story p{font-size:10px}
+.window-body .array-workspace{gap:8px;padding:0 8px 8px}
+.window-body #array{gap:3px}.window-body .pe{padding:4px}.window-body .pe .sum{font-size:17px;margin-top:2px}
+.window-body .pe .equation{font-size:10px}.window-body .reg{font-size:8px;padding:1px 2px}
+.window-body .feeder{padding:3px}.window-body .queue-chip{min-height:25px;padding:2px}.window-body .queue-chip b{font-size:12px}
+.window-body .pe-inspect{padding:6px 8px;font-size:10px}
+.bank-arbitration{margin:0 8px 8px;padding:7px;font-size:10px}.arb-columns{gap:7px}.arb-columns h4{margin:4px 0;font-size:10px}
+.window-body #moduleBody{padding:8px}.window-body .module-tabs button{padding:5px 7px;font-size:10px}
+.legend{gap:7px}.layout-toolbar{padding:4px 0}.control-rail .toolbar{gap:3px}
+.control-rail .toolbar>button{padding:4px 6px;min-height:27px}.control-rail .clock{margin-top:6px;padding-top:6px}
+footer{padding:9px 0;font-size:10px}
+@media(max-width:650px){body:not(.floating-layout) main#pageWorkspace{padding:7px 6px 12px}.fields{grid-template-columns:repeat(auto-fit,minmax(90px,1fr))}.app-header{gap:4px}.app-header h1{font-size:14px}}
+
+/* Remove redundant row-feed text and tighten the remaining presentation. */
+#feedSummary{display:none}
+body:not(.floating-layout) main#pageWorkspace{padding:7px 8px 12px}
+body:not(.floating-layout) .panel-layout,#scheduleView{gap:7px}
+.window-body .surface-head,.fit-tight .surface-head{padding:5px 7px}
+.window-body .tensor-columns{padding:0 6px 6px;gap:7px}
+.window-body .tensor-select{padding:3px 6px}
+.stack-gallery,.window-body .stack-gallery{gap:4px}
+.stack-card,.window-body .stack-card,.schedule-tensors .stack-card{padding:4px}
+.window-body .tensor-stack,.fit-tight .tensor-stack,.schedule-tensors .tensor-stack{max-height:120px}
+.window-body .array-workspace{gap:6px;padding:0 6px 6px}
+.window-body #array{gap:2px}.window-body .weight-queue{min-height:0;gap:2px}
+.window-body .weight-source{padding:3px 1px}
+.window-body .queue-chip,.window-body .weight-chip{min-height:20px;padding:2px}
+.window-body .queue-chip b{font-size:11px}.window-body .queue-chip small{font-size:7px}
+.window-body .input-queue{min-height:23px}.window-body .queue-key{padding:3px;gap:3px}
+.window-body .pe .sum{font-size:15px}.window-body .pe{padding:3px}
+.window-body .queue-label{margin-bottom:2px}.window-body .queue-caption{font-size:8px;line-height:1.2}
+.memory-views .input-sram,.memory-views .kernel-sram{padding:4px}
+.memory-views .kernel-sram{margin-top:4px}.window-body .pe-inspect{padding:4px 6px}
+.bank-arbitration{margin:0 6px 6px;padding:5px}.request-lane,.bank-port{padding:3px 4px}
+#scheduleView>.surface{padding:8px}.process-card{padding:5px;gap:3px}.tile-process{gap:4px}
+.view-tabs{padding:3px 0}.view-tabs button{padding:5px 8px}
+.selection-controls{margin:4px 0 6px}.schedule-tensor-columns{gap:7px}
+@container(min-width:650px){.window-body .tensor-columns{grid-template-columns:minmax(150px,1fr) minmax(0,2fr)}}
+@media(min-width:1450px){body:not(.floating-layout) .panel-layout>[data-panel="array"]{grid-column:span 9}body:not(.floating-layout) .panel-layout>[data-panel="output"]{grid-column:span 3}}
+@media(max-width:650px){body:not(.floating-layout) main#pageWorkspace{padding:5px 5px 9px}}
+
+/* Readable density: spend screen width on content, not oversized gutters. */
+body{font-size:14px}
+body:not(.floating-layout) main#pageWorkspace{max-width:none;padding:8px 10px 14px}
+button,select{font-size:12px;padding:5px 8px}.app-header h1{font-size:19px}
+.control-rail .toolbar>button{font-size:12px;min-height:29px}
+.surface-head h2,.window-body .surface-head h2,.tensor-panel .surface-head h2{font-size:16px}
+.fields label,.stack-card h4,.fit-tight .stack-card h4{font-size:12px}
+.fields input{font-size:13px}.capacity span,.preset-lesson{font-size:12px}
+.window-body .tensor-stack,.fit-tight .tensor-stack,.schedule-tensors .tensor-stack{width:auto;height:auto;min-height:clamp(160px,18vh,220px);max-height:none;max-width:none}
+.window-body .stack-scroll,.schedule-tensors .stack-scroll{overflow:auto;max-height:280px;max-width:100%}
+.window-body .stack-card,.schedule-tensors .stack-card{max-width:100%;min-width:0;padding:5px}
+.window-body .array-workspace{grid-template-columns:minmax(0,1.15fr) minmax(300px,1fr);gap:10px}
+.window-body #array{max-width:none!important;width:100%;gap:4px}
+.window-body .pe{padding:5px}.window-body .pe .sum{font-size:22px}
+.window-body .pe .equation,.minimal-text .pe .equation{font-size:13px}
+.window-body .pe .pe-id,.window-body .queue-label,.window-body .axis{font-size:11px}
+.window-body .reg{font-size:10px;padding:2px}.window-body .queue-chip b{font-size:14px}
+.window-body .queue-chip small{font-size:9px}.window-body .queue-chip,.window-body .weight-chip{min-height:25px}
+.window-body .queue-caption{font-size:10px}.window-body .array-out{font-size:11px}
+.memory-views h3{font-size:14px}.memory-views .lowered-matrix td,.memory-views .lowered-matrix th{font-size:11px}
+.memory-views .matrix-value{font-size:12px}.window-body .sram-output-bank .cell{font-size:13px}
+.bank-arbitration{font-size:12px}.arb-columns h4{font-size:12px}
+.process-card b{font-size:13px}.process-card span{font-size:12px}
+.window-body .pe-inspect{font-size:12px}.intro{font-size:12px}
+@container(max-width:820px){.window-body .array-workspace{grid-template-columns:1fr}}
+@media(max-width:650px){body{font-size:13px}body:not(.floating-layout) main#pageWorkspace{padding:6px}.app-header h1{font-size:16px}.control-rail .toolbar>button{font-size:11px}.window-body .tensor-stack,.fit-tight .tensor-stack,.schedule-tensors .tensor-stack{min-height:150px}.window-body .stack-scroll,.schedule-tensors .stack-scroll{max-height:230px}}
+
+/* Four stable preview slots; these are visual previews, not hardware FIFOs. */
+.window-body .input-queue{position:relative;display:flex;align-items:center;justify-content:flex-end;flex-wrap:nowrap;width:164px;min-width:164px;max-width:164px;height:36px;min-height:36px;max-height:36px;gap:2px;margin:0 auto;}
+.window-body .weight-queue{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;width:40px;min-width:40px;height:164px;min-height:164px;max-height:164px;gap:2px;margin:0 auto;}
+.window-body .queue-chip,.window-body .weight-chip,.window-body .queue-placeholder{box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:0 0 36px;width:36px;min-width:36px;max-width:36px;height:36px;min-height:36px;max-height:36px;padding:1px;}
+.window-body .queue-chip b{font-size:12px;line-height:15px;font-variant-numeric:tabular-nums;}
+.window-body .queue-chip small{font-size:7px;line-height:9px;max-width:100%;white-space:nowrap;overflow:hidden;}
+.window-body .queue-chip em{position:absolute;right:-2px;top:-6px;transform:none;font-size:7px;line-height:1;}
+.queue-placeholder{border:1px dashed #cbd8d5;border-radius:3px;background:#edf2ef;opacity:.55;}
+.weight-queue .queue-placeholder{background:#f6f0e3;border-color:#d8ceb8;}
+.window-body .input-queue .queue-port,.window-body .weight-queue .queue-port{display:block;flex:0 0 12px;width:12px;min-width:12px;height:12px;line-height:12px;font-size:15px;text-align:center;}
+.window-body .queue-more{position:absolute;z-index:2;left:0;top:-10px;font-size:9px;line-height:10px;background:#f5f8f6;padding:0 2px;}
+.window-body .weight-queue .queue-more{left:50%;top:-10px;transform:translateX(-50%);}
+.window-body .queue-empty{position:absolute;inset:0 14px 0 0;display:flex;align-items:center;justify-content:center;z-index:1;font-size:10px;background:#f5f8f6dd;}
+.window-body .weight-queue .queue-empty{inset:0 -18px 14px;}
+.window-body .queue-label{height:16px;min-height:16px;line-height:16px;flex-wrap:nowrap;white-space:nowrap;overflow:hidden;margin:0 0 3px;}
+.window-body .queue-caption{box-sizing:border-box;display:block;height:32px;min-height:32px;max-height:32px;line-height:15px;margin:3px 0 0;font-size:10px;overflow:hidden;}
+.window-body .queue-caption>span{display:block;}
+.minimal-text .queue-caption,.fit-tight .queue-caption{display:block;visibility:hidden;}
+.window-body .weight-source .queue-caption{height:32px;min-height:32px;line-height:15px;}
+.moving-token{will-change:transform,opacity;backface-visibility:hidden;pointer-events:none;}
+
+.full-lowered-scroll{max-height:360px;overflow:auto;isolation:isolate;}
+.full-lowered-matrix thead th{position:sticky;top:0;z-index:2;background:#edf3ef;}
+.full-lowered-matrix th:first-child{position:sticky;left:0;z-index:1;background:#edf3ef;white-space:nowrap;}
+.full-lowered-matrix thead th:first-child{z-index:3;}
+.full-lowered-matrix .current-tap-row>th{background:#d3e8e0;}
+
+.full-lowered-matrix th.current-term-column{background:#d3e8e0;box-shadow:inset 0 -3px #087e8b;}
+
+/* Matrix-only lowered view; coordinate details remain available on hover. */
+.full-lowered-matrix thead,.full-lowered-matrix tbody th{display:none;}
+.input-sram:has(.full-lowered-matrix) #matrixPager{display:none;}
+
+/* Reference-style pipeline: physical memory → routing → virtual lowering → array. */
+.window-body .diagram-workspace{display:block;padding:0 8px 8px;overflow-x:auto;}
+.data-path{display:grid;grid-template-columns:minmax(175px,.75fr) 110px minmax(230px,1fr) minmax(430px,1.65fr);gap:16px;align-items:start;min-width:1010px;}
+.path-stage{min-width:0;border:1px solid #ccd7d3;border-radius:6px;background:#fbfcf9;padding:7px;position:relative;}
+.path-stage>h3,.path-stage>.sram-heading h3{font-size:14px;margin:0 0 6px;}
+.path-stage .route-caption{font-size:10px;line-height:1.35;margin:3px 0 7px;color:#5e7379;}
+.storage-stage:after,.lowered-stage:after{content:'→';font-size:23px;font-weight:700;position:absolute;right:-17px;top:40%;color:#173c46;z-index:4;}
+.routing-stage{padding:5px 2px;background:#f1f5f3;}
+.routing-stage>h3{text-align:center;font-size:13px;}
+.routing-svg{display:block;width:100%;height:auto;max-height:350px;overflow:visible;}
+.routing-svg path{fill:none;}.routing-svg text{font:9px ui-monospace,monospace;fill:#203c45;}
+.routing-svg circle{fill:#173c46;}.route-possible{stroke:#a5b8b1;stroke-width:1;opacity:.23;}
+.route-granted{stroke:#087e8b;stroke-width:2.4;}.route-retry{stroke:#dc4f3d;stroke-width:2.2;stroke-dasharray:4 3;}.route-wait{stroke:#c29a4f;stroke-width:1.5;stroke-dasharray:3 4;}
+#routingStatus{text-align:center;font-size:10px;line-height:1.3;margin-top:7px;}
+#bankStorage{max-height:370px;overflow:auto;}.storage-matrix{border-collapse:separate;border-spacing:1px;width:max-content;min-width:100%;}
+.storage-matrix th{font:10px ui-monospace,monospace;padding:3px;background:#edf2ed;position:sticky;top:0;z-index:1;}
+.storage-matrix td{padding:1px;border:1px solid #d6ddd8;background:#f7faf5;text-align:center;min-width:29px;height:26px;}
+.storage-matrix .matrix-value{font:11px ui-monospace,monospace;padding:2px;min-width:25px;border-radius:0;}.stored-word{font:11px ui-monospace,monospace;padding:2px;}
+.storage-matrix td.storage-read{outline:2px solid #e44c3b;outline-offset:-2px;background:#e6f4e9;}.storage-matrix td.storage-retry{outline:2px dashed #e44c3b;outline-offset:-2px;}
+#storagePager{display:flex;gap:3px;align-items:center;flex-wrap:wrap;margin:0 0 6px;font:10px ui-monospace,monospace;}#storagePager button{font-size:10px;padding:2px 5px;}
+#storageCapacity{font-size:10px;line-height:1.4;color:#637674;}
+.window-body .lowered-stage{padding:7px;}.lowered-stage .sram-heading{display:block;}.lowered-stage #inputView{font-size:10px;padding:3px;max-width:100%;margin:0 0 4px;}
+.lowered-stage .buffer-note,.lowered-stage .feed-legend{font-size:10px;line-height:1.35;margin:4px 0;}.lowered-stage .source-tools{font-size:9px;}
+.lowered-stage .full-lowered-scroll{max-height:330px;}.lowered-stage .matrix-scroll{max-height:390px;}
+.window-body .compute-stage .array-scroll{padding:0 0 7px;max-width:100%;overflow:auto;}
+.window-body .compute-stage .kernel-sram{margin:8px 0 0;max-width:100%;}.compute-stage .kernel-sram h3{font-size:12px;}
+.compute-stage .kernel-address-note{font-size:10px;}.compute-stage .sram-bank{max-width:100%;}
+.compute-stage .array-canvas{min-width:0;}.compute-stage #array{margin:0;}
+.minimal-text .path-stage .route-caption,.minimal-text #storageCapacity,.minimal-text .lowered-stage .buffer-note{display:none;}
+@media(min-width:1450px){body:not(.floating-layout) .panel-layout>[data-panel="array"]{grid-column:span 12;}body:not(.floating-layout) .panel-layout>[data-panel="output"]{grid-column:span 12;}}
+@media(max-width:650px){.window-body .diagram-workspace{padding:0 5px 6px;}.data-path{gap:13px;}}
+
+.routing-svg marker path{fill:#087e8b;}
+
+.path-kernels{margin-top:9px;min-width:1010px;}.path-kernels .kernel-sram{margin:0;padding:6px;}.path-kernels #kernelBanks{display:flex;flex-wrap:wrap;gap:8px;align-items:start;}.path-kernels .kernel-bank{flex:1 1 300px;min-width:0;max-width:100%;}.path-kernels .kernel-sram h3{font-size:13px;}
+
+/* Keep the lowered and kernel SRAM inspectors together on the right. */
+.data-path{grid-template-columns:minmax(165px,.65fr) 110px minmax(430px,1.55fr) minmax(265px,1fr);}
+.diagram-memory{min-width:0;display:flex;flex-direction:column;gap:8px;}
+.diagram-memory .input-sram,.diagram-memory .kernel-sram{margin:0;min-width:0;max-width:100%;}
+.diagram-memory .lowered-stage:after{display:none;}
+.diagram-memory .kernel-sram{padding:7px;border-radius:6px;}
+.diagram-memory #kernelBanks{display:flex;flex-direction:column;gap:6px;}
+.diagram-memory .kernel-bank{min-width:0;max-width:100%;}
+.diagram-memory .kernel-sram h3{font-size:14px;margin:0 0 6px;}
+
+/* Horizontal input-bank rows share the PE row pitch; routes use rendered centers. */
+#bankStorage{max-height:none;overflow-x:auto;overflow-y:hidden;}
+.storage-matrix{border-spacing:1px 0;}
+.storage-matrix tbody tr{height:var(--bank-pitch,80px);}
+.storage-matrix tbody th{position:static;}
+.storage-matrix td{height:auto;}
+.routing-svg{max-height:none;}
+.storage-stage:after{display:none;}
+
+/* Compact horizontal banks; box the next queue operand rather than a newer read. */
+.data-path{grid-template-columns:minmax(190px,.75fr) 80px minmax(390px,1.35fr) minmax(250px,1fr);gap:8px;min-width:950px;}
+.path-stage{padding:5px;}.path-stage>h3{margin-bottom:4px;}
+.storage-matrix{border-spacing:1px var(--bank-gap,0px);}
+.storage-matrix tbody tr{height:30px;}
+.storage-matrix td{height:30px;box-sizing:border-box;}
+.storage-matrix td.storage-next{outline:2px solid #bd7b08;outline-offset:-2px;background:#fff2c9;}
+.storage-matrix thead th{position:static;}
+.routing-stage{padding:5px 2px;}#routingStatus{font-size:9px;margin-top:3px;}
+.diagram-memory{gap:5px;}.window-body .diagram-memory .lowered-stage,.diagram-memory .kernel-sram{padding:5px;}
+.window-body #array{gap:3px;}.window-body .pe{padding:3px;}
+.window-body .queue-caption{height:20px;min-height:20px;max-height:20px;line-height:10px;margin-top:2px;}
+.window-body .weight-source .queue-caption{height:20px;min-height:20px;line-height:10px;}
+@media(max-width:650px){.data-path{gap:8px;}}
+
+/* Keep alignment whitespace outside the compact SRAM/routing cards. */
+.storage-matrix{border-spacing:1px 0;}
+.storage-matrix tbody tr{height:var(--bank-pitch,80px);}
+.storage-matrix td{height:auto;padding:0 1px;border:0;background:transparent;}
+.storage-matrix tbody th{background:transparent;padding:0 2px;}
+.storage-matrix .bank-word{display:block;min-width:24px;line-height:22px;border:1px solid #d6ddd8;background:#f7faf5;}
+.storage-matrix .bank-word>.matrix-value{min-width:24px;padding:1px;font-size:11px;line-height:20px;}
+.storage-matrix td.storage-next{outline:0;background:transparent;}
+.storage-matrix td.storage-next>.bank-word{outline:2px solid #bd7b08;outline-offset:-2px;background:#fff2c9;}
+.storage-matrix .stored-word{padding:0 1px;}
+.routing-svg .route-next{fill:none;stroke:#bd7b08;stroke-width:2.4;}
+.routing-svg marker path{fill:#bd7b08;}
+.routing-stage>h3{font-size:12px;margin-bottom:3px;}
+.path-stage .route-caption{margin:2px 0 4px;}
+#storagePager{margin-bottom:3px;gap:2px;}#storageCapacity{margin-top:3px;}
+
+</style></head>
+<body><header class="app-header"><h1>NCHW <span>im2col tiling</span></h1><div class="header-actions"><button id="configure" aria-controls="settings" aria-expanded="false">Layer & tensors</button><label class="desktop-toggle"><input id="desktopMode" type="checkbox"> Floating windows</label><button id="minimalText" aria-pressed="false" title="Hide explanations and secondary labels; keep values and controls">Minimal text</button><button id="resetLayout">Reset windows</button></div></header>
+<aside id="controlRail" class="control-rail" aria-label="Pinned simulation controls"><span class="rail-heading">Simulation</span><div class="toolbar rail-buttons"><button id="play" class="primary">▶ Play</button><button id="step">Step →</button><button id="back">← Back</button><button id="reset">Reset</button><button id="nextState">Next state</button><button id="nextStage" title="Finish the current schedule stage and stop at the next stage">Next stage</button><button id="nextTap">Next group</button><button id="finish">Finish layer</button><label class="speed">Speed <select id="speed"><option value="1200">Slow</option><option value="650" selected>Normal</option><option value="180">Fast</option></select></label><div class="clock"><span>START → DONE</span><b id="clock">0</b><small id="clockTotal"></small></div></div>
+<div id="phasebar" class="phasebar" aria-label="Controller state"></div><div class="timeline-row"><label for="seek">Rising edge <b id="edge">0</b></label><input id="seek" type="range" value="0" min="0" max="1"><span id="runLabel"></span></div>
+<span class="rail-heading">Windows</span><nav id="windowTaskbar" class="window-taskbar" aria-label="Open simulator windows"></nav></aside>
+<main id="pageWorkspace"><div class="intro"><span class="dot"></span> NCHW · spatial taps first within each channel; CRS terms across array rows · <code>conv_accelerator</code><span>Signed 8-bit operands · signed 32-bit sums</span></div>
+<details class="surface settings" id="settings"><summary><b>01 / Configure the layer & tensors</b><span id="shapeSummary"></span></summary><div class="settings-body"><div class="spread"><label>Example <select id="preset"><option value="starter">1 · One output tile, one job</option><option value="width">2 · Split a row into width segments</option><option value="filters">3 · Output-channel blocks: 2 + 2 + 1</option><option value="reduce">4 · Build one tile with three jobs: 2 + 2 + 1</option><option value="layout">5 · Same SRAM, different tile widths</option><option value="unroll">6 · Compare unrolling: four passes versus one group</option><option value="fallback">7 · Kernel too small: single-tap jobs</option><option value="images">8 · Two images, processed sequentially</option><option value="padding">9 · Padding: real pixels versus zero-only patches</option><option value="stride">10 · Stride 2 leaves the last row and column unused</option><option value="all">11 · All traversal orders in one run</option><option value="conflict">12 · Bank conflicts: NCHW read retries</option></select></label><button id="random">New signed values</button></div><p id="presetLesson" class="preset-lesson" aria-live="polite"></p><p class="muted">Valid edits restart the model. Array size and address widths describe a compiled hardware build; geometry is captured at start.</p><div class="fields" id="fields"></div><div class="capacity" id="capacity"></div><div class="editors"><div><h3 class="teal">Input · N × C × H × W</h3><div class="tensor-editors" id="inputEditors"></div><details><summary>Paste input tensor (NCHW)</summary><textarea id="pasteX" aria-label="Input values in NCHW order"></textarea><button data-paste="x">Apply input</button></details></div><div><h3 class="amber">Kernel · K × C × R × S</h3><div class="tensor-editors" id="weightEditors"></div><details><summary>Paste kernel tensor (KCRS)</summary><textarea id="pasteW" aria-label="Kernel values in KCRS order"></textarea><button data-paste="w">Apply kernel</button></details></div></div></div></details><p class="error" id="error" role="alert"></p>
+<nav class="view-tabs" aria-label="Simulation detail" role="tablist"><button id="scheduleTab" role="tab" aria-selected="true" aria-controls="scheduleView">Tiling schedule</button><button id="convolutionTab" role="tab" aria-selected="false" aria-controls="convolutionView">Current tile convolution</button></nav>
+<section id="scheduleView" role="tabpanel" aria-labelledby="scheduleTab"><div id="scheduleOverview" class="surface schedule-overview"></div><section class="surface schedule-tensors" aria-label="Tile selection across full input and kernel tensors"><div class="surface-head"><div><div class="eyebrow">PICK THE TILE FROM THE FULL TENSORS</div><h2>Current tile selection</h2><p id="tileSelectionLabel"></p></div><label><input id="scheduleSpread" type="checkbox"> Spread channels</label></div><div class="selection-controls"><button id="previousBlock">← Previous block</button><button id="nextBlock">Next block →</button><span>Bring a channel forward</span><div id="scheduleChannels"></div></div><div class="tensor-legend"><span><i class="swatch plane-swatch"></i> Full tensor channel plane</span><span><i class="swatch pass-swatch"></i> Grey: selected for this job</span></div><div class="schedule-tensor-columns"><div><h3 class="teal">Full input images · N × C × H × W</h3><div id="scheduleInputStacks" class="stack-gallery"></div></div><div><h3 class="amber">Full filter kernels · K × C × R × S</h3><div id="scheduleKernelStacks" class="stack-gallery"></div></div><div><h3 class="purple">Full outputs · N × K × P × Q</h3><div id="scheduleOutputStacks" class="stack-gallery"></div></div></div><p id="selectionPadding" class="buffer-note"></p></section><div class="surface schedule-diagram"><div id="scheduleProcess"></div></div><div class="surface"><div class="surface-head"><div><div class="eyebrow">HARDWARE JOB ORDER</div><h2>Layer timeline</h2></div><label>Jobs <select id="jobPage"></select></label></div><div id="jobTimeline" class="scroll"></div></div><div class="surface"><div class="surface-head"><div><h2>Full-layer source & stored outputs</h2><p>Source patch highlighted for the current tile. Outputs appear only when DMA stores commit.</p></div><label>Image <select id="layerImage"></select></label><label>Input channel <select id="layerChannel"></select></label><label>Output filter <select id="layerFilter"></select></label></div><div id="layerMemory"></div></div></section>
+<div id="convolutionView" role="tabpanel" aria-labelledby="convolutionTab" hidden><div class="layout-toolbar"><span id="panelHelp">Drag title bars · resize edges · double-click to maximize. Arrows move; Alt + arrows resize.</span><span id="layoutStatus" role="status" aria-live="polite"></span></div><div id="panelLayout" class="panel-layout">
+<section data-panel="tensors" class="surface tensor-panel" aria-label="Tensor stacks and current CRS group">
+<div class="surface-head"><div><div class="eyebrow">TENSOR VIEW / CHANNELS FORM ONE IMAGE</div><h2>Current local tile & tensor sources</h2><p id="tensorPass"></p></div><label><input id="spreadChannels" type="checkbox"> Spread channels</label></div>
+<div id="tilingOverview" class="tiling-overview"></div><div class="tensor-legend"><span><i class="swatch plane-swatch"></i> Channel plane</span><span><i class="swatch pass-swatch"></i> Used in this CRS group</span><span><i class="swatch fed-swatch"></i> Entering the array on the last edge</span><span><i class="swatch preload-swatch"></i> Next group being loaded</span></div>
+<div class="tensor-select"><span>Bring a channel forward</span><div id="channelSelect"></div><span class="muted small">CRS coordinates are zero-based.</span></div>
+<div class="tensor-columns"><div><h3 class="teal">Resident input patch · local N × C × H × W</h3><div id="inputStacks" class="stack-gallery"></div></div><div><h3 class="amber">Resident kernel block · local K × C × R × S</h3><div id="kernelStacks" class="stack-gallery"></div></div></div>
+<div id="feedSummary" class="feed-summary" aria-live="polite"></div></section>
+<section data-panel="array" class="surface array-panel"><div class="surface-head"><div><div class="eyebrow">02 / CHANNEL REDUCTION</div><h2>The systolic array</h2><p id="arraySubtitle"></p></div><label><input id="motion" type="checkbox" checked> Animate flow</label><label><input id="peDetails" type="checkbox" checked> PE registers</label></div><div class="story" aria-live="polite"><b id="storyTitle"></b><p id="storyText"></p></div><div class="array-workspace diagram-workspace"><div class="data-path"><section class="path-stage storage-stage"><h3>Input SRAM</h3><p class="route-caption">Physical banks · selected reads outlined in red</p><div id="storagePager"></div><div id="bankStorage"></div><p id="storageCapacity"></p></section><section class="path-stage routing-stage"><h3 id="routingTitle"></h3><div id="routingDiagram"></div><p id="routeCaption" class="route-caption"></p><p id="routingStatus"></p></section><section class="path-stage compute-stage"><h3>Systolic array</h3><p class="route-caption">Generated input lanes → PEs · weights load from above</p><div class="array-scroll"><div class="array-canvas"><div id="array"></div><div id="flowLayer" aria-hidden="true"></div></div></div></section><div class="memory-views diagram-memory"><section class="input-sram path-stage lowered-stage" aria-label="Input SRAM and virtual lowered matrix"><div class="sram-heading"><h3>Lowered matrix</h3><select id="inputView" aria-label="Input SRAM view"><option value="lowered">Full lowered matrix · virtual</option><option value="physical">Stored banks · physical</option></select></div><p class="buffer-note">Virtual lowering / previews only. No physical buffer stores lowered elements.</p><div class="feed-legend"><span class="feed-now-key">Teal: in PE[i,0]</span><span class="feed-next-key">Amber: next</span></div><div id="matrixPager" class="matrix-pager"></div><div id="bankFeeds" class="bank-feeds"></div><div class="source-tools"><div id="sourceReadout" class="source-readout" aria-live="polite">Hover: source · click: tensor</div><div id="sourceMini" class="source-mini"></div></div><div id="inputMatrix" class="matrix-scroll"></div></section><section class="kernel-sram" aria-label="Kernel SRAM by output channel"><div class="sram-heading"><h3>Kernel SRAM</h3></div><p class="kernel-address-note">Bank k · block c · taps (r,s) · @ = (c·R+r)·S+s. Hover for address.</p><div id="kernelPager" class="matrix-pager"></div><div id="kernelBanks"></div></section></div></div></div><div class="legend"><span class="teal">Activation →</span><span class="amber">Stationary weight / load ↓</span><span class="purple">Partial sum ↓</span><span class="green">SRAM write</span><span>Dashed = inactive CRS row</span><span>Visual stream previews only · no lowered-element buffer. Next value is nearest the array.</span></div><div id="peInspect" class="pe-inspect"></div></section>
+<aside data-panel="output" class="surface output-panel"><div class="surface-head"><div><div class="eyebrow">03 / STORED PARTIAL SUMS</div><h2>Output SRAM</h2></div><span class="badge" id="tapBadge"></span></div><div class="output-options"><label>Image <select id="batch"></select></label><label><input id="reference" type="checkbox"> Reference</label></div><div class="meter"><div id="progress"></div></div><p id="result" role="status"></p><p class="output-key">Green: write · —: unwritten · hover: address / groups</p><div id="outputs" class="outputs"></div><p class="buffer-note">These are resident local sums. The Tiling schedule tab shows final backing-memory stores.</p></aside>
+<section data-panel="modules" class="surface module-panel"><div class="module-tabs" role="tablist" aria-label="Inspect a module"><button role="tab" aria-selected="true" data-tab="input">01 · Implicit im2col & banks</button><button role="tab" aria-selected="false" data-tab="weights">02 · Weight double buffer</button><button role="tab" aria-selected="false" data-tab="output">03 · Output accumulator</button><button role="tab" aria-selected="false" data-tab="schedule">04 · Group schedule</button></div><div id="moduleBody" role="tabpanel"></div><section id="bankArbitration" class="bank-arbitration" aria-label="Bank arbitration and two vector slots"></section></section>
+</div></div><footer><p class="credit">Inspired by “Convolution Simulator” · Conceptualized by Adelson Chua</p><p>Browser teaching model of channel-last unrolling; naming describes unrolling order, not tensor-file layout · AI-assisted implementation</p><p>Space: play / pause · →: step · ←: back · Memory views represent testbench inspection; the accelerator uses synchronous idle-only core output readback.</p><p id="provenance"></p><button id="export">Download run JSON</button> <a href="" download="NCHW.html" id="download">Download offline HTML</a></footer></main><script>
+/* Channel-last edge model: CRS rows, synchronous banks, two vector slots and stalled array. */
+(function(root){'use strict';
+const range=n=>Array.from({length:n},(_,i)=>i),clone=x=>JSON.parse(JSON.stringify(x));
+const defaults={a:4,n:1,c:2,k:2,h:3,w:3,r:2,s:2,pad_i:0,pad_j:0,stride_i:1,stride_j:1,dilation_i:1,dilation_j:1,ia:8,oa:8,ka:8};
+const xindex=(d,n,c,h,w)=>((n*d.c+c)*d.h+h)*d.w+w,windex=(d,k,c,r,s)=>((k*d.c+c)*d.r+r)*d.s+s,yindex=(d,n,k,p,q)=>((n*d.k+k)*d.p+p)*d.q+q;
+function reference(d,x,w){const y=Array(d.n*d.k*d.p*d.q).fill(0);for(let n=0;n<d.n;n++)for(let k=0;k<d.k;k++)for(let p=0;p<d.p;p++)for(let q=0;q<d.q;q++){let sum=0;for(let c=0;c<d.c;c++)for(let r=0;r<d.r;r++)for(let s=0;s<d.s;s++){const h=p*d.stride_i+r*d.dilation_i-d.pad_i,v=q*d.stride_j+s*d.dilation_j-d.pad_j;if(h>=0&&h<d.h&&v>=0&&v<d.w)sum=(sum+x[xindex(d,n,c,h,v)]*w[windex(d,k,c,r,s)])|0;}y[yindex(d,n,k,p,q)]=sum;}return y;}
+function placement(d,c,h,w,n=0){const slot=c*d.r*d.s+(h%d.r)*d.s+w%d.s,tr=Math.ceil(d.h/d.r),tc=Math.ceil(d.w/d.s);return {bank:slot%d.a,addr:(Math.floor(slot/d.a)*tr*tc+Math.floor(h/d.r)*tc+Math.floor(w/d.s))*d.n+n};}
+function address(d,pos,term){const n=pos%d.n,p=Math.floor(pos/d.n/d.q),q=Math.floor(pos/d.n)%d.q,c=Math.floor(term/(d.r*d.s)),r=Math.floor(term/d.s)%d.r,s=term%d.s,h=p*d.stride_i+r*d.dilation_i-d.pad_i,w=q*d.stride_j+s*d.dilation_j-d.pad_j,valid=term<d.c*d.r*d.s&&h>=0&&h<d.h&&w>=0&&w<d.w;return {pos,n,p,q,c,r,s,h,w,term,valid,...(valid?placement(d,c,h,w,n):{bank:0,addr:0})};}
+function emptyBanks(d){return {issue:0,issueSlot:0,readSlot:0,active:false,occupied:[false,false],ready:[false,false],pending:range(d.a).map(()=>false),values:range(2).map(()=>range(d.a).map(()=>({value:0,token:null}))),response:[],responseSlot:0,responseFinal:false,readData:Array(d.a).fill(0)};}
+function create(d,x,w){return {d,x:[...x],w:[...w],expected:reference(d,x,w),state:'IDLE',started:false,finished:false,edge:0,cycles:0,base:0,r:0,s:0,active:0,runCount:0,loadRow:d.a-1,loadPhase:'PREFETCH',kernelData:Array(d.a).fill(0),pe:range(d.a).map(()=>range(d.a).map(()=>({weights:[0,0],a:0,sum:0,wo:0,token:null,product:0,above:0,weightUsed:0}))),col:Array(d.a).fill(0),mem:range(d.a).map(()=>Array(2**d.oa).fill(null)),writes:range(d.k).map(()=>Array(d.m).fill(0)),oldOut:Array(d.a).fill(0),ptr:Array(d.a).fill(0),skew:range(d.a).map(i=>range(i).map(()=>({value:0,token:null}))),banks:emptyBanks(d),stalls:0,retries:0,reads:0,event:null};}
+function controls(s){const d=s.d,running=s.state==='RUN',hasNext=s.base+d.a<d.c*d.r*d.s,preload=running&&hasNext,load=s.state==='LOAD_WEIGHTS'||preload&&s.loadPhase==='SHIFT_WEIGHTS',readRow=load&&s.loadRow? s.loadRow-1:s.loadRow;return {running,clear:!running,hasNext,preload,load,readRow,writeBuffer:running?1-s.active:s.active,kernelRead:s.state==='PRIME'||s.state==='LOAD_WEIGHTS'||preload&&s.loadPhase!=='WEIGHTS_READY',term:(running?s.base+d.a:s.base)+readRow};}
+function step(s){if(s.finished)return s;const d=s.d,ctl=controls(s),old=s.pe,phase=s.state,b=s.banks,first=phase==='IDLE'&&!s.started,advance=ctl.running&&s.runCount<d.m+2*d.a&&(s.runCount>=d.m||b.ready[b.readSlot]),consume=advance&&s.runCount<d.m,activeRows=Math.min(d.a,d.c*d.r*d.s-s.base);
+ const vectors=range(d.a).map(i=>consume?b.values[b.readSlot][i]:{value:0,token:null}),activations=range(d.a).map(i=>i?s.skew[i][i-1]:vectors[i]);
+ const ev={state:phase,base:s.base,advance,consume,activations:clone(activations),writes:[],grants:[],retry:false,ctl,loadRow:s.loadRow,kernelAddr:ctl.term};
+ // SRAM read-modify-write captures the old memory before this edge's write.
+ const nextOld=s.oldOut.slice();for(let k=0;k<d.a;k++){const valid=advance&&k<d.k&&s.runCount>=k+d.a+1&&s.runCount-(k+d.a+1)<d.m,ptr=s.ptr[k],readPtr=ctl.clear?0:valid?ptr+1:ptr;nextOld[k]=s.mem[k]?.[readPtr]??0;if(valid){const before=s.mem[k][ptr],value=(s.col[k]+((s.base||d.continue)?s.oldOut[k]:0))|0;s.mem[k][ptr]=value;s.writes[k][ptr]++;ev.writes.push({k,addr:ptr,before,result:s.col[k],value});}s.ptr[k]=ctl.clear?0:valid?ptr+1:ptr;}s.oldOut=nextOld;
+ s.pe=old.map((row,i)=>row.map((pe,k)=>{const a=k?old[i][k-1].a:activations[i].value,above=i?old[i-1][k].sum:0,wi=i?(i<activeRows&&k<d.k?old[i-1][k].wo:0):(k<d.k?s.kernelData[k]:0),weights=pe.weights.slice();if(ctl.load)weights[ctl.writeBuffer]=wi;return {...pe,weights,a:ctl.clear?0:advance?a:pe.a,sum:ctl.clear?0:advance?(above+a*pe.weights[s.active])|0:pe.sum,wo:ctl.load?wi:pe.wo,token:ctl.clear?null:advance?(k?old[i][k-1].token:activations[i].token):pe.token,weightUsed:pe.weights[s.active],product:advance?a*pe.weights[s.active]:pe.product,above};}));
+ if(advance)s.col=old[d.a-1].map(pe=>pe.sum);
+ if(ctl.clear)s.skew=range(d.a).map(i=>range(i).map(()=>({value:0,token:null})));else if(advance)s.skew=range(d.a).map(i=>i?[clone(vectors[i]),...s.skew[i].slice(0,i-1)]:[]);
+ if(ctl.kernelRead)s.kernelData=range(d.a).map(k=>k<d.k&&ctl.term<d.c*d.r*d.s?(s.w[k*d.c*d.r*d.s+ctl.term]??0):0);
+ if(ctl.clear)s.banks=emptyBanks(d);else{
+  const next=clone(b),available=!b.occupied[b.issueSlot]||consume&&b.readSlot===b.issueSlot,enable=b.issue<d.m&&(b.active||available),req=range(d.a).map(i=>address(d,b.issue,s.base+i)),pending=range(d.a).map(i=>b.active?b.pending[i]:req[i].valid),readMap=new Map(),grant=Array(d.a).fill(false);
+  if(enable)for(let i=0;i<d.a;i++)if(pending[i]){const z=req[i];if(!readMap.has(z.bank)){readMap.set(z.bank,z.addr);grant[i]=true;}else if(readMap.get(z.bank)===z.addr)grant[i]=true;}
+  if(consume){next.ready[b.readSlot]=false;next.occupied[b.readSlot]=false;next.readSlot=1-b.readSlot;}
+  for(const z of b.response)next.values[b.responseSlot][z.row]={value:b.readData[z.bank],token:z};
+  if(b.responseFinal)next.ready[b.responseSlot]=true;
+  next.response=range(d.a).filter(i=>grant[i]).map(i=>({...req[i],row:i}));next.responseSlot=b.issueSlot;next.responseFinal=false;
+  if(enable){if(!b.active){next.occupied[b.issueSlot]=true;next.ready[b.issueSlot]=false;next.values[b.issueSlot]=range(d.a).map(()=>({value:0,token:null}));}next.pending=pending.map((v,i)=>v&&!grant[i]);if(!next.pending.some(Boolean)){next.active=false;next.issueSlot=1-b.issueSlot;next.issue++;if(!grant.some(Boolean))next.ready[b.issueSlot]=true;else next.responseFinal=true;}else next.active=true;}
+  for(const [bank,addr]of readMap){const z=req.find((z,i)=>grant[i]&&z.bank===bank);next.readData[bank]=s.layer?s.layer.input[bank][addr]:(s.x[xindex(d,z.n,z.c,z.h,z.w)]??0);ev.grants.push({bank,addr,value:next.readData[bank]});}
+  ev.retry=enable&&next.pending.some(Boolean);s.retries+=Number(ev.retry);s.reads+=readMap.size;if(!advance&&s.runCount<d.m)s.stalls++;s.banks=next;
+ }
+ const passDone=advance&&s.runCount===d.m+2*d.a-1,restart=first||passDone&&ctl.hasNext&&s.loadPhase==='WEIGHTS_READY';
+ if(restart){s.loadRow=d.a-1;s.loadPhase='PREFETCH';}else if(phase==='LOAD_WEIGHTS'){if(!s.loadRow){s.loadRow=d.a-1;s.loadPhase='PREFETCH';}else s.loadRow--;}else if(ctl.preload){if(s.loadPhase==='PREFETCH')s.loadPhase='SHIFT_WEIGHTS';else if(s.loadPhase==='SHIFT_WEIGHTS'){if(!s.loadRow)s.loadPhase='WEIGHTS_READY';else s.loadRow--;}}
+ if(ctl.clear)s.runCount=0;else if(advance)s.runCount++;
+ if(first){s.state='PRIME';s.started=true;}else if(phase==='PRIME')s.state='LOAD_WEIGHTS';else if(phase==='LOAD_WEIGHTS'&&ev.loadRow===0)s.state='RUN';else if(phase==='SWITCH_GROUP')s.state='RUN';else if(passDone){if(!ctl.hasNext){s.state='IDLE';s.finished=true;}else if(restart){s.base+=d.a;s.active=1-s.active;s.state='SWITCH_GROUP';}}
+ if(!first)s.cycles++;s.edge++;s.event=ev;return s;
+}
+function jobCycles(d){const s=create(d,Array(d.n*d.c*d.h*d.w).fill(0),Array(d.k*d.c*d.r*d.s).fill(0));while(!s.finished&&s.edge<=30000)step(s);if(!s.finished)throw Error('Core exceeds teaching clock limit.');return s.cycles;}
+root.CLEngine={defaults,create,step,controls,address,placement,reference,clone,range,xindex,windex,yindex,jobCycles};
+})(globalThis);
+
+</script><script>
+/* conv_accelerator's serialized edge FSM. The retained core models each job. */
+(function(root){
+'use strict';
+const E=CLEngine, min=Math.min;
+function config(raw){
+ const d={...E.defaults,...raw};
+ for(const key of Object.keys(E.defaults)){
+  const lo=key.startsWith('pad')?0:1,hi=['ia','oa','ka'].includes(key)?12:key==='a'?10:32;
+  if(!Number.isInteger(d[key])||d[key]<lo||d[key]>hi)throw Error(`${key}: enter an integer ${lo}–${hi}.`);
+ }
+ d.p=Math.floor((d.h+2*d.pad_i-d.dilation_i*(d.r-1)-1)/d.stride_i)+1;
+ d.q=Math.floor((d.w+2*d.pad_j-d.dilation_j*(d.s-1)-1)/d.stride_j)+1;
+ if(d.p<1||d.q<1)throw Error('The dilated kernel must fit the padded input.');
+ if(d.n*d.c*d.h*d.w>16384||d.k*d.c*d.r*d.s>16384||d.n*d.k*d.p*d.q>16384)throw Error('Use at most 16,384 elements per teaching tensor.');
+ d.ei=d.dilation_i*(d.r-1)+1;d.ej=d.dilation_j*(d.s-1)+1;
+ const T=d.r*d.s,Di=2**d.ia,Dw=2**d.ka,tr=Math.ceil(d.ei/d.r),tc=Math.ceil(d.ej/d.s);
+ d.tapMode=T>Dw||Math.ceil(T/d.a)*tr*tc>Di;
+ d.ct=d.tapMode?min(d.a,Dw):min(d.a,Math.floor(Dw/T),Math.floor(Math.floor(Di/(tr*tc))*d.a/T));
+ const groups=Math.ceil(d.ct*T/d.a),maxWidth=Math.floor(Di/(groups*tr))*d.s;
+ d.qt=min(2**d.oa,1+Math.floor(d.tapMode?(Di-1)/d.stride_j:(maxWidth-d.ej)/d.stride_j));
+ d.m=d.n*d.p*d.q;d.taps=d.r*d.s;
+ // Exactly the RTL loop order. This list is also the teaching timeline.
+ d.jobs=[];let reads=0,stores=0,busy=0,tiles=0;
+ for(let n=0;n<d.n;n++)for(let k=0;k<d.k;k+=d.a)for(let p=0;p<d.p;p++)for(let q=0;q<d.q;q+=d.qt){
+  const K=min(d.a,d.k-k),Q=min(d.qt,d.q-q);tiles++;stores+=K*Q;
+  for(let c=0;c<d.c;c+=d.ct)for(let t=0;t<(d.tapMode?d.taps:1);t++){
+   const C=min(d.ct,d.c-c),r=d.tapMode?Math.floor(t/d.s):0,s=d.tapMode?t%d.s:0;
+   const ri=p*d.stride_i-d.pad_i+(d.tapMode?r*d.dilation_i:0),rj=q*d.stride_j-d.pad_j+(d.tapMode?s*d.dilation_j:0);
+   const i=Math.max(0,ri),j=Math.max(0,rj),h=Math.max(0,min(d.h,ri+(d.tapMode?1:d.ei))-i),w=Math.max(0,min(d.w,rj+(Q-1)*d.stride_j+(d.tapMode?1:d.ej))-j);
+   const R=d.tapMode?1:d.r,S=d.tapMode?1:d.s,T=R*S,cycles=E.jobCycles({...d,n:1,c:C,k:K,h,w,r:R,s:S,p:1,q:Q,m:Q,pad_i:i-ri,pad_j:j-rj,continue:!!(c||r||s)});
+   const job={n,k,p,q,c,r,s,K,Q,C,R,S,i,j,h,w,pad_i:i-ri,pad_j:j-rj,continue:!!(c||r||s),tile:tiles-1,cycles};
+   d.jobs.push(job);reads+=C*h*w+K*C*R*S;busy+=cycles;
+   if(d.jobs.length>30000)throw Error('Use a smaller teaching layer.');
+  }
+ }
+ let cursor=2,previousTile=-1;
+ for(let z=0;z<d.jobs.length;z++){
+  const j=d.jobs[z];if(j.tile!==previousTile){cursor++;previousTile=j.tile;}
+  j.beginEdge=cursor;cursor+=1+2*(j.C*j.h*j.w+j.K*j.C*j.R*j.S)+1;j.startEdge=cursor;
+  cursor+=j.cycles+1;j.endEdge=cursor;
+  if(z===d.jobs.length-1||d.jobs[z+1].tile!==j.tile)cursor+=2*j.K*j.Q+1;
+ }
+ d.total=1+2*tiles+3*d.jobs.length+busy+2*(reads+stores);d.reads=reads;d.stores=stores;d.tiles=tiles;d.coreCycles=busy;
+ if(d.total>30000)throw Error(`Teaching limit: ${d.total.toLocaleString()} clocks exceeds 30,000.`);
+ return d;
+}
+function localConfig(d,j){const m=j.Q,taps=j.R*j.S;return {...d,_local:true,n:1,c:j.C,k:j.K,h:j.h,w:j.w,r:j.R,s:j.S,p:1,q:j.Q,pad_i:j.pad_i,pad_j:j.pad_j,m,taps,run:m+2*d.a,total:j.cycles,continue:j.continue,jobs:undefined};}
+function prepare(s){
+ const L=s.layer,d=L.d,j=d.jobs[L.job],ld=localConfig(d,j),oldPE=s.pe;
+ const xx=E.range(j.C*j.h*j.w).map(i=>{const c=Math.floor(i/(j.h*j.w)),h=Math.floor(i/j.w)%j.h,w=i%j.w,z=E.placement(ld,c,h,w);return L.input[z.bank][z.addr];});
+ const ww=E.range(j.K*j.C*j.R*j.S).map(i=>L.kernel[Math.floor(i/(j.C*j.R*j.S))][i%(j.C*j.R*j.S)]);
+ const next=E.create(ld,xx.map(v=>v??0),ww.map(v=>v??0));
+ Object.assign(s,next);if(oldPE)s.pe=oldPE.map(row=>row.map(pe=>({...pe,a:0,sum:0,token:null,product:0,above:0,weightUsed:0})));
+ s.x=xx;s.w=ww;s.mem=L.output;s.layer=L;s.finished=false;L.coreDone=false;L.localJob=L.job;
+ L.bank=0;L.word=0;
+}
+function create(raw,x,w){
+ const d=config(raw);
+ for(const [name,arr,len]of [['Input',x,d.n*d.c*d.h*d.w],['Kernel',w,d.k*d.c*d.r*d.s]])
+  if(arr.length!==len||arr.some(v=>!Number.isInteger(v)||v< -128||v>127))throw Error(`${name}: provide ${len} signed 8-bit integers (−128…127).`);
+ const banks=bits=>E.range(d.a).map(()=>Array(2**bits).fill(null));
+ const L={d,X:[...x],W:[...w],expected:E.reference(d,x,w),result:Array(d.n*d.k*d.p*d.q).fill(null),storeCounts:Array(d.n*d.k*d.p*d.q).fill(0),input:banks(d.ia),kernel:banks(d.ka),output:banks(d.oa),inputOrigin:banks(d.ia),kernelOrigin:banks(d.ka),state:'IDLE',job:0,bank:0,word:0,coreDone:false,reads:0,stores:0,completed:0,event:null,readData:null,readOutput:null};
+ // Stable, nonoverlapping teaching bases. RTL bases are runtime word addresses.
+ L.inputBase=0;L.kernelBase=x.length+64;L.outputBase=L.kernelBase+w.length+64;
+ const s={layer:L};prepare(s);s.edge=0;s.cycles=0;return s;
+}
+function step(s){
+ if(s.finished)return s;
+ const edge=s.edge,cycles=s.cycles,L=s.layer,d=L.d,j=d.jobs[L.job],phase=L.state,b=L.bank,a=L.word;
+ L.event={state:phase,job:L.job,bank:b,word:a};
+ if((phase!=='WAIT_CORE'||L.coreDone)&&phase!=='START_CORE'){
+  s.event=null;
+  s.pe=s.pe.map(row=>row.map(pe=>({...pe,a:0,sum:0,token:null,product:0,above:0,weightUsed:0})));
+ }
+ switch(phase){
+ case 'IDLE':L.state='SETUP';break;
+ case 'SETUP':L.state='PLAN_TILE';break;
+ case 'PLAN_TILE':L.state='PREPARE';break;
+ case 'PREPARE':prepare(s);L.state=j.h&&j.w?'INPUT_READ':'KERNEL_READ';break;
+ case 'INPUT_READ':{
+  const h=j.i+Math.floor(a/j.w),w=j.j+a%j.w,index=E.xindex(d,j.n,j.c+b,h,w);
+  L.readData=L.X[index];Object.assign(L.event,{address:L.inputBase+index,value:L.readData,kind:'input',coords:[j.n,j.c+b,h,w]});L.readCoords=L.event.coords;L.reads++;L.state='INPUT_WRITE';break;
+ }
+ case 'INPUT_WRITE':{
+  const z=E.placement(s.d,b,Math.floor(a/j.w),a%j.w);
+  L.input[z.bank][z.addr]=L.readData;L.inputOrigin[z.bank][z.addr]=L.readCoords;s.x[b*j.h*j.w+a]=L.readData;Object.assign(L.event,{bank:z.bank,word:z.addr,value:L.readData,kind:'input'});
+  if(++L.word===j.h*j.w){L.word=0;if(++L.bank===j.C){L.bank=0;L.state='KERNEL_READ';break;}}L.state='INPUT_READ';break;}
+ case 'KERNEL_READ':{
+  const c=j.c+Math.floor(a/(j.R*j.S)),r=d.tapMode?j.r:Math.floor(a/j.S)%j.R,t=d.tapMode?j.s:a%j.S,index=E.windex(d,j.k+b,c,r,t);
+  L.readData=L.W[index];Object.assign(L.event,{address:L.kernelBase+index,value:L.readData,kind:'kernel',coords:[j.k+b,c,r,t]});L.readCoords=L.event.coords;L.reads++;L.state='KERNEL_WRITE';break;
+ }
+ case 'KERNEL_WRITE':
+  L.kernel[b][a]=L.readData;L.kernelOrigin[b][a]=L.readCoords;s.w[b*j.C*j.R*j.S+a]=L.readData;Object.assign(L.event,{value:L.readData,kind:'kernel'});
+  if(++L.word===j.C*j.R*j.S){L.word=0;if(++L.bank===j.K){L.bank=0;L.state='START_CORE';break;}}L.state='KERNEL_READ';break;
+ case 'START_CORE':
+  s.expected=E.reference(s.d,s.x,s.w);E.step(s);L.state='WAIT_CORE';break;
+ case 'WAIT_CORE':
+  if(L.coreDone){
+   L.completed++;const next=d.jobs[L.job+1];
+   if(next&&next.tile===j.tile){L.job++;L.state='PREPARE';}
+   else{L.bank=0;L.word=0;L.state='OUTPUT_READ';}
+  }else{E.step(s);if(s.finished){L.coreDone=true;s.finished=false;}}
+  break;
+ case 'OUTPUT_READ':L.readOutput=L.output[b][a];Object.assign(L.event,{value:L.readOutput,kind:'output'});L.state='OUTPUT_WRITE';break;
+ case 'OUTPUT_WRITE':{
+  const index=E.yindex(d,j.n,j.k+b,j.p,j.q+a);L.result[index]=L.readOutput;L.storeCounts[index]++;L.stores++;
+  Object.assign(L.event,{address:L.outputBase+index,value:L.readOutput,kind:'output',coords:[j.n,j.k+b,j.p,j.q+a]});
+  if(++L.word===j.Q){L.word=0;if(++L.bank===j.K){L.bank=0;L.state='NEXT_TILE';break;}}L.state='OUTPUT_READ';break;
+ }
+ case 'NEXT_TILE':if(L.job+1===d.jobs.length){s.finished=true;L.state='IDLE';}else{L.job++;L.state='PLAN_TILE';}break;
+ }
+ s.edge=edge+1;s.cycles=phase==='IDLE'&&edge===0?0:cycles+1;return s;
+}
+function check(s){const L=s.layer,bad=L.result.filter((v,i)=>v!==L.expected[i]).length;return {written:L.stores,bad,ok:s.finished&&!bad&&L.storeCounts.every(v=>v===1)};}
+function partialReference(s,k,pos){
+ const L=s.layer,d=L.d,j=d.jobs[L.localJob];let sum=0;
+ const currentWrites=s.writes[k][pos];
+ if(!currentWrites&&!j.continue)return null;
+ for(let c=0;c<j.c+j.C;c++)for(let r=0;r<d.r;r++)for(let t=0;t<d.s;t++){
+  if(c>=j.c){const tap=r*d.s+t;if(d.tapMode?(tap>j.r*d.s+j.s||tap===j.r*d.s+j.s&&!currentWrites):(c-j.c)*j.R*j.S+tap>=currentWrites*d.a)continue;}
+  const h=j.p*d.stride_i+r*d.dilation_i-d.pad_i,w=(j.q+pos)*d.stride_j+t*d.dilation_j-d.pad_j;
+  if(h>=0&&h<d.h&&w>=0&&w<d.w)sum=(sum+L.X[E.xindex(d,j.n,c,h,w)]*L.W[E.windex(d,j.k+k,c,r,t)])|0;
+ }
+ return sum;
+}
+root.CLTiled={config,create,step,check,partialReference,output:s=>s.layer.result.slice()};
+})(globalThis);
+
+</script><script>
+/* Both tabs inspect one clocked model. Only the detail tab draws individual PEs. */
+let activeView='schedule';
+const scheduleStages=[['Plan',['IDLE','SETUP','PLAN_TILE','PREPARE']],['Input DMA',['INPUT_READ','INPUT_WRITE']],['Kernel DMA',['KERNEL_READ','KERNEL_WRITE']],['Convolve tile',['START_CORE','WAIT_CORE']],['Output DMA',['OUTPUT_READ','OUTPUT_WRITE']],['Advance',['NEXT_TILE']]];
+function scheduleStage(){return sim.finished?'Done':scheduleStages.find(([,states])=>states.includes(sim.layer.state))[0];}
+function nextScheduleStage(){if(!valid||sim.finished)return;pause();const stage=scheduleStage();do{clockEdge(sim);}while(!sim.finished&&scheduleStage()===stage);render();}
+function render(animate=false){
+ x=sim.x;w=sim.w;
+ if(activeView==='convolution'){renderLocal(animate);renderDataPath();}
+ const L=sim.layer,d=L.d,j=d.jobs[L.job];
+ $('shapeSummary').textContent=`${d.n}×${d.c}×${d.h}×${d.w} → ${d.n}×${d.k}×${d.p}×${d.q} · ${d.a}×${d.a} array`;
+ $('capacity').innerHTML=[`Input ${2**d.ia}`,`Output ${2**d.oa}`,`Kernel ${2**d.ka}`].map(v=>`<span>${v} words / bank</span>`).join('');
+ $('clock').textContent=sim.cycles;$('clockTotal').textContent=`/ ${d.total}`;$('edge').textContent=sim.edge;$('seek').max=d.total+1;$('seek').value=sim.edge;
+ $('phasebar').innerHTML=['IDLE','SETUP','PLAN_TILE','PREPARE','INPUT_READ','INPUT_WRITE','KERNEL_READ','KERNEL_WRITE','START_CORE','WAIT_CORE','OUTPUT_READ','OUTPUT_WRITE','NEXT_TILE'].map(v=>`<span class="${L.state===v?'active':''}">${v}${v==='WAIT_CORE'?' · '+sim.state:''}</span>`).join('');
+ $('runLabel').textContent=`Job ${L.job+1}/${d.jobs.length} · tile ${j.tile+1}/${d.tiles}${activeView==='convolution'?` · CRS group ${Math.floor(sim.base/sim.d.a)+1}`:''}${sim.finished?' · done':''}`;
+ for(const id of ['play','step','nextState','nextStage','nextTap','finish'])$(id).disabled=!valid||sim.finished;
+ $('back').disabled=!valid||sim.edge===0;$('seek').disabled=!valid;
+ const summary=`n${j.n} · k ${j.k}–${j.k+j.K-1} · p${j.p} · q ${j.q}–${j.q+j.Q-1} · c ${j.c}–${j.c+j.C-1}${d.tapMode?` · global tap (${j.r},${j.s})`:''}`;
+ const resident=L.d.jobs[L.localJob],localSummary=`n${resident.n} · k ${resident.k}–${resident.k+resident.K-1} · p${resident.p} · q ${resident.q}–${resident.q+resident.Q-1} · c ${resident.c}–${resident.c+resident.C-1}${d.tapMode?` · global tap (${resident.r},${resident.s})`:""}`;
+ $('tilingOverview').innerHTML=`<b>Resident tile ${resident.tile+1} · local job ${L.localJob+1} · ${L.state}</b><p>${localSummary}</p><p>Local N=P=1 · ${resident.C} rows × ${resident.K} columns · patch ${resident.h}×${resident.w}, origin (${resident.i},${resident.j}), padding (${resident.pad_i},${resident.pad_j}) · continue_sum=${Number(resident.continue)}.</p><p>Tensor coordinates below are local; hover any linked value for full-layer coordinates. During DMA, unwritten SRAM contains retained or unknown data.</p>`;
+ if(activeView==='convolution'){
+  $('tapBadge').textContent=`CRS group ${Math.floor(sim.base/sim.d.a)+1}/${Math.ceil(sim.d.c*sim.d.r*sim.d.s/sim.d.a)}`;
+  $('result').textContent=`Resident sums · ${resident.continue?'continuing this tile':'initial contribution'} · ${sim.writes.flat().reduce((a,b)=>a+b,0)} writes in this job`;
+  if(L.state!=='WAIT_CORE'&&L.state!=='START_CORE'){$('storyTitle').textContent=L.state;$('storyText').textContent='The core is idle while the accelerator transfers or plans this tile. Local memories retain their contents.';}
+  $('arraySubtitle').textContent=`Physical ${d.a}×${d.a} · row i maps to CRS term ${sim.base}+i; column k maps to global k=${resident.k}+column`;
+ }else renderSchedule(summary);
+}
+function renderSchedule(summary){
+ const s=sim,L=s.layer,d=L.d,j=d.jobs[L.job],e=L.event;
+ $('scheduleOverview').innerHTML=`<div class="eyebrow">FULL LAYER / HARDWARE-OWNED TILING</div><h2>${sim.finished?'Layer complete':`Tile ${j.tile+1} of ${d.tiles} · job ${L.job+1} of ${d.jobs.length}`}</h2><p>${summary}</p><div class="capacity"><span>${d.tapMode?'One-tap fallback':'Full-kernel jobs'}</span><span>Ct ≤ ${d.ct} · Kt ≤ ${d.a} · Qt ≤ ${d.qt}</span><span>${L.completed}/${d.jobs.length} jobs complete</span><span>${L.reads}/${d.reads} reads · ${L.stores}/${d.stores} stores</span></div><p>Loop order: image → output-channel block → output row → output-column block → input-channel block${d.tapMode?' → kernel tap':''}. SRAM sums remain resident until all contributions complete.</p>`;
+ renderTileSelection();
+ const current=L.state,groups=scheduleStages;
+ $('scheduleProcess').innerHTML=`<div class="tile-process">${groups.map(([name,states])=>`<div class="process-card ${states.includes(current)?'current':''}"><b>${name}</b><span>${name==='Convolve tile'?`1×${j.C}×${j.h}×${j.w}<br>⊛ ${j.K}×${j.C}×${j.R}×${j.S}<br>→ 1×${j.K}×1×${j.Q}`:name==='Input DMA'?`${j.C*j.h*j.w} words`:name==='Kernel DMA'?`${j.K*j.C*j.R*j.S} words`:name==='Output DMA'?`${j.K*j.Q} final words`:name==='Advance'?`Tile ${j.tile+1}/${d.tiles}`:'Clip · select blocks'}</span></div>`).join('')}</div><p class="transfer-detail"><b>${current}${current==='WAIT_CORE'?` · ${s.state}`:''}</b> · ${e?`Last edge: ${e.state}${e.address!==undefined?` · backing @${e.address} ${e.kind==='output'?'←':'→'} ${e.value}`:e.kind?` · local ${e.kind} bank ${e.bank} @${e.word} · ${e.value}`:''}`:'Step to accept the layer start.'}</p><p>Local patch: ${j.h}×${j.w} at (${j.i},${j.j}); local pad (${j.pad_i},${j.pad_j}). ${!j.h||!j.w?'Entirely padded: input DMA skipped.':''} ${j.continue?'Continue resident partial sums.':'Initialize output sums.'}</p><div class="meter"><div style="width:${100*Math.min(s.cycles,d.total)/d.total}%"></div></div><p>${current==='WAIT_CORE'?`Abstract convolution job: ${Math.min(s.edge-j.startEdge,j.cycles)} / ${j.cycles} clocks. Open Current tile convolution to inspect the array.`:'Reads request on one edge; writes consume on the next. Transfers and computation are serialized.'}</p>`;
+ const pages=Math.ceil(d.jobs.length/20),old=Number($('jobPage').value||0);
+ if($('jobPage').options.length!==pages)$('jobPage').innerHTML=range(pages).map(i=>`<option value="${i}">${i*20+1}–${Math.min(d.jobs.length,(i+1)*20)}</option>`).join('');
+ const page=Number($('jobPage').dataset.manual==='true'?old:Math.floor(L.job/20));$('jobPage').value=page;
+ $('jobTimeline').innerHTML=rows(['Job / seek','Tile','n · k · p · q','C block','Taps','Local patch','Sum','State'],d.jobs.slice(page*20,page*20+20).map((v,i)=>{const z=page*20+i;return [`<button data-job="${z}" ${z===L.job?'aria-current="step"':''}>${z+1}${z===L.job?' ◀':''}</button>`,v.tile+1,`${v.n} · ${v.k}…${v.k+v.K-1} · ${v.p} · ${v.q}…${v.q+v.Q-1}`,`${v.c}…${v.c+v.C-1}`,d.tapMode?`${v.r},${v.s}`:`${d.r}×${d.s}`,`${v.h}×${v.w}`,v.continue?'add':'init',z<L.completed?'done':z===L.job?current:'pending'];}));
+ for(const [id,count]of [['layerImage',d.n],['layerChannel',d.c],['layerFilter',d.k]])if($(id).options.length!==count)$(id).innerHTML=range(count).map(i=>`<option>${i}</option>`).join('');
+ const n=Number($('layerImage').value),c=Number($('layerChannel').value),k=Number($('layerFilter').value),grid=(h,w,fn)=>`<div class="global-grid-scroll"><div class="global-grid" style="grid-template-columns:repeat(${w},minmax(35px,1fr))">${range(h*w).map(i=>fn(Math.floor(i/w),i%w)).join('')}</div></div>`;
+ $('layerMemory').innerHTML=`<div class="module-grid"><div><h3>Backing input X[${n},${c},:,:]</h3>${grid(d.h,d.w,(h,w)=>{const idx=E.xindex(d,n,c,h,w),inside=n===j.n&&c>=j.c&&c<j.c+j.C&&h>=j.i&&h<j.i+j.h&&w>=j.j&&w<j.j+j.w;return `<span class="cell ${inside?'tile-source':''} ${e?.kind==='input'&&e.address===L.inputBase+idx?'fresh':''}" title="X[${n},${c},${h},${w}] · backing @${L.inputBase+idx}">${L.X[idx]}</span>`;})}</div><div><h3>Backing output Y[${n},${k},:,:]</h3>${grid(d.p,d.q,(p,q)=>{const idx=E.yindex(d,n,k,p,q),inside=n===j.n&&k>=j.k&&k<j.k+j.K&&p===j.p&&q>=j.q&&q<j.q+j.Q;return `<span class="cell ${inside?'tile-output':''} ${L.result[idx]!==null?'written':''} ${e?.state==='OUTPUT_WRITE'&&e.address===L.outputBase+idx?'fresh':''}" title="Y[${n},${k},${p},${q}] · backing @${L.outputBase+idx} · ref ${L.expected[idx]}">${fmt(L.result[idx])}</span>`;})}</div></div><p id="layerResult">${s.finished?(T.check(s).ok?`✓ All ${L.result.length} outputs match the reference.`:'Output mismatch.'):`${L.stores}/${L.result.length} final stores committed; partial sums stay in local SRAM.`}</p><p class="small muted">Word bases: input ${L.inputBase} · kernel ${L.kernelBase} · output ${L.outputBase}. Teaching bases include 64-word gaps. Source defaults A4 and 256 words per bank remain available; the tiling presets use smaller builds to expose boundaries.</p>`;
+}
+function setView(view){
+ activeView=view;$('scheduleView').hidden=view!=='schedule';$('convolutionView').hidden=view!=='convolution';
+ $('scheduleTab').setAttribute('aria-selected',view==='schedule');$('convolutionTab').setAttribute('aria-selected',view==='convolution');
+ // Floating windows are positioned against the page; hide them with their tab.
+ document.body.classList.toggle('schedule-view',view==='schedule');render();
+}
+document.addEventListener('DOMContentLoaded',()=>{
+ document.body.classList.add('schedule-view');
+ $('scheduleTab').onclick=()=>setView('schedule');$('convolutionTab').onclick=()=>setView('convolution');
+ for(const id of ['layerImage','layerChannel','layerFilter'])$(id).onchange=()=>render();
+ $('nextStage').onclick=nextScheduleStage;
+ $('scheduleSpread').onchange=()=>{selectionKey='';render();};
+ $('previousBlock').onclick=()=>seek(sim.layer.d.jobs[Math.max(0,sim.layer.job-1)].beginEdge+1);
+ $('nextBlock').onclick=()=>seek(sim.layer.d.jobs[Math.min(sim.layer.d.jobs.length-1,sim.layer.job+1)].beginEdge+1);
+ document.addEventListener('click',ev=>{const button=ev.target.closest('[data-schedule-front]'),plane=ev.target.closest('.schedule-channel-plane');if(button){selectionFront=Number(button.dataset.scheduleFront);const L=sim.layer,j=L.d.jobs[L.job];selectionFronts.x[j.n]=selectionFront;for(let k=j.k;k<j.k+j.K;k++)selectionFronts.w[k]=selectionFront;}else if(plane){const kind=plane.dataset.kind,id=Number(plane.dataset.id),channel=Number(plane.dataset.channel);selectionFronts[kind][id]=channel;if(kind!=='y')selectionFront=channel;}else return;selectionKey='';outputSelectionKey='';render();});
+ $('jobPage').onchange=()=>{$('jobPage').dataset.manual='true';render();};
+ document.addEventListener('click',ev=>{const b=ev.target.closest('[data-job]');if(b){$('jobPage').dataset.manual='false';seek(sim.layer.d.jobs[Number(b.dataset.job)].beginEdge+1);}});
+ document.querySelector('.view-tabs').addEventListener('keydown',ev=>{if(ev.key==='ArrowRight'||ev.key==='ArrowLeft'){ev.preventDefault();setView(activeView==='schedule'?'convolution':'schedule');$(activeView==='schedule'?'scheduleTab':'convolutionTab').focus();}});
+});
+
+// The same stacked 2D channel-plane method used by the detailed tap view,
+// applied to full-layer coordinates and the accelerator's actual DMA blocks.
+let selectionLayer=null,selectionJob=-1,selectionFront=0,selectionKey='',outputSelectionKey='',selectionFronts={x:{},w:{},y:{}};
+function resetSelectionFronts(){selectionLayer=null;selectionJob=-1;selectionKey=outputSelectionKey='';selectionFronts={x:{},w:{},y:{}};}
+function tileSourceSelected(d,j,kind,id,c,i,v){
+ if(kind==='y')return id===j.n&&c>=j.k&&c<j.k+j.K&&i===j.p&&v>=j.q&&v<j.q+j.Q;
+ if(c<j.c||c>=j.c+j.C)return false;
+ return kind==='x'?id===j.n&&i>=j.i&&i<j.i+j.h&&v>=j.j&&v<j.j+j.w:
+  id>=j.k&&id<j.k+j.K&&(!d.tapMode||i===j.r&&v===j.s);
+}
+function selectedOutputValue(n,k,p,q){
+ const L=sim.layer,d=L.d,j=d.jobs[L.job],stored=L.result[E.yindex(d,n,k,p,q)];
+ if(stored!==null)return {value:stored,status:'stored final output'};
+ const resident=d.jobs[L.localJob],localK=k-j.k,localQ=q-j.q;
+ if(tileSourceSelected(d,j,'y',n,k,p,q)&&resident.tile===j.tile&&(resident.continue||sim.writes[localK]?.[localQ]>0))return {value:sim.mem[localK][localQ],status:'resident partial sum'};
+ return {value:null,status:'not written for this output tile'};
+}
+function tileStackSVG(kind,id,front,spread){
+ const L=sim.layer,d=L.d,j=d.jobs[L.job],input=kind==='x',output=kind==='y',channels=output?d.k:d.c,
+  h=input?d.h:output?d.p:d.r,wid=input?d.w:output?d.q:d.s,
+  cell=Math.max(22,Math.min(34,240/Math.max(h,wid))),dx=spread?wid*cell+30:28,dy=spread?0:24,
+  sw=wid*cell+(channels-1)*dx+12,sh=h*cell+(spread?0:(channels-1)*dy)+36,
+  color=c=>`hsl(${((input?180:output?270:20)+id*137+c*37)%360} 62% ${76+(c%2)*5}%)`,
+  order=range(channels).reverse().filter(c=>c!==front);
+ order.push(front);
+ let html=`<svg class="tensor-stack schedule-stack" width="${sw}" height="${sh}" viewBox="0 0 ${sw} ${sh}" role="img" aria-label="Full ${input?'input image':output?'output image':'kernel filter'} ${id}; grey cells ${output?'receive contributions from':'are selected for'} job ${L.job+1}">`;
+ for(const c of order){
+  const ox=6+c*dx,oy=28+(spread?0:(channels-1-c)*dy),selectedPlane=output?id===j.n&&c>=j.k&&c<j.k+j.K:c>=j.c&&c<j.c+j.C&&(input?id===j.n:id>=j.k&&id<j.k+j.K);
+  html+=`<g class="schedule-channel-plane" data-kind="${kind}" data-id="${id}" data-channel="${c}" data-selected="${selectedPlane}" data-schedule-front-plane="${c===front}"><rect x="${ox-2}" y="${oy-23}" width="90" height="20" rx="4" fill="${color(c)}" stroke="${selectedPlane?'#173c46':'#829291'}" stroke-width="${selectedPlane?2:1}"/><text x="${ox+5}" y="${oy-9}" font-size="11" font-weight="700" fill="#173c46">${output?'k':'c'} = ${c}${selectedPlane?' · tile':''}${c===front?' ◀':''}</text>`;
+  for(let i=0;i<h;i++)for(let v=0;v<wid;v++){
+   const used=tileSourceSelected(d,j,kind,id,c,i,v),datum=output?selectedOutputValue(id,c,i,v):null,
+    value=input?L.X[E.xindex(d,id,c,i,v)]:output?datum.value:L.W[E.windex(d,id,c,i,v)],cx=ox+v*cell,cy=oy+i*cell,
+    coords=`${input?'X':output?'Y':'W'}[${id},${c},${i},${v}]`,status=output?datum.status:used?'selected tile source':'outside this job';
+   html+=`<g><title>${coords} = ${fmt(value)} · ${status}${output&&used?' · current output tile':''}</title><rect class="schedule-tensor-cell ${used?'tap-used':''}" data-kind="${kind}" data-id="${id}" data-c="${c}" data-i="${i}" data-j="${v}" ${output?`data-status="${status}"`:''} x="${cx}" y="${cy}" width="${cell}" height="${cell}" fill="${used?'#d9dde0':color(c)}" stroke="${used?'#677a83':'#556b6a'}" stroke-width="1"/><text x="${cx+cell/2}" y="${cy+cell/2+4}" text-anchor="middle" font-family="ui-monospace,Consolas,monospace" font-size="${output?9:value<-99?10:12}" font-weight="${used?700:500}" fill="#203d45">${fmt(value)}</text></g>`;
+  }
+  html+=`<rect x="${ox}" y="${oy}" width="${wid*cell}" height="${h*cell}" fill="none" stroke="${selectedPlane?'#173c46':'#607873'}" stroke-width="${selectedPlane?2:1}"/></g>`;
+ }
+ return html+'</svg>';
+}
+function selectionGallery(kind,count,spread){
+ const L=sim.layer,d=L.d,j=d.jobs[L.job],output=kind==='y',input=kind==='x';
+ return range(count).map(id=>{const selected=kind==='w'?id>=j.k&&id<j.k+j.K:id===j.n,front=selectionFronts[kind][id]??0;return `<div class="stack-card ${selected?'tile-selected-card':''}" data-tensor-id="${id}"><h4>${input?'Image n':output?'Output n':'Filter k'} = ${id}<small>${selected?'Selected · ':''}${output?d.k:d.c} ${output?'output':'input'} channels · ${input?d.h:output?d.p:d.r} × ${input?d.w:output?d.q:d.s}</small></h4><div class="stack-scroll">${tileStackSVG(kind,id,front,spread)}</div></div>`;}).join('');
+}
+function keepSelectionVisible(id){
+ const gallery=$(id),chosen=gallery.querySelector('.tile-selected-card');
+ gallery.scrollTop=chosen?chosen.offsetTop-gallery.firstElementChild.offsetTop:0;
+ // Only selected tensor cards follow the active block. Unrelated cards retain
+ // their own front channels and are not scrolled to the active channel.
+ for(const box of gallery.querySelectorAll('.tile-selected-card .stack-scroll')){
+  const plane=box.querySelector('[data-schedule-front-plane="true"]'),rect=plane?.firstElementChild;
+  if(rect){box.scrollLeft=Math.max(0,Number(rect.getAttribute('x'))-4);box.scrollTop=Math.max(0,Number(rect.getAttribute('y'))-4);}
+ }
+}
+function renderTileSelection(){
+ const L=sim.layer,d=L.d,j=d.jobs[L.job];
+ if(selectionLayer!==L||selectionJob!==L.job){
+  selectionLayer=L;selectionJob=L.job;selectionFront=j.c;selectionKey=outputSelectionKey='';
+  selectionFronts.x[j.n]=j.c;for(let k=j.k;k<j.k+j.K;k++)selectionFronts.w[k]=j.c;selectionFronts.y[j.n]=j.k;
+ }
+ const spread=$('scheduleSpread').checked,key=`${L.job}:${selectionFront}:${JSON.stringify(selectionFronts)}:${spread}`,
+  outputKey=`${key}:${sim.writes.flat().reduce((a,b)=>a+b,0)}:${L.stores}`;
+ $('previousBlock').disabled=!valid||L.job===0;$('nextBlock').disabled=!valid||L.job===d.jobs.length-1;
+ if(outputKey!==outputSelectionKey){
+  outputSelectionKey=outputKey;$('scheduleOutputStacks').innerHTML=selectionGallery('y',d.n,spread);keepSelectionVisible('scheduleOutputStacks');
+ }
+ if(key===selectionKey)return;
+ selectionKey=key;
+ $('tileSelectionLabel').textContent=`Image ${j.n} · input channels ${j.c}–${j.c+j.C-1} · filters ${j.k}–${j.k+j.K-1} → output Y[${j.n}, ${j.k}…${j.k+j.K-1}, ${j.p}, ${j.q}…${j.q+j.Q-1}]${d.tapMode?` · tap (${j.r},${j.s})`:''}`;
+ $('scheduleChannels').innerHTML=range(d.c).map(c=>`<button data-schedule-front="${c}" aria-pressed="${c===selectionFront}" class="${c>=j.c&&c<j.c+j.C?'selected-channel':''}">c${c}${c>=j.c&&c<j.c+j.C?' · tile':''}</button>`).join('');
+ $('scheduleInputStacks').innerHTML=selectionGallery('x',d.n,spread);$('scheduleKernelStacks').innerHTML=selectionGallery('w',d.k,spread);
+ $('selectionPadding').textContent=(j.h&&j.w?`Grey input cells: clipped rows ${j.i}–${j.i+j.h-1}, columns ${j.j}–${j.j+j.w-1}. Grey kernel cells: ${d.tapMode?'this single tap':'all taps'} in the selected input channels and filters.`:'Entirely padded patch: no input cells are transferred; selected kernel weights multiply generated zeros.')+' Grey output cells mark the region receiving this job’s contribution. Values show resident partial sums or stored final outputs; — means this output has not been written.';
+ keepSelectionVisible('scheduleInputStacks');keepSelectionVisible('scheduleKernelStacks');
+}
+
+</script><script>
+/* CL presentation: CRS rows and real stalled clocks, without changing the model. */
+let tensorFront=0,matrixPage=0,kernelPageCL=0;
+const weightOrigins=new WeakMap(),bankObservations=new WeakMap();
+function termCoord(d,t){return {c:Math.floor(t/(d.r*d.s)),r:Math.floor(t/d.s)%d.r,s:t%d.s};}
+function activeRows(s){return Math.max(0,Math.min(s.d.a,s.d.c*s.d.r*s.d.s-s.base));}
+function clockEdge(s){
+ const d=s.d,b=s.banks,previous=weightOrigins.get(s)??E.range(d.a).map(()=>E.range(d.a).map(()=>null)),snapshot={base:s.base,count:s.runCount,issue:b.issue,issueSlot:b.issueSlot,readSlot:b.readSlot,active:b.active,pending:[...b.pending],occupied:[...b.occupied],ready:[...b.ready],returns:E.clone(b.response),responseSlot:b.responseSlot,readData:[...b.readData],requests:E.range(d.a).map(i=>E.address(d,b.issue,s.base+i))};
+ T.step(s);const e=s.event;
+ bankObservations.set(s,e?.state==='RUN'?snapshot:null);
+ if(e?.ctl.load){const base=e.base+(e.ctl.running?d.a:0),rows=Math.min(d.a,d.c*d.r*d.s-e.base),job=s.layer.d.jobs[s.layer.localJob];
+  weightOrigins.set(s,E.range(d.a).map(i=>E.range(d.a).map(k=>{if(k>=d.k||i>=rows)return null;if(i)return previous[i-1][k];const t=base+e.loadRow;if(t>=d.c*d.r*d.s)return null;const z=termCoord(d,t);return {...z,k,global:[job.k+k,job.c+z.c,s.layer.d.tapMode?job.r:z.r,s.layer.d.tapMode?job.s:z.s]};})));
+ }
+ x=s.x;w=s.w;
+}
+function currentActivation(s,i,k=0){
+ if(s.state!=='RUN')return null;const pos=s.runCount-1-i-k;
+ if(pos<0||pos>=s.d.m||i>=activeRows(s))return null;
+ return {...E.address(s.d,pos,s.base+i),value:s.pe[i][k].a,row:i};
+}
+function operandQueues(s,limit=4){
+ const d=s.d,result={limit,inputs:E.range(d.a).map(()=>[]),weights:E.range(d.a).map(()=>[]),inputRemaining:Array(d.a).fill(0),weightRemaining:0};
+ if(s.finished||s.layer.state!=='WAIT_CORE'||s.layer.coreDone)return result;
+ const future=E.clone({...s,layer:undefined}),base=s.base;let weightGroup=null;
+ for(let after=1;after<=(d.a+limit+3)*(d.a+4);after++){
+  const count=future.runCount;E.step(future);const e=future.event;if(e.base!==base)break;
+  if(e.advance)for(let i=0;i<Math.min(d.a,d.c*d.r*d.s-base);i++){
+   const pos=count-i;if(pos<0||pos>=d.m||result.inputs[i].length>=limit)continue;
+   result.inputs[i].push({...E.address(d,pos,base+i),value:future.pe[i][0].a,after,row:i});
+  }
+  if(e.ctl.load){const group=e.base+(e.ctl.running?d.a:0),key=`${group}:${e.ctl.writeBuffer}`;if(weightGroup===null)weightGroup=key;
+   if(key===weightGroup)for(let k=0;k<d.k;k++){if(result.weights[k].length>=limit)continue;const term=group+e.loadRow,z=termCoord(d,term);result.weights[k].push({...z,value:future.pe[0][k].wo,k,term,row:e.loadRow,buffer:e.ctl.writeBuffer,masked:term>=d.c*d.r*d.s,after});}
+  }
+  if(future.finished)break;
+ }
+ for(let i=0;i<d.a;i++)result.inputRemaining[i]=result.inputs[i].length?d.m-result.inputs[i][0].pos:0;
+ result.weightRemaining=result.weights[0]?.length?result.weights[0][0].row+1:0;return result;
+}
+function inputQueueHTML(i,forecast){const list=forecast.inputs[i],remaining=forecast.inputRemaining[i],z=termCoord(sim.d,sim.base+i);return `<div class="queue-label">row ${i} · ${i<activeRows(sim)?`(${z.c},${z.r},${z.s})`:'inactive'}</div><div class="input-queue" data-input-queue="${i}">${remaining>list.length?`<span class="queue-more">+${remaining-list.length}</span>`:''}${previewSlots(list,'input')}${!list.length?`<span class="queue-empty">${i>=activeRows(sim)?'masked':sim.finished?'done':'no pending feed'}</span>`:''}<span class="queue-port">→</span></div><div class="queue-caption">${list.length?`${remaining} left · next in ${list[0].after} clocks`:'Array advances only on a ready vector'}</div>`;}
+function linkAttrs(kind,id,c,i,j){
+ const L=sim.layer,d=sim.d;let origin;
+ if(kind==='x'){const z=E.placement(d,c,i,j,id);origin=L.inputOrigin[z.bank]?.[z.addr];}else origin=L.kernelOrigin[id]?.[(c*d.r+i)*d.s+j];
+ if(!origin)return '';return `data-source-kind="${kind}" data-source-id="${origin[0]}" data-source-c="${origin[1]}" data-source-i="${origin[2]}" data-source-j="${origin[3]}"`;
+}
+function explicitAttrs(kind,origin){return origin?`data-source-kind="${kind}" data-source-id="${origin[0]}" data-source-c="${origin[1]}" data-source-i="${origin[2]}" data-source-j="${origin[3]}"`:'';}
+function sourceButton(kind,origin,value,note=''){const color=origin?`hsl(${((kind==='x'?180:20)+origin[0]*137+origin[1]*37)%360} 62% ${76+(origin[1]%2)*5}%)`:'#eef2ee';return `<button class="matrix-value" style="--source-color:${color}" ${explicitAttrs(kind,origin)} title="${origin?`${kind==='x'?'X':'W'}[${origin.join(',')}]`:'Unknown SRAM word'} = ${fmt(value)} ${note}">${fmt(value)}</button>`;}
+function renderLocal(animate=false){
+ const s=sim,d=s.d,L=s.layer,e=s.event,groups=Math.ceil(d.c*d.r*d.s/d.a),ctl=E.controls(s),forecast=operandQueues(s,4);displayedQueueLimit=4;
+ $('batch').innerHTML=`<option value="0">${L.d.jobs[L.localJob].n} (global)</option>`;
+ $('runLabel').textContent=`Group ${Math.floor(s.base/d.a)+1}/${groups} · ${s.runCount}/${d.m+2*d.a} advances · ${s.stalls} waits`;
+ $('storyTitle').textContent=`${s.state} · ${e?.advance?'array advanced':s.state==='RUN'?'array held':'pipeline clear'} · B${s.active}`;
+ $('storyText').textContent=`Rows reduce CRS terms ${s.base}–${Math.min(d.c*d.r*d.s-1,s.base+d.a-1)}. ${s.retries} conflict retry rounds, ${s.stalls} memory wait clocks. Input/skew/PE sums/writeback hold together during a wait; next-group weight shifts continue independently.`;
+ let html='<div class="queue-key"><b>Generated lanes</b><b class="quiet-symbol">→ ↓</b><span>Next value is nearest the array.</span><small>Preview only; vector slots shown below are actual hardware.</small></div>'+E.range(d.a).map(k=>`<div class="axis weight-source" data-weight-source="${k}">${weightQueueHTML(k,forecast)}</div>`).join('');
+ for(let i=0;i<d.a;i++){html+=`<div class="feeder" data-feeder="${i}">${inputQueueHTML(i,forecast)}</div>`;for(let k=0;k<d.a;k++){const p=s.pe[i][k],token=currentActivation(s,i,k),used=i<activeRows(s)&&k<d.k,z=termCoord(d,s.base+i);html+=`<button class="pe ${used?'':'masked'} ${selected[0]===i&&selected[1]===k?'selected':''} ${token?'lit':''}" data-pe="${i},${k}" aria-label="Inspect PE row ${i}, column ${k}" aria-pressed="${selected[0]===i&&selected[1]===k}"><span class="pe-id">PE [${i},${k}] · ${used?`(${z.c},${z.r},${z.s})`:'masked'}</span><span class="equation"><span class="teal">${p.a}</span> × <span class="amber">${p.weightUsed}</span></span><span class="sum">${p.sum}</span><span class="operand-tag">${token?`${token.valid?'X':'pad 0'} · pos${token.pos}`:'no activation'}</span><span class="regs">${p.weights.map((v,b)=>`<span class="reg ${b===s.active?'active':''} ${e?.ctl.load&&b===e.ctl.writeBuffer?'loading':''}" data-buffer="${b}">B${b} ${v}</span>`).join('')}</span></button>`;}}
+ html+='<div class="axis">Registered column<br>output → SRAM</div>'+E.range(d.a).map(k=>{const wr=e?.writes.find(v=>v.k===k);return `<div class="array-out">col = ${s.col[k]}<br>${k>=d.k?'disabled':wr?`@${wr.addr} ← ${wr.value}`:'no write'}</div>`;}).join('');
+ $('array').style.gridTemplateColumns=`184px repeat(${d.a},minmax(0,1fr))`;$('array').style.maxWidth=(184+d.a*96)+'px';$('array').style.minWidth=(184+d.a*80)+'px';$('array').innerHTML=html;$('array').classList.toggle('hidden-regs',!$('peDetails').checked);
+ const [i,k]=selected,p=s.pe[i][k];$('peInspect').innerHTML=`<div class="eyebrow">PE [${i},${k}]</div><p><strong>${ctl.clear?`sum ${p.sum} · pipeline clear`:!s.runCount?`sum ${p.sum} · waiting for first vector`:`${p.sum} = ${(p.sum-p.product)|0} + <span class="teal">${p.a}</span> × <span class="amber">${p.weightUsed}</span>`}</strong></p><span class="muted">${ctl.clear?'Pipeline held clear; no MAC is performed.':'Values hold on stalled clocks. Equation describes the last advancing MAC.'} B0=${p.weights[0]}, B1=${p.weights[1]}.</span>`;
+ $('outputs').innerHTML=E.range(d.k).map(k=>`<div class="map sram-output-bank" data-output-bank="${k}"><h3>k=${k}</h3><div class="map-grid" style="--map-cols:${d.q};grid-template-columns:repeat(${d.q},minmax(0,1fr))">${E.range(d.m).map(q=>`<div class="cell ${s.mem[k][q]===null?'':'written'} ${e?.writes.some(v=>v.k===k&&v.addr===q)?'fresh':''}" title="Bank ${k} @${q} · ${s.writes[k][q]}/${groups} groups">${fmt(s.mem[k][q])}${$('reference').checked?`<span class="expected">ref ${fmt(T.partialReference(s,k,q))}</span>`:''}</div>`).join('')}</div></div>`).join('');
+ $('progress').style.width=`${100*s.writes.flat().reduce((a,b)=>a+b,0)/(d.k*d.m*groups)}%`;
+ renderTensors();renderInputMatrix(forecast);renderModule();fitWindows();renderFlows(animate);
+}
+function groupCells(c){const s=sim,d=s.d,cells=new Set();for(let t=s.base;t<Math.min(s.base+d.a,d.c*d.r*d.s);t++){if(termCoord(d,t).c!==c)continue;for(let pos=0;pos<d.m;pos++){const z=E.address(d,pos,t);if(z.valid)cells.add(`${z.h},${z.w}`);}}return cells;}
+function localStackSVG(kind,id,front,spread){
+ const d=sim.d,h=kind==='x'?d.h:d.r,wid=kind==='x'?d.w:d.s,cell=Math.max(22,Math.min(34,240/Math.max(h,wid))),dx=spread?wid*cell+30:28,dy=spread?0:24,sw=wid*cell+(d.c-1)*dx+12,sh=h*cell+(spread?0:(d.c-1)*dy)+36,order=E.range(d.c).reverse().filter(c=>c!==front);order.push(front);
+ let out=`<svg class="tensor-stack" width="${sw}" height="${sh}" viewBox="0 0 ${sw} ${sh}" role="img" aria-label="Local ${kind==='x'?'input':'kernel'} ${id}, ${d.c} channel planes">`;
+ for(const c of order){const ox=6+c*dx,oy=28+(spread?0:(d.c-1-c)*dy),usedCells=kind==='x'?groupCells(c):null;out+=`<g class="channel-plane" data-channel="${c}"><rect x="${ox-2}" y="${oy-23}" width="74" height="20" rx="4" fill="${tensorColor(kind,id,c)}" stroke="#173c46"/><text x="${ox+5}" y="${oy-9}" font-size="11" font-weight="700">c = ${c}${c===front?' · front':''}</text>`;
+  for(let i=0;i<h;i++)for(let j=0;j<wid;j++){
+   const term=(c*d.r+i)*d.s+j,used=kind==='x'?usedCells.has(`${i},${j}`):term>=sim.base&&term<sim.base+d.a,
+    now=kind==='x'&&E.range(d.a).some(row=>{const t=currentActivation(sim,row);return t?.valid&&t.c===c&&t.h===i&&t.w===j;}),
+    loading=kind==='w'&&sim.event?.ctl.load&&term>=(sim.event.base+(sim.event.ctl.running?d.a:0))&&term<(sim.event.base+(sim.event.ctl.running?2*d.a:d.a)),
+    value=kind==='x'?sim.x[E.xindex(d,0,c,i,j)]:sim.w[E.windex(d,id,c,i,j)],cx=ox+j*cell,cy=oy+i*cell;
+   out+=`<g><title>Local ${kind==='x'?'X':'W'}[${id},${c},${i},${j}] = ${fmt(value)}</title><rect class="tensor-cell ${used?'tap-used':''} ${now?'input-fed':''} ${loading?'tap-loading':''}" data-kind="${kind}" data-id="${id}" data-c="${c}" data-i="${i}" data-j="${j}" ${linkAttrs(kind,id,c,i,j)} x="${cx}" y="${cy}" width="${cell}" height="${cell}" fill="${now?'#087e8b':used?'#d9dde0':tensorColor(kind,id,c)}" stroke="${now?'#023e49':loading?'#b77711':'#677a83'}" stroke-width="${now||loading?3:1}" ${loading?'stroke-dasharray="5 2"':''}/><text x="${cx+cell/2}" y="${cy+cell/2+4}" text-anchor="middle" font-family="ui-monospace,monospace" font-size="12" fill="${now?'white':'#203d45'}">${fmt(value)}</text></g>`;
+  }out+=`<rect x="${ox}" y="${oy}" width="${wid*cell}" height="${h*cell}" fill="none" stroke="#173c46" stroke-width="${c===front?2:1}"/></g>`;
+ }return out+'</svg>';
+}
+function renderTensors(){
+ const s=sim,d=s.d,front=Math.min(tensorFront,d.c-1),spread=$('spreadChannels').checked;
+ $('tensorPass').textContent=`Current CRS group: terms ${s.base}–${Math.min(s.base+d.a-1,d.c*d.r*d.s-1)}. Grey cells belong to the group; teal cells are currently held in PE[i,0].`;
+ $('channelSelect').innerHTML=E.range(d.c).map(c=>`<button data-front="${c}" aria-pressed="${c===front}" style="--channel:${tensorColor('x',0,c)}">c = ${c}</button>`).join('');
+ $('inputStacks').innerHTML=`<div class="stack-card"><h4>Local image 0 · ${d.c} channels</h4><div class="stack-scroll">${localStackSVG('x',0,front,spread)}</div></div>`;
+ $('kernelStacks').innerHTML=E.range(d.k).map(k=>`<div class="stack-card"><h4>Local filter ${k} · ${d.c} channels</h4><div class="stack-scroll">${localStackSVG('w',k,front,spread)}</div></div>`).join('');
+ $('feedSummary').innerHTML=E.range(activeRows(s)).map(i=>{const t=currentActivation(s,i);return `<span class="feed-chip">row ${i}: ${t?`${t.valid?'X':'pad'} ${t.value} · pos${t.pos}`:'—'}</span>`;}).join('');
+}
+// Virtual lowering: retain every CRS term, not just the active array group.
+function renderFullLoweredMatrix(forecast){
+ const s=sim,d=s.d,L=s.layer,cols=E.range(d.m),terms=d.c*d.r*d.s;
+ $('matrixPager').innerHTML=`<span>Full lowered matrix · ${d.m} output positions × ${terms} terms · channel → tap columns</span>`;
+ $('bankFeeds').innerHTML='';
+ let html=`<section class="sram-bank"><div class="bank-matrix-scroll full-lowered-scroll"><table class="lowered-matrix full-lowered-matrix" data-full-lowered="true" data-row-order="channel-tap"><thead><tr><th>term · (c,r,s)</th>${cols.map(pos=>{const z=E.address(d,pos,0);return `<th>${z.n},${z.p},${z.q}</th>`;}).join('')}</tr></thead><tbody>`;
+ for(let term=0;term<terms;term++){
+  const z=termCoord(d,term),i=term-s.base,active=i>=0&&i<d.a,now=active?currentActivation(s,i):null,next=active?forecast.inputs[i][0]:null;
+  html+=`<tr class="${active?'current-tap-row':''}" data-term="${term}" data-c="${z.c}" data-r="${z.r}" data-s="${z.s}" data-active="${active}"><th>${term} · (${z.c},${z.r},${z.s})</th>`;
+  for(const pos of cols){const t=E.address(d,pos,term),value=t.valid?L.input[t.bank][t.addr]:0,mark=`${now?.pos===pos?'feed-current':''} ${next?.pos===pos?'feed-next':''}`;html+=`<td data-row="${term}" data-pos="${pos}" class="${mark}" title="${t.valid?`bank ${t.bank} @${t.addr}`:'Generated zero; no SRAM source'}">${t.valid?sourceButton('x',L.inputOrigin[t.bank][t.addr],value,`· bank ${t.bank} @${t.addr}`):'<span class="matrix-padding">0</span>'}</td>`;}html+='</tr>';
+ }
+ $('inputMatrix').innerHTML=html+'</tbody></table></div></section>';transposeLoweredMatrix();
+}
+function renderInputMatrix(forecast=operandQueues(sim,4)){
+ showSource(null);const s=sim,d=s.d,L=s.layer,physical=$('inputView').value==='physical',size=12,total=physical?2**d.ia:d.m;
+ matrixPage=Math.min(matrixPage,Math.max(0,Math.ceil(total/size)-1));const start=matrixPage*size,cols=E.range(Math.min(size,total-start)).map(i=>start+i),feeds=E.range(d.a).map(i=>({now:currentActivation(s,i),next:forecast.inputs[i][0]}));
+ $('matrixPager').innerHTML=`<span>${physical?'Stored addresses':'Output positions'} ${start}–${start+cols.length-1}/${total}</span><div><button data-input-page="-1" ${matrixPage?'':'disabled'}>←</button><button data-input-page="1" ${start+size<total?'':'disabled'}>→</button></div>`;
+ $('bankFeeds').innerHTML=feeds.slice(0,activeRows(s)).map((f,i)=>`<div class="bank-feed-summary"><b>row ${i}</b><span>Now ${f.now?`${f.now.value} · ${f.now.valid?`b${f.now.bank}@${f.now.addr}`:'pad'}`:'—'}</span><span>Next ${f.next?`${f.next.value} · +${f.next.after} clk`:'—'}</span></div>`).join('');
+ const mark=(now,next)=>`${now?'feed-current':''} ${next?'feed-next':''}`;
+ if(physical)$('inputMatrix').innerHTML=E.range(d.a).map(b=>`<section class="sram-bank input-bank" data-input-bank="${b}"><h4>bank ${b}</h4><div class="bank-matrix-scroll"><table class="lowered-matrix"><thead><tr>${cols.map(a=>`<th>@${a}</th>`).join('')}</tr></thead><tbody><tr>${cols.map(a=>{const now=feeds.some(f=>f.now?.valid&&f.now.bank===b&&f.now.addr===a),next=feeds.some(f=>f.next?.valid&&f.next.bank===b&&f.next.addr===a);return `<td data-bank="${b}" data-address="${a}" class="${mark(now,next)}">${sourceButton('x',L.inputOrigin[b][a],L.input[b][a],`· bank ${b} @${a}`)}</td>`;}).join('')}</tr></tbody></table></div></section>`).join('');
+ else renderFullLoweredMatrix(forecast);
+ renderKernelBanks();renderBankArbitration();
+}
+function renderKernelBanks(){const d=sim.d,L=sim.layer,total=d.c*d.r*d.s,size=12;kernelPageCL=Math.min(kernelPageCL,Math.max(0,Math.ceil(total/size)-1));const start=kernelPageCL*size,cols=E.range(Math.min(size,total-start)).map(i=>start+i);
+ $('kernelPager').innerHTML=`<span>CRS terms ${start}–${start+cols.length-1}/${total}</span><div><button data-kernel-page="-1" ${kernelPageCL?'':'disabled'}>←</button><button data-kernel-page="1" ${start+size<total?'':'disabled'}>→</button></div>`;
+ $('kernelBanks').innerHTML=E.range(d.k).map(k=>`<section class="sram-bank kernel-bank" data-kernel-bank="${k}"><h4>k=${k}</h4><div class="bank-matrix-scroll"><table class="lowered-matrix"><thead><tr>${cols.map(t=>{const z=termCoord(d,t);return `<th>@${t}<br>${z.c},${z.r},${z.s}</th>`;}).join('')}</tr></thead><tbody><tr>${cols.map(t=>`<td data-kernel-address="${t}" class="${t>=sim.base&&t<sim.base+d.a?'current-kernel-tap':''}">${sourceButton('w',L.kernelOrigin[k][t],L.kernel[k][t])}</td>`).join('')}</tr></tbody></table></div></section>`).join('');
+}
+function renderBankArbitration(){
+ const s=sim,d=s.d,b=s.banks,o=bankObservations.get(s),e=s.event,live=e?.state==='RUN'&&o;
+ const req=live?o.requests:[],grants=e?.grants??[];
+ let lanes=E.range(d.a).map(i=>{const z=req[i],pending=live&&(o.active?o.pending[i]:z.valid),grant=pending&&grants.some(g=>g.bank===z.bank&&g.addr===z.addr),retry=pending&&!grant&&e.retry;
+  return `<div class="request-lane ${grant?'granted':''} ${retry?'retrying':''}" data-request-row="${i}" data-granted="${!!grant}" data-retry="${!!retry}"><b>row ${i}</b><span>${!z?'idle':!z.valid?'generated zero':`${z.c},${z.r},${z.s} → bank ${z.bank} @${z.addr}`}</span><strong>${grant?'read granted':retry?'retry':pending?'slot wait':z&&!z.valid?'0':'—'}</strong></div>`;
+ }).join('');
+ $('bankArbitration').innerHTML=`<div class="arb-head"><b>${s.state==='RUN'?(e?.advance?'Advance = 1 · array moved':'Advance = 0 · array holds'):'Array idle'}</b><span>${s.stalls} wait clocks · ${s.retries} retry rounds</span></div><div class="arb-columns"><div><h4>Last-edge row requests · position ${live?o.issue:'—'}</h4><div class="request-lanes">${lanes}</div></div><div><h4>Independent synchronous banks</h4><div class="bank-port-list">${E.range(d.a).map(bank=>{const g=grants.find(g=>g.bank===bank);return `<div class="bank-port ${g?'granted':''}" data-bank-port="${bank}"><b>bank ${bank}</b><span>${g?`read @${g.addr} → ${g.value}`:'no read'}</span></div>`;}).join('')}</div><p class="small">Lowest row wins a bank; identical addresses share a read. Different words retry.</p></div><div><h4>Two vector slots · state after edge</h4>${E.range(2).map(slot=>`<div class="vector-slot ${b.ready[slot]?'ready':''}" data-slot="${slot}" data-ready="${b.ready[slot]}"><b>S${slot} · ${b.ready[slot]?'ready':b.occupied[slot]?'filling':'free'}</b><span>${slot===b.issueSlot?'producer ':''}${slot===b.readSlot?'consumer':''}</span><div>${b.values[slot].map((v,i)=>`<span class="slot-value" title="row ${i}">${v.value}</span>`).join('')}</div></div>`).join('')}<p class="small">${live&&o.returns.length?`Returned from previous reads: ${o.returns.map(t=>`row ${t.row} ← ${o.readData[t.bank]}`).join(' · ')}`:'No read returns on the last edge.'}</p><p class="small">${e?.consume?`Consumed S${o.readSlot} → row-skew registers.`:'No vector consumed.'}</p></div></div>`;
+}
+function renderModule(){
+ const s=sim,d=s.d,e=s.event,b=s.banks;
+ if(tab==='input')$('moduleBody').innerHTML=`<div class="module-grid"><div><h3>One request per CRS row</h3><div class="formula">t = group_base + i<br>c = floor(t/(R·S)); r = floor(t/S)%R; s = t%S<br>h = p·stride_i + r·dilation_i − pad_i<br>w = q·stride_j + s·dilation_j − pad_j<br>slot = c·R·S + (h%R)·S + w%S<br>bank = slot%A<br>@ = (floor(slot/A)·ceil(H/R)·ceil(W/S)<br> + floor(h/R)·ceil(W/S) + floor(w/S))·N+n</div><p>Padding is masked before arbitration. Banks are selected by the swizzled slot, not by channel alone. No lowered matrix is stored.</p></div><div><h3>Real vector buffering</h3><p>Producer S${b.issueSlot}; consumer S${b.readSlot}; issue position ${b.issue}. A vector is consumed only when complete. Stalls freeze the activation skew, PEs, column registers and output write pointers together.</p>${rows(['Slot','Occupied','Ready'],E.range(2).map(i=>[i,b.occupied[i],b.ready[i]]))}<h3>Last enabled bank reads</h3>${rows(['Bank','Address','Value'],e?.grants?.map(g=>[g.bank,g.addr,g.value])??[])}</div></div>`;
+ else if(tab==='weights')$('moduleBody').innerHTML=`<div class="module-grid"><div><h3>Compute B${s.active}; prepare B${1-s.active}</h3><div class="formula">Kernel @ = group_base + read_row<br>Initial: PRIME then A descending shifts<br>Loader: ${s.loadPhase}; next physical row ${s.loadRow}</div><p>Every physical row takes a shift. The inactive weight registers can load while the array is stalled. Buffer switching waits for the current group's final drain write.</p></div><div>${rows(['PE','B0','B1'],s.pe.flatMap((row,i)=>row.map((p,k)=>[`[${i},${k}]`,...p.weights])))}</div></div>`;
+ else if(tab==='output')$('moduleBody').innerHTML=`<div class="module-grid"><div><h3>Resident group/job accumulation</h3><div class="formula">Bank = k; @ = (p·Q+q)·N+n<br>First contribution overwrites<br>Later groups / continue_sum add old SRAM<br>ACC_WIDTH = 32; signed wraparound</div><p>SRAM writeback advances only with the array. Idle-only synchronous output readback precedes each final DMA store.</p></div><div>${rows(['Column','Address','Old','Array result','Stored'],e?.writes?.map(v=>[v.k,v.addr,fmt(v.before),v.result,v.value])??[])}</div></div>`;
+ else $('moduleBody').innerHTML=`<h3>CRS reduction groups</h3><div class="formula">G = ceil(C·R·S/A) = ${Math.ceil(d.c*d.r*d.s/d.a)}<br>Advances/group = N·P·Q + 2A = ${d.m+2*d.a}<br>Core clocks = 1+A + G·(N·P·Q+2A) + (G−1) + measured waits<br>Current waits: ${s.stalls}; job latency: ${d.total}</div><p>Group boundaries follow actual bank service and synchronous return timing. Each button replays to that group's RUN entry.</p><div class="taps">${E.range(Math.ceil(d.c*d.r*d.s/d.a)).map(g=>`<button data-group="${g}" class="${g*d.a===s.base?'current':''}">Group ${g+1} · t${g*d.a}–${Math.min((g+1)*d.a-1,d.c*d.r*d.s-1)}</button>`).join('')}</div>`;
+}
+function seekGroup(group){if(!valid)return;const job=sim.layer.localJob,target=group*sim.d.a;seek(sim.layer.d.jobs[job].startEdge);while(!sim.finished&&sim.layer.localJob===job&&(sim.base<target||sim.state!=='RUN'))clockEdge(sim);render();}
+function sourceElement(target){return target.closest('[data-source-kind],.tensor-cell');}
+function showSource(el){
+ document.querySelectorAll('.source-linked').forEach(v=>v.classList.remove('source-linked'));$('sourceMini').replaceChildren();
+ if(!el){$('sourceReadout').textContent='Hover: global source · click: tensor';return;}
+ const a=el.dataset;if(!a.sourceKind){$('sourceReadout').textContent='Unknown SRAM word; no source has been loaded.';return;}
+ const kind=a.sourceKind,id=Number(a.sourceId),c=Number(a.sourceC),i=Number(a.sourceI),j=Number(a.sourceJ),d=sim.layer.d,job=d.jobs[sim.layer.localJob],value=kind==='x'?sim.layer.X[E.xindex(d,id,c,i,j)]:sim.layer.W[E.windex(d,id,c,i,j)],localC=c-job.c;
+ if(localC>=0&&localC<sim.d.c&&tensorFront!==localC){tensorFront=localC;renderTensors();}
+ document.querySelectorAll('[data-source-kind]').forEach(node=>{const b=node.dataset;if(b.sourceKind===kind&&Number(b.sourceId)===id&&Number(b.sourceC)===c&&Number(b.sourceI)===i&&Number(b.sourceJ)===j)node.classList.add('source-linked');});
+ $('sourceReadout').textContent=`Global ${kind==='x'?'X':'W'}[${id},${c},${i},${j}] = ${value}`;
+ const h=kind==='x'?d.h:d.r,w=kind==='x'?d.w:d.s,cell=14;$('sourceMini').innerHTML=`<svg viewBox="0 0 ${w*cell} ${h*cell}" role="img" aria-label="Global source plane"><title>Global ${kind==='x'?'X':'W'}[${id},${c},:,:]</title>${E.range(h*w).map(p=>`<rect x="${p%w*cell+1}" y="${Math.floor(p/w)*cell+1}" width="12" height="12" fill="#c9e3df" stroke="${Math.floor(p/w)===i&&p%w===j?'#173c46':'white'}" stroke-width="${Math.floor(p/w)===i&&p%w===j?3:1}"/>`).join('')}</svg>`;
+}
+function renderFlows(animate){
+ if(activeView!=='convolution'||!$('array').children.length||!$('array').getClientRects().length)return;
+ const layer=$('flowLayer'),grid=$('array'),s=sim,d=s.d,e=s.event,base=grid.getBoundingClientRect(),scale=base.width/Math.max(1,grid.offsetWidth),get=(i,k)=>grid.querySelector(`[data-pe="${i},${k}"]`),center=el=>{const b=el.getBoundingClientRect();return {x:(b.left-base.left+b.width/2)/scale,y:(b.top-base.top+b.height/2)/scale};},target=(i,k)=>{const pe=get(i,k),reg=pe.querySelectorAll('.reg')[e?.ctl.writeBuffer??s.active];return reg?.getClientRects().length?reg:pe;},lines=[];
+ layer.replaceChildren();const cb=grid.closest('.array-canvas').getBoundingClientRect();layer.style.left=((base.left-cb.left)/scale)+'px';layer.style.top=((base.top-cb.top)/scale)+'px';layer.style.width=grid.scrollWidth+'px';layer.style.height=grid.scrollHeight+'px';
+ for(let i=0;i<activeRows(s);i++)for(let k=0;k<d.k;k++){const to=center(get(i,k)),from=center(k?get(i,k-1):grid.querySelector(`[data-feeder="${i}"] .queue-port`)),wt=center(target(i,k)),top=center(i?target(i-1,k):grid.querySelector(`[data-weight-source="${k}"] .queue-port`));lines.push(`<path class="activation-path" d="M${from.x},${to.y} H${to.x}"/><path class="weight-path" d="M${top.x},${top.y} L${wt.x},${wt.y}"/>`);}
+ layer.innerHTML=`<svg class="flow-wires" width="${grid.scrollWidth}" height="${grid.scrollHeight}">${lines.join('')}</svg>`;
+ if(!animate||!e||!$('motion').checked||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const duration=Math.max(120,Number($('speed').value)*.94),move=(type,value,from,to,label,attrs)=>{const chip=document.createElement('div');chip.className=`moving-token ${type}`;chip.innerHTML=`<b>${value}</b><small>${label}</small>`;Object.assign(chip.dataset,attrs);layer.append(chip);chip.animate([{transform:`translate(${from.x}px,${from.y}px) translate(-50%,-50%)`,opacity:1},{transform:`translate(${to.x}px,${to.y}px) translate(-50%,-50%)`,opacity:1,offset:.96},{transform:`translate(${to.x}px,${to.y}px) translate(-50%,-50%)`,opacity:0}],{duration,fill:'forwards',easing:'linear'});};
+ if(e.advance)for(let i=0;i<d.a;i++)for(let k=0;k<d.k;k++){const token=currentActivation(s,i,k);if(!token)continue;move('activation-token',s.pe[i][k].a,center(k?get(i,k-1):grid.querySelector(`[data-feeder="${i}"] .queue-port`)),center(get(i,k)),`${token.valid?'X':'pad'} · pos${token.pos}`,{row:i,k,pos:token.pos});}
+ if(e.ctl.load)for(let i=0;i<activeRows(s);i++)for(let k=0;k<d.k;k++){const origin=weightOrigins.get(s)?.[i][k];move('weight-token',s.pe[i][k].wo,center(i?target(i-1,k):grid.querySelector(`[data-weight-source="${k}"] .queue-port`)),center(target(i,k)),origin?`W[${origin.global.join(',')}]`:'masked 0',{row:i,k,buffer:e.ctl.writeBuffer,sourceC:origin?.c??-1});}
+}
+document.addEventListener('DOMContentLoaded',()=>{
+ $('inputView').onchange=()=>{matrixPage=0;render();};
+ $('matrixPager').addEventListener('click',ev=>{const b=ev.target.closest('[data-input-page]');if(b){matrixPage+=Number(b.dataset.inputPage);renderInputMatrix();}});
+ $('kernelPager').addEventListener('click',ev=>{const b=ev.target.closest('[data-kernel-page]');if(b){kernelPageCL+=Number(b.dataset.kernelPage);renderKernelBanks();}});
+ document.addEventListener('pointerover',ev=>{const el=sourceElement(ev.target),prior=ev.relatedTarget instanceof Element?sourceElement(ev.relatedTarget):null;if(el!==prior)showSource(el);});
+ document.addEventListener('focusin',ev=>{const el=sourceElement(ev.target);if(el)showSource(el);});
+ document.addEventListener('click',ev=>{const el=ev.target.closest('[data-source-kind]');if(!el)return;showSource(el);const panel=document.querySelector('[data-panel="tensors"]');if(panel.hidden)document.querySelector('[data-window="tensors"]').click();panel.scrollIntoView({block:'start',behavior:'instant'});});
+});
+
+</script><script>
+/* Read-only paper-style view of actual SRAM words, routing and generated lanes. */
+let storageDiagramPage=0,storageDiagramOwner=null,storageDiagramJob=-1,storageDiagramManual=false;
+function dataPathRequests(){
+ const s=sim,d=s.d,e=s.event,isCL=typeof CLEngine!=='undefined';
+ if(isCL){const o=bankObservations.get(s),live=e?.state==='RUN'&&o,grants=e?.grants??[];return E.range(d.a).map(row=>{const z=live?o.requests[row]:null,pending=!!(z&&(o.active?o.pending[row]:z.valid)),granted=!!(pending&&grants.some(g=>g.bank===z.bank&&g.addr===z.addr));return {row,bank:z?.bank,addr:z?.addr,valid:!!z?.valid,pending,granted,retry:!!(pending&&!granted&&e.retry),value:granted?s.layer.input[z.bank][z.addr]:null};});}
+ return E.range(d.a).map(row=>{const z=e?.state==='RUN'&&row<d.c?e.feeds[row]:null,granted=!!(z?.enable&&z.valid);return {row,bank:row,addr:z?.addr,valid:!!z?.valid,pending:granted,granted,retry:false,value:granted?s.layer.input[row][z.addr]:null};});
+}
+// Only operands entering a PE row on the next clock, including waits and skew.
+function dataPathNextFeeds(){
+ const forecast=operandQueues(sim,1),isCL=typeof CLEngine!=='undefined';
+ return E.range(sim.d.a).map(row=>{const z=forecast.inputs[row][0];return z?{...z,row,bank:isCL?z.bank:row}:null;}).filter(z=>z&&z.after===1);
+}
+function diagramStoredWord(bank,addr){
+ const L=sim.layer,d=sim.d,origin=L.inputOrigin[bank]?.[addr],value=L.input[bank]?.[addr];
+ if(typeof CLEngine!=='undefined')return sourceButton('x',origin,value,`bank ${bank} @${addr}`);
+ const j=L.d.jobs[L.localJob];if(origin){const n=origin[0]-j.n,c=origin[1]-j.c,h=origin[2]-j.i,w=origin[3]-j.j;if(n===0&&c>=0&&c<d.c&&h>=0&&h<d.h&&w>=0&&w<d.w)return matrixValue('x',0,c,h,w,value,`X[${origin.join(',')}] · bank ${bank} @${addr}`);}
+ return `<span class="stored-word" title="${origin?`Retained X[${origin.join(',')}]`:'Unwritten SRAM word'} · bank ${bank} @${addr}">${fmt(value)}</span>`;
+}
+function renderDataPath(){
+ if(!sim?.layer||activeView!=='convolution')return;const s=sim,d=s.d,L=s.layer,isCL=typeof CLEngine!=='undefined',nextFeeds=dataPathNextFeeds(),depth=2**d.ia,size=12;
+ if(storageDiagramOwner!==L||storageDiagramJob!==L.localJob){storageDiagramOwner=L;storageDiagramJob=L.localJob;storageDiagramPage=0;storageDiagramManual=false;}
+ const first=nextFeeds.find(r=>r.valid);if(first&&!storageDiagramManual)storageDiagramPage=Math.floor(first.addr/size);
+ storageDiagramPage=Math.max(0,Math.min(storageDiagramPage,Math.ceil(depth/size)-1));const start=storageDiagramPage*size,addresses=E.range(Math.min(size,depth-start)).map(i=>start+i);
+ $('storagePager').innerHTML=`<button data-storage-page="-1" ${start?'':'disabled'} aria-label="Previous input bank addresses">←</button><span>@${start}–${start+addresses.length-1}</span><button data-storage-page="1" ${start+size<depth?'':'disabled'} aria-label="Next input bank addresses">→</button><button data-storage-follow aria-pressed="${!storageDiagramManual}" title="Follow inputs entering on the next clock">Follow</button>`;
+ $('routingTitle').textContent=isCL?'Crossbar':'Fixed routes';
+ $('routeCaption').textContent=isCL?'Source banks → buffered CRS rows':'Channel bank c → array row c';
+ $('bankStorage').innerHTML=`<table class="storage-matrix"><thead><tr><th>Bank / @</th>${addresses.map(addr=>`<th>${addr}</th>`).join('')}</tr></thead><tbody>${E.range(d.a).map(bank=>`<tr data-bank-row="${bank}"><th>B${bank}</th>${addresses.map(addr=>{const next=nextFeeds.filter(r=>r.valid&&r.bank===bank&&r.addr===addr);return `<td data-storage-bank="${bank}" data-storage-address="${addr}" class="${next.length?'storage-next':''}" title="${next.map(r=>`Next input to row ${r.row}: ${r.value} · in ${r.after} clocks`).join('; ')}"><span class="bank-word">${diagramStoredWord(bank,addr)}</span></td>`;}).join('')}</tr>`).join('')}</tbody></table>`;
+ // Measure the rendered PE rows (including zoom/text mode), not an arbitrary SVG spacing.
+ const peRows=E.range(d.a).map(i=>$('array').querySelector(`[data-pe="${i},0"]`).getBoundingClientRect()),centers=peRows.map(r=>r.top+r.height/2),table=$('bankStorage').querySelector('table');
+ const pitch=d.a>1?centers[1]-centers[0]:peRows[0].height;
+ table.style.setProperty('--bank-pitch',pitch+'px');
+ // Place the compact cards beside the PE rows, below the weight-preview area.
+ // Keep the vertical offset outside the cards instead of blank padding inside.
+ const storage=$('bankStorage').closest('.storage-stage'),routeStage=$('routingDiagram').closest('.routing-stage');
+ storage.style.marginTop='0px';routeStage.style.marginTop='0px';table.style.marginTop='0px';
+ const firstBank=table.querySelector('tbody tr').getBoundingClientRect();
+ storage.style.marginTop=Math.max(0,centers[0]-firstBank.top-firstBank.height/2)+'px';
+ const diagramTop=$('routingDiagram').getBoundingClientRect().top;
+ routeStage.style.marginTop=Math.max(0,peRows[0].top-diagramTop)+'px';
+ const routing=$('routingDiagram'),W=routing.clientWidth,top=routing.getBoundingClientRect().top,
+       Y=i=>centers[i]-top,B=i=>{const r=table.querySelector(`[data-bank-row="${i}"]`).getBoundingClientRect();return r.top+r.height/2-top;},
+       H=Math.max(1,Y(d.a-1)+peRows[d.a-1].height/2),
+       path=(b,r)=>`M8,${B(b)} C${W*.35},${B(b)} ${W*.65},${Y(r)} ${W-8},${Y(r)}`;
+ let svg=`<svg class="routing-svg" viewBox="0 0 ${W} ${H}" style="height:${H}px" role="img" aria-label="${isCL?'Crossbar: SRAM banks to CRS rows':'Fixed connections: input channel banks to array rows'}"><defs><marker id="routeArrow" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5" fill="#087e8b"/></marker></defs>`;
+ for(let b=0;b<d.a;b++)for(let r=0;r<d.a;r++)if(isCL||b===r)svg+=`<path class="route-possible" d="${path(b,r)}"/>`;
+ // These connections explain the boxed operands' SRAM origins; reads and
+ // conflict arbitration remain visible in the independent bank detail below.
+ for(const r of nextFeeds)if(r.valid)svg+=`<path class="route-next" data-route-row="${r.row}" data-route-bank="${r.bank}" data-route-address="${r.addr}" data-route-after="${r.after}" d="${path(r.bank,r.row)}" marker-end="url(#routeArrow)"><title>Next input: bank ${r.bank} @${r.addr} → row ${r.row}, value ${r.value}, in ${r.after} clocks (buffered preview)</title></path>`;
+ for(let i=0;i<d.a;i++)svg+=`<circle cx="8" cy="${B(i)}" r="3"/><circle cx="${W-8}" cy="${Y(i)}" r="3"/><text x="0" y="${B(i)-7}">B${i}</text><text x="${W-18}" y="${Y(i)-7}">R${i}</text>`;
+ $('routingDiagram').innerHTML=svg+'</svg>';
+ $('routingStatus').textContent=nextFeeds.some(r=>r.valid)?'Next clock · PE input sources':'Next clock · no SRAM input';
+ $('storageCapacity').textContent=`${depth} scalar words/bank · 1 read/bank/clock`;
+}
+document.addEventListener('click',ev=>{const next=ev.target.closest('[data-storage-page]'),follow=ev.target.closest('[data-storage-follow]');if(next){storageDiagramPage+=Number(next.dataset.storagePage);storageDiagramManual=true;renderDataPath();}else if(follow){storageDiagramManual=false;renderDataPath();}});
+
+</script><script>
+'use strict';
+const E=CLEngine,T=CLTiled,$=id=>document.getElementById(id),range=E.range;
+const fields=[['a','Array size A'],['n','Images N'],['c','Input channels C'],['k','Output channels K'],['h','Input height H'],['w','Input width W'],['r','Kernel height R'],['s','Kernel width S'],['pad_i','Padding i'],['pad_j','Padding j'],['stride_i','Stride i'],['stride_j','Stride j'],['dilation_i','Dilation i'],['dilation_j','Dilation j'],['ia','Input addr bits'],['oa','Output addr bits'],['ka','Kernel addr bits']];
+let sim,raw,x,w,timer=null,selected=[0,0],tab='input',valid=true,matrixRow=0,matrixCol=0,kernelPage=0;
+const fmt=v=>v===null?'—':String(v),small=v=>v===null?'—':String(v),rows=(head,data)=>`<div class="scroll"><table><thead><tr>${head.map(v=>`<th>${v}</th>`).join('')}</tr></thead><tbody>${data.map(row=>`<tr>${row.map(v=>`<td>${v}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+function pause(){if(timer)clearInterval(timer);timer=null;$('play').textContent='▶ Play';}
+function error(e){pause();valid=false;$('error').textContent=e.message;for(const id of ['play','step','back','nextState','nextStage','nextTap','finish','seek'])$(id).disabled=true;}
+function init(d,xx,ww){const next=T.create(d,xx,ww);pause();sim=next;raw={...d};x=next.x;w=next.w;valid=true;matrixRow=matrixCol=kernelPage=0;selected=[Math.min(selected[0],d.a-1),Math.min(selected[1],d.a-1)];$('error').textContent='';resetSelectionFronts();tensorFront=0;$('batch').innerHTML=range(d.n).map(n=>`<option>${n}</option>`).join('');render();showExampleLesson(d);}
+function editors(d,xx,ww){const grid=(side,h,v,fn)=>`<div class="tensor-grid" style="grid-template-columns:repeat(${v},51px)">${range(h).flatMap(i=>range(v).map(j=>{const [idx,value,label]=fn(i,j);return `<input type="number" min="-128" max="127" step="1" data-side="${side}" data-index="${idx}" value="${value}" aria-label="${label}">`;})).join('')}</div>`;let a='',b='';for(let n=0;n<d.n;n++)for(let c=0;c<d.c;c++)a+=`<div class="tensor-card"><h4>Image ${n} · channel ${c}</h4>${grid('x',d.h,d.w,(h,v)=>{const i=E.xindex(d,n,c,h,v);return [i,xx[i],`X[${n},${c},${h},${v}]`];})}</div>`;for(let k=0;k<d.k;k++)for(let c=0;c<d.c;c++)b+=`<div class="tensor-card"><h4>Filter ${k} · channel ${c}</h4>${grid('w',d.r,d.s,(r,s)=>{const i=E.windex(d,k,c,r,s);return [i,ww[i],`W[${k},${c},${r},${s}]`];})}</div>`;$('inputEditors').innerHTML=a;$('weightEditors').innerHTML=b;}
+function readCells(side){return [...document.querySelectorAll(`[data-side=${side}]`)].map(el=>{const v=Number(el.value);if(el.value.trim()===''||!Number.isInteger(v)||v< -128||v>127)throw Error('Every tensor cell needs a signed 8-bit integer (−128…127).');return v;});}
+function edit(){activeExample=null;try{const d=T.config(Object.fromEntries(fields.map(([key])=>[key,$('cfg-'+key).value.trim()===''?NaN:Number($('cfg-'+key).value)]))),old=sim.layer.d,xx=readCells('x'),ww=readCells('w'),nx=range(d.n*d.c*d.h*d.w).map(i=>{const v=i%d.w,h=Math.floor(i/d.w)%d.h,c=Math.floor(i/(d.w*d.h))%d.c,n=Math.floor(i/(d.w*d.h*d.c));return n<old.n&&c<old.c&&h<old.h&&v<old.w?xx[E.xindex(old,n,c,h,v)]:1;}),nw=range(d.k*d.c*d.r*d.s).map(i=>{const s=i%d.s,r=Math.floor(i/d.s)%d.r,c=Math.floor(i/(d.s*d.r))%d.c,k=Math.floor(i/(d.s*d.r*d.c));return k<old.k&&c<old.c&&r<old.r&&s<old.s?ww[E.windex(old,k,c,r,s)]:0;});if(['n','c','h','w','k','r','s'].some(key=>d[key]!==old[key]))editors(d,nx,nw);init(d,nx,nw);}catch(e){error(e);}}
+// Common presentation examples use explicit geometry and simple reproducible tensors.
+const teachingExamples={"starter":{"label":"1 · One output tile, one job","config":{"a":2,"n":1,"c":2,"k":2,"h":2,"w":3,"r":2,"s":2,"pad_i":0,"pad_j":0,"stride_i":1,"stride_j":1,"dilation_i":1,"dilation_j":1,"ia":4,"oa":2,"ka":4},"lesson":"Start here: one row segment across two output channels. Step through Plan → input/weight loads → convolution → final stores. Filter 0 sums its eight input values; filter 1 doubles that sum."},"width":{"label":"2 · Split a row into width segments","config":{"a":2,"n":1,"c":2,"k":2,"h":3,"w":7,"r":2,"s":2,"pad_i":0,"pad_j":0,"stride_i":1,"stride_j":1,"dilation_i":1,"dilation_j":1,"ia":6,"oa":1,"ka":4},"lesson":"Output SRAM has two words per bank, so each six-column output row splits into 0–1, 2–3 and 4–5. Click Next block to watch the input patches overlap."},"filters":{"label":"3 · Output-channel blocks: 2 + 2 + 1","config":{"a":2,"n":1,"c":2,"k":5,"h":2,"w":3,"r":2,"s":2,"pad_i":0,"pad_j":0,"stride_i":1,"stride_j":1,"dilation_i":1,"dilation_j":1,"ia":4,"oa":2,"ka":4},"lesson":"Five filters share a two-column array. Watch output channels 0–1, then 2–3, then 4. The last block leaves one array column inactive."},"reduce":{"label":"4 · Build one tile with three jobs: 2 + 2 + 1","config":{"a":4,"n":1,"c":5,"k":2,"h":2,"w":4,"r":2,"s":2,"pad_i":0,"pad_j":0,"stride_i":1,"stride_j":1,"dilation_i":1,"dilation_j":1,"ia":5,"oa":2,"ka":3},"lesson":"Eight kernel words per bank fit only two input channels × four taps. Watch three jobs accumulate channels 0–1, 2–3 and 4 into the same output tile; Output DMA happens only after the third job."},"layout":{"label":"5 · Same SRAM, different tile widths","config":{"a":4,"n":1,"c":4,"k":2,"h":6,"w":6,"r":3,"s":3,"pad_i":0,"pad_j":0,"stride_i":1,"stride_j":1,"dilation_i":1,"dilation_j":1,"ia":4,"oa":8,"ka":8},"lesson":"Compare this exact preset in NHWC and NCHW. With 16 input words per bank, NHWC chooses width 3 (eight tiles); NCHW chooses width 1 (16 tiles) because its swizzled capacity bound differs."},"unroll":{"label":"6 · Compare unrolling: four passes versus one group","config":{"a":4,"n":1,"c":1,"k":2,"h":3,"w":5,"r":2,"s":2,"pad_i":0,"pad_j":0,"stride_i":1,"stride_j":1,"dilation_i":1,"dilation_j":1,"ia":5,"oa":2,"ka":3},"lesson":"Open Current tile convolution. NHWC uses one channel row and four tap passes. NCHW assigns the four spatial taps to four rows in one group. Tile boundaries and job counts match."},"fallback":{"label":"7 · Kernel too small: single-tap jobs","config":{"a":2,"n":1,"c":3,"k":2,"h":3,"w":4,"r":2,"s":2,"pad_i":0,"pad_j":0,"stride_i":1,"stride_j":1,"dilation_i":1,"dilation_j":1,"ia":3,"oa":1,"ka":1},"lesson":"Two kernel words per bank cannot hold even one complete 2×2 kernel. Watch single-tap jobs walk the four kernel positions, then the next input-channel block, before the output tile is stored."},"images":{"label":"8 · Two images, processed sequentially","config":{"a":2,"n":2,"c":2,"k":2,"h":2,"w":3,"r":2,"s":2,"pad_i":0,"pad_j":0,"stride_i":1,"stride_j":1,"dilation_i":1,"dilation_j":1,"ia":4,"oa":2,"ka":4},"lesson":"Watch the first image finish before the second image starts. Each image needs one output tile and one job; these tiled accelerators do not interleave images."},"padding":{"label":"9 · Padding: real pixels versus zero-only patches","config":{"a":2,"n":1,"c":1,"k":1,"h":1,"w":1,"r":1,"s":1,"pad_i":1,"pad_j":1,"stride_i":1,"stride_j":1,"dilation_i":1,"dilation_j":1,"ia":1,"oa":1,"ka":1},"lesson":"A single real pixel sits inside a padded 3×3 output. Watch entirely padded jobs skip Input DMA and generate zero locally. Only the center output receives the real pixel."},"stride":{"label":"10 · Stride 2 leaves the last row and column unused","config":{"a":2,"n":1,"c":2,"k":2,"h":5,"w":5,"r":2,"s":2,"pad_i":0,"pad_j":0,"stride_i":2,"stride_j":2,"dilation_i":1,"dilation_j":1,"ia":4,"oa":2,"ka":4},"lesson":"The 2×2 kernel starts at input positions 0 and 2 in each dimension. The output is 2×2; input row 4 and column 4 are never selected. No padding is added."},"all":{"label":"11 · All traversal orders in one run","config":{"a":3,"n":2,"c":5,"k":5,"h":3,"w":7,"r":2,"s":2,"pad_i":0,"pad_j":0,"stride_i":1,"stride_j":1,"dilation_i":1,"dilation_j":1,"ia":4,"oa":1,"ka":3},"lesson":"Follow every normal traversal: 2 images → 3 output-channel blocks [0–1], [2–3], [4] → 2 output rows → 3 width segments [0–1], [2–3], [4–5] → 3 input-channel jobs [0–1], [2–3], [4]. Both designs use 36 output tiles and 108 jobs. Use Next block to follow the schedule; open Current tile convolution for NHWC channel rows/tap passes versus NCHW spatial-tap rows/CRS groups. Single-tap fallback is a separate mode (example 7)."},"conflict":{"label":"12 · Bank conflicts: NCHW read retries","config":{"a":2,"n":1,"c":1,"k":1,"h":1,"w":9,"r":1,"s":3,"pad_i":0,"pad_j":0,"stride_i":1,"stride_j":2,"dilation_i":1,"dilation_j":1,"ia":3,"oa":2,"ka":2},"lesson":"In NCHW, one tile and one job isolate input-bank reuse and arbitration. In NCHW at cycle 37, bank 0 @2 (value 7) is boxed for row 0 and bank 0 @4 (value 6) for row 1; both enter on cycle 38. The vector slots fetched these values earlier on separate clocks. The actual read conflict occurs at cycle 33: bank 0 @3 and @1 are requested together, so one retries. Watch Current tile convolution: bank boxes/source routes show next-clock PE inputs; the bank-arbitration detail shows actual reads and retries. Compare the same shape in NHWC. Input is 1 2 3 4 5 6 7 8 9; kernel is 1 1 1. SRAM address bits: input 3 (8 words/bank), output 2 (4), kernel 2 (4)."}};
+let activeExample='starter';
+function showExampleLesson(d){const e=teachingExamples[activeExample];$('presetLesson').textContent=(e?e.lesson:'Custom configuration: tile and job counts follow your current settings.')+` Current plan: ${d.tiles} output tiles · ${d.jobs.length} jobs · up to ${d.ct} input channels/job · output width capacity ${d.qt}.`;}
+function preset(kind){const e=teachingExamples[kind];activeExample=kind;const d=T.config(e.config),xx=range(d.n*d.c*d.h*d.w).map(i=>{const v=i%d.w,h=Math.floor(i/d.w)%d.h,c=Math.floor(i/(d.h*d.w))%d.c,n=Math.floor(i/(d.c*d.h*d.w));return 1+(3*n+2*c+h+v)%9;}),ww=range(d.k*d.c*d.r*d.s).map(i=>1+Math.floor(i/(d.c*d.r*d.s))%3);fields.forEach(([key])=>$('cfg-'+key).value=d[key]);editors(d,xx,ww);init(d,xx,ww);}
+
+function step(){if(valid&&!sim.finished){clockEdge(sim);render(true);if(sim.finished)pause();}}
+function seek(edge){if(!valid)return;pause();const next=T.create(raw,sim.layer.X,sim.layer.W);while(next.edge<edge&&!next.finished)clockEdge(next);sim=next;x=next.x;w=next.w;render();}
+function advance(kind){if(!valid||sim.finished)return;pause();const state=sim.layer.state+sim.state,group=sim.layer.job+':'+sim.base;do{clockEdge(sim);}while(!sim.finished&&(kind==='finish'||kind==='state'&&sim.layer.state+sim.state===state||kind==='tap'&&sim.layer.job+':'+sim.base===group));render();}
+function play(){if(timer){pause();return;}if(!valid||sim.finished)return;$('play').textContent='Ⅱ Pause';step();if(!sim.finished)timer=setInterval(step,Number($('speed').value));}
+// Track weight identities alongside the unchanged arithmetic model. Forwarding
+// registers retain their old contents between shifts, including across groups.
+// Change only presentation orientation; preserve each cell and its source identity.
+function transposeLoweredMatrix(){
+ const table=$('inputMatrix').querySelector('[data-full-lowered]'),oldRows=[...table.tBodies[0].rows],heads=[...table.tHead.rows[0].cells],cells=oldRows.map(row=>[...row.cells].slice(1)),header=document.createElement('tr'),corner=document.createElement('th');corner.textContent='output · (n,p,q)';header.append(corner);
+ for(const row of oldRows){const th=document.createElement('th');th.textContent=row.cells[0].textContent;Object.assign(th.dataset,row.dataset);if(row.dataset.active==='true')th.classList.add('current-term-column');header.append(th);}
+ const body=document.createDocumentFragment();for(let pos=0;pos<heads.length-1;pos++){const row=document.createElement('tr');row.dataset.pos=pos;row.append(heads[pos+1].cloneNode(true));for(let term=0;term<oldRows.length;term++)row.append(cells[term][pos]);body.append(row);}
+ table.tHead.replaceChildren(header);table.tBodies[0].replaceChildren(body);table.dataset.termOrder=table.dataset.rowOrder;table.dataset.rowOrder='output-position';table.dataset.orientation='positions-by-terms';
+}
+function queueChip(item,index,type){const weight=type==='weight',description=weight?`W[${item.k},${item.c},${item.r},${item.s}]${item.masked?' · inactive physical row: masked zero':''}`:`X[${item.n},${item.c},${item.h},${item.w}]${item.valid?'':' · padding zero'}`;return `<span class="queue-chip ${index===0?'queue-head':''} ${weight?'weight-chip':'input-chip'} ${weight?item.masked?'queue-zero':'':!item.valid?'queue-zero':''}" data-order="${index}" data-after="${item.after}" data-value="${item.value}" ${weight?(item.masked?'':originAttrs('w',item.k,item.c,item.r,item.s)):(item.valid?originAttrs('x',item.n,item.c,item.h,item.w):'')} ${weight?`data-source-c="${item.c}" data-r="${item.r}" data-s="${item.s}" data-buffer="${item.buffer}"`:`data-pos="${item.pos}" data-n="${item.n}" data-h="${item.h}" data-w="${item.w}"`} title="${description} = ${item.value}; enters after ${item.after} clock edge${item.after===1?'':'s'}"><b>${item.value}</b><small>${weight?`c${item.c}${item.masked?' · mask':''}`:item.valid?`n${item.n} · ${item.h},${item.w}`:'pad 0'}</small>${index===0?'<em>next</em>':''}</span>`;}
+// Keep four display slots even when no operands remain; never invent queue data.
+function previewSlots(list,type){return range(4).map(i=>list[i]?queueChip(list[i],i,type):`<span class="queue-placeholder" aria-hidden="true"></span>`).reverse().join('');}
+function weightQueueHTML(k,forecast){const d=sim.d,list=forecast.weights[k],ctl=E.controls(sim),ready=ctl.hasNext&&sim.loadPhase==='WEIGHTS_READY',note=sim.finished?'done':k>=d.k?'inactive':ready?`B${1-sim.active} ready`:!ctl.hasNext&&sim.state==='RUN'?'final group · no refill':'no pending shift';return `<div class="queue-label"><span>k = ${k}</span><span class="annotation">weights</span></div><div class="weight-queue" data-weight-queue="${k}">${forecast.weightRemaining>list.length&&k<d.k?`<span class="queue-more">+${forecast.weightRemaining-list.length}</span>`:''}${previewSlots(list,'weight')}${!list.length?`<span class="queue-empty">${note}</span>`:''}<span class="queue-port">↓</span></div><div class="queue-caption">${list.length?`term ${list[0].term} → B${list[0].buffer}<br>${forecast.weightRemaining} left · +${list[0].after} clk`:note}</div>`;}
+
+// Presentation only: values and coordinates are read from the committed engine state.
+const channelColors=['#ffe270','#4bc895','#8ec7ef','#f2a7ac','#bfa5ed','#f3b46c','#94d4c5','#cadb79','#b0bddf','#e9a9d0'];
+function tensorColor(kind,id,c){if(sim?.layer){const j=sim.layer.d.jobs[sim.layer.localJob];id+=kind==='x'?j.n:j.k;c+=j.c;}return `hsl(${((kind==='x'?180:20)+id*137+c*37)%360} 62% ${76+(c%2)*5}%)`;}
+function originAttrs(kind,id,c,i,j){return linkAttrs(kind,id,c,i,j);}
+function matrixValue(kind,id,c,i,j,value,label){return `<button class="matrix-value" style="--source-color:${tensorColor(kind,id,c)}" ${originAttrs(kind,id,c,i,j)} title="${label} = ${value}" aria-label="${label} = ${value}">${fmt(value)}</button>`;}
+// Feed markers use token coordinates, never a value match (values may repeat).
+// Presentation preferences and fit behavior never advance the simulation clock.
+let displayedQueueLimit=4;
+function queuePreviewLimit(){return 4;}
+function setupTextMode(){const key='cl-im2col-tiling-minimal-text-v1',button=$('minimalText');let quiet=false;try{quiet=JSON.parse(localStorage.getItem(key))===true;}catch{}
+ const apply=()=>{document.body.classList.toggle('minimal-text',quiet);button.setAttribute('aria-pressed',String(quiet));button.textContent=quiet?'Show text':'Minimal text';button.title=quiet?'Restore explanatory text':'Hide explanations and secondary labels; keep values and controls';};apply();button.addEventListener('click',()=>{quiet=!quiet;apply();try{localStorage.setItem(key,JSON.stringify(quiet));}catch{}if(sim)render();window.dispatchEvent(new Event('resize'));});}
+function fitWindows(){for(const panel of document.querySelectorAll('[data-panel]')){const body=panel.querySelector('.window-body');if(!body||panel.hidden)continue;panel.classList.toggle('fit-compact',body.clientWidth<650);panel.classList.toggle('fit-tight',document.body.classList.contains('minimal-text')||body.clientHeight<(panel.dataset.panel==='array'?720:480));}
+ const panel=document.querySelector('[data-panel="array"]'),body=panel?.querySelector('.window-body'),canvas=document.querySelector('.array-canvas'),scroll=document.querySelector('.array-scroll');if(!body||!canvas||!scroll||panel.hidden)return;
+ canvas.style.zoom='1';canvas.style.width='100%';const grid=$('array'),usableW=Math.max(140,scroll.clientWidth-16);const floating=$('panelLayout').classList.contains('desktop-mode');if(floating){const outside=[...body.children].filter(el=>!el.contains(scroll)).reduce((sum,el)=>{const style=getComputedStyle(el);return style.display==='none'?sum:sum+el.offsetHeight+parseFloat(style.marginTop||0)+parseFloat(style.marginBottom||0);},0),usableH=Math.max(130,body.clientHeight-outside-12),scale=Math.max(.6,Math.min(1,usableH/Math.max(1,grid.offsetHeight)));canvas.style.zoom=String(scale);canvas.style.width=(usableW/scale)+'px';}else canvas.style.width=usableW+'px';
+}
+
+// Presentation-only window geometry; the live panel DOM and arithmetic model stay intact.
+function setupPanels(){
+ const root=$('panelLayout'),names={tensors:'Tensor view',array:'Systolic array',output:'Output SRAM',modules:'Module details'},ids=Object.keys(names),key='cl-im2col-tiling-page-v1',panels=Object.fromEntries(ids.map(id=>[id,root.querySelector(`[data-panel="${id}"]`)])),clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));let gesture=null,paint=0,scrollFrame=0;
+ const headerHeight=()=>document.querySelector('.app-header').getBoundingClientRect().height,left=()=>(root.clientWidth?root:$('scheduleView')).getBoundingClientRect().left+scrollX,pageTop=()=>(root.clientWidth?root:$('scheduleView')).getBoundingClientRect().top+scrollY,width=()=>Math.max(170,root.clientWidth||$('scheduleView').clientWidth||$('pageWorkspace').clientWidth),baseHeight=()=>innerHeight-headerHeight(),minimum=id=>Math.min(id==='output'?200:240,width()-12);
+ function syncHeader(){document.documentElement.style.setProperty('--header-h',headerHeight()+'px');}syncHeader();
+ function defaults(){const W=width(),Y=pageTop()+8,narrow=W<760;return {desktop:false,order:[...ids],rects:narrow?Object.fromEntries(ids.map((id,i)=>[id,{x:8+i*2,y:Y+i*45,w:W-36,h:480}])):{tensors:{x:4,y:Y,w:W*.60-12,h:390},modules:{x:W*.60+4,y:Y,w:W*.40-8,h:390},array:{x:4,y:Y+402,w:W*.74-12,h:650},output:{x:W*.74+4,y:Y+402,w:W*.26-8,h:650}},minimized:{},maximized:null,zOrder:['tensors','modules','array','output']};}
+ let state=defaults();
+ function normalize(){for(const id of ids){const r=state.rects[id];r.w=clamp(r.w,minimum(id),width()-16);r.h=clamp(r.h,180,2500);r.x=clamp(r.x,0,width()-r.w);r.y=clamp(r.y,headerHeight()+4,100000);}}
+ function restore(){try{const saved=JSON.parse(localStorage.getItem(key));if(!saved||typeof saved.desktop!=='boolean'||!saved.rects||!Array.isArray(saved.zOrder)||saved.zOrder.length!==4||new Set(saved.zOrder).size!==4||!saved.zOrder.every(id=>ids.includes(id)))return;for(const id of ids){const r=saved.rects[id];if(!r||!['x','y','w','h'].every(k=>Number.isFinite(r[k])))return;}state={desktop:saved.desktop,order:Array.isArray(saved.order)&&saved.order.length===4&&new Set(saved.order).size===4&&saved.order.every(id=>ids.includes(id))?saved.order:[...ids],rects:saved.rects,minimized:Object.fromEntries(ids.map(id=>[id,saved.minimized?.[id]===true])),maximized:ids.includes(saved.maximized)?saved.maximized:null,zOrder:saved.zOrder};$('layoutStatus').textContent='Saved window layout restored.';}catch{}}
+ function redraw(){cancelAnimationFrame(paint);paint=requestAnimationFrame(()=>{if(sim){if(displayedQueueLimit!==queuePreviewLimit())render();else{fitWindows();renderFlows(false);renderDataPath();}}});}
+ function apply(){normalize();root.classList.toggle('desktop-mode',state.desktop);document.body.classList.toggle('floating-layout',state.desktop);$('panelHelp').textContent=state.desktop?'Drag title bars · resize edges · double-click to maximize. Arrows move; Alt + arrows resize.':'Use ↑ / ↓ on each panel to change its position. Arrow keys on its title also move it.';if([...root.children].map(el=>el.dataset.panel).join()!==state.order.join())for(const id of state.order)root.append(panels[id]);$('desktopMode').checked=state.desktop;$('windowTaskbar').hidden=!state.desktop;root.style.height=state.desktop?Math.max(200,innerHeight-pageTop()-20,...ids.filter(id=>!state.minimized[id]&&state.maximized!==id).map(id=>state.rects[id].y+state.rects[id].h-pageTop()+20))+'px':'';
+  for(const id of ids){const panel=panels[id],max=state.desktop&&state.maximized===id,r=max?{x:4,y:headerHeight()+document.querySelector('.view-tabs').offsetHeight+8,w:width()-8,h:baseHeight()-document.querySelector('.view-tabs').offsetHeight-12}:state.rects[id];panel.hidden=state.desktop&&!!state.minimized[id];panel.classList.toggle('window-maximized',max);panel.classList.toggle('window-front',state.desktop&&state.zOrder.at(-1)===id);panel.style.cssText=state.desktop?`position:${max?'fixed':'absolute'};left:${left()+r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px;z-index:${10+state.zOrder.indexOf(id)};`:'';panel.querySelector('[data-panel-shift="-1"]').disabled=state.order.indexOf(id)===0;panel.querySelector('[data-panel-shift="1"]').disabled=state.order.indexOf(id)===ids.length-1;const button=panel.querySelector('[data-window-action="maximize"]');button.textContent=max?'❐':'□';button.setAttribute('aria-label',`${max?'Restore':'Maximize'} ${names[id]}`);button.title=max?'Restore window':'Maximize window';const task=$('windowTaskbar').querySelector(`[data-window="${id}"]`);task.setAttribute('aria-pressed',String(!state.minimized[id]));task.classList.toggle('window-active',state.zOrder.at(-1)===id&&!state.minimized[id]);task.title=state.minimized[id]?`Restore ${names[id]}`:`Bring ${names[id]} to front`;}
+  redraw();
+ }
+ function save(message){try{localStorage.setItem(key,JSON.stringify(state));if(message)$('layoutStatus').textContent=message+' Saved in this browser.';}catch{if(message)$('layoutStatus').textContent=message+' Kept for this visit.';}}
+ function shiftPanel(id,delta){const i=state.order.indexOf(id),j=clamp(i+delta,0,ids.length-1);if(i===j)return;[state.order[i],state.order[j]]=[state.order[j],state.order[i]];apply();save(`${names[id]} moved ${delta<0?'up':'down'}.`);panels[id].querySelector('.panel-handle').focus({preventScroll:true});}
+ function front(id){state.zOrder=state.zOrder.filter(v=>v!==id).concat(id);}
+ function maximize(id){end(true);state.minimized[id]=false;state.maximized=state.maximized===id?null:id;front(id);apply();save(`${names[id]} ${state.maximized===id?'maximized':'restored'}.`);}
+ function start(ev,id,edge,handle){if(!state.desktop||gesture||ev.button!==0||state.maximized===id)return;const before=JSON.parse(JSON.stringify(state));front(id);apply();gesture={id,edge,handle,pointer:ev.pointerId,x:ev.clientX,y:ev.clientY,scrollY:window.scrollY,lastX:ev.clientX,lastY:ev.clientY,rect:{...state.rects[id]},before,changed:false};handle.setPointerCapture(ev.pointerId);document.body.classList.add('window-gesturing');document.body.style.cursor=edge?`${edge}-resize`:'grabbing';if(!edge)autoScroll();ev.preventDefault();}
+ function change(ev){if(!gesture||ev.pointerId!==gesture.pointer)return;const g=gesture,r=g.rect,dx=ev.clientX-g.x,dy=ev.clientY-g.y+scrollY-g.scrollY,min=minimum(g.id);g.lastX=ev.clientX;g.lastY=ev.clientY;g.changed=g.changed||Math.abs(dx)+Math.abs(dy)>2;let next={...r};if(!g.edge){next.x=clamp(r.x+dx,0,width()-r.w);next.y=clamp(r.y+dy,headerHeight()+4,100000);}else{if(g.edge.includes('e'))next.w=clamp(r.w+dx,min,width()-r.x);if(g.edge.includes('s'))next.h=clamp(r.h+dy,180,2500);if(g.edge.includes('w')){next.x=clamp(r.x+dx,0,r.x+r.w-min);next.w=r.x+r.w-next.x;}if(g.edge.includes('n')){next.y=clamp(r.y+dy,headerHeight()+4,r.y+r.h-180);next.h=r.y+r.h-next.y;}}state.rects[g.id]=next;apply();ev.preventDefault();}
+ function autoScroll(){if(!gesture||gesture.edge)return;const delta=gesture.lastY>innerHeight-40?18:gesture.lastY<headerHeight()+40?-18:0;if(delta){window.scrollBy(0,delta);change({pointerId:gesture.pointer,clientX:gesture.lastX,clientY:gesture.lastY,preventDefault(){}});}scrollFrame=requestAnimationFrame(autoScroll);}
+ function end(cancel){cancelAnimationFrame(scrollFrame);if(!gesture)return;const g=gesture;gesture=null;document.body.classList.remove('window-gesturing');document.body.style.cursor='';if(g.handle.hasPointerCapture(g.pointer))g.handle.releasePointerCapture(g.pointer);if(cancel)state=g.before;apply();if(!cancel)save(g.changed?`${names[g.id]} ${g.edge?'resized':'moved'}.`:null);}
+ for(const id of ids){const panel=panels[id],body=document.createElement('div');body.className='window-body';while(panel.firstChild)body.append(panel.firstChild);panel.append(body);const bar=document.createElement('div');bar.className='panel-movebar';bar.innerHTML=`<button class="panel-handle" aria-label="Move ${names[id]}" aria-describedby="panelHelp"><span aria-hidden="true">⠿</span> ${names[id]}</button><div class="stack-controls"><button data-panel-shift="-1" aria-label="Move ${names[id]} up" title="Move panel up">↑</button><button data-panel-shift="1" aria-label="Move ${names[id]} down" title="Move panel down">↓</button></div><div class="window-controls"><button data-window-action="minimize" aria-label="Minimize ${names[id]}" title="Minimize to window bar">—</button><button data-window-action="maximize" aria-label="Maximize ${names[id]}" title="Maximize window">□</button></div>`;panel.prepend(bar);const handle=bar.querySelector('.panel-handle');
+  panel.addEventListener('pointerdown',()=>{if(state.desktop&&!gesture){front(id);apply();save();}});
+  bar.addEventListener('pointerdown',ev=>{if(!ev.target.closest('[data-window-action]'))start(ev,id,'',bar);});
+  bar.addEventListener('dblclick',ev=>{if(state.desktop&&!ev.target.closest('[data-window-action]'))maximize(id);});
+  handle.addEventListener('keydown',ev=>{if(!state.desktop&&['ArrowUp','ArrowDown'].includes(ev.key)){ev.preventDefault();shiftPanel(id,ev.key==='ArrowUp'?-1:1);return;}if(!state.desktop||state.maximized===id||!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(ev.key))return;ev.preventDefault();const r=state.rects[id],amount=ev.shiftKey?20:5;if(ev.altKey){if(ev.key==='ArrowRight')r.w+=amount;if(ev.key==='ArrowLeft')r.w-=amount;if(ev.key==='ArrowDown')r.h+=amount;if(ev.key==='ArrowUp')r.h-=amount;}else{if(ev.key==='ArrowRight')r.x+=amount;if(ev.key==='ArrowLeft')r.x-=amount;if(ev.key==='ArrowDown')r.y+=amount;if(ev.key==='ArrowUp')r.y-=amount;}front(id);apply();save(`${names[id]} adjusted.`);});
+  bar.querySelectorAll('[data-panel-shift]').forEach(button=>button.addEventListener('click',()=>shiftPanel(id,Number(button.dataset.panelShift))));
+  bar.querySelector('[data-window-action="minimize"]').addEventListener('click',()=>{state.minimized[id]=true;apply();save(`${names[id]} minimized; use the window bar to restore.`);});bar.querySelector('[data-window-action="maximize"]').addEventListener('click',()=>maximize(id));
+  for(const edge of ['n','s','e','w','ne','nw','se','sw']){const grip=document.createElement('div');grip.className=`window-resize resize-${edge}`;grip.dataset.edge=edge;grip.title='Drag to resize';grip.setAttribute('aria-hidden','true');grip.addEventListener('pointerdown',ev=>{ev.stopPropagation();start(ev,id,edge,grip);});panel.append(grip);}
+ }
+ $('windowTaskbar').innerHTML=ids.map(id=>`<button data-window="${id}" aria-pressed="true">${names[id]}</button>`).join('');$('windowTaskbar').addEventListener('click',ev=>{const button=ev.target.closest('[data-window]');if(!button)return;const id=button.dataset.window;state.minimized[id]=false;front(id);apply();save(`${names[id]} brought to front.`);panels[id].scrollIntoView({block:'nearest',inline:'nearest'});});
+ $('desktopMode').addEventListener('change',()=>{end(true);state.desktop=$('desktopMode').checked;apply();save(state.desktop?'Desktop windows enabled.':'Stacked view enabled.');});
+ $('resetLayout').addEventListener('click',()=>{end(true);const mode=state.desktop;state=defaults();state.desktop=mode;apply();save('Window positions and sizes reset.');});
+ document.addEventListener('pointermove',change,{passive:false});document.addEventListener('pointerup',ev=>{if(gesture?.pointer===ev.pointerId)end(false);});document.addEventListener('pointercancel',()=>end(true));window.addEventListener('blur',()=>end(true));document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&gesture){ev.preventDefault();end(true);}});window.addEventListener('resize',()=>{end(true);syncHeader();apply();});$('settings').addEventListener('toggle',()=>{$('configure').setAttribute('aria-expanded',String($('settings').open));apply();});new ResizeObserver(()=>{syncHeader();apply();}).observe(document.querySelector('.app-header'));restore();apply();
+}
+
+$('fields').innerHTML=fields.map(([key,label])=>`<label>${label}<input id="cfg-${key}" type="number" min="${key.startsWith('pad')?0:1}" max="${['ia','oa','ka'].includes(key)?12:key==='a'?10:32}" step="1"></label>`).join('');
+$('configure').onclick=()=>{$('settings').open=!$('settings').open;if($('settings').open)$('settings').scrollIntoView({block:'start'});};
+$('fields').addEventListener('input',edit);document.querySelectorAll('.tensor-editors').forEach(el=>el.addEventListener('input',edit));$('preset').onchange=()=>preset($('preset').value);$('play').onclick=play;$('step').onclick=step;$('back').onclick=()=>seek(sim.edge-1);$('reset').onclick=()=>seek(0);$('nextState').onclick=()=>advance('state');$('nextTap').onclick=()=>advance('tap');$('finish').onclick=()=>advance('finish');$('seek').oninput=()=>seek(Number($('seek').value));$('speed').onchange=()=>{if(timer){pause();play();}};$('batch').onchange=()=>render();$('reference').onchange=()=>render();$('peDetails').onchange=()=>render();$('spreadChannels').onchange=()=>render();$('motion').onchange=()=>render();$('random').onclick=()=>{if(!valid)return;const xx=sim.layer.X.map(()=>Math.floor(Math.random()*19)-9),ww=sim.layer.W.map(()=>Math.floor(Math.random()*9)-4);editors(sim.layer.d,xx,ww);init(sim.layer.d,xx,ww);};
+document.addEventListener('click',ev=>{const front=ev.target.closest('[data-front]');if(front){tensorFront=Number(front.dataset.front);render();}const plane=ev.target.closest('.channel-plane');if(plane){tensorFront=Number(plane.dataset.channel);render();}const pe=ev.target.closest('[data-pe]');if(pe){selected=pe.dataset.pe.split(',').map(Number);render();}const t=ev.target.closest('[data-tab]');if(t){tab=t.dataset.tab;document.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-selected',b===t));renderModule();}const group=ev.target.closest('[data-group]');if(group)seekGroup(Number(group.dataset.group));const paste=ev.target.closest('[data-paste]');if(paste){try{const side=paste.dataset.paste,arr=$(side==='x'?'pasteX':'pasteW').value.trim().split(/[\s,;\[\]]+/).filter(Boolean).map(Number),next=T.create(sim.layer.d,side==='x'?arr:sim.layer.X,side==='w'?arr:sim.layer.W);editors(next.layer.d,next.layer.X,next.layer.W);init(next.layer.d,next.layer.X,next.layer.W);}catch(e){error(e);}}});
+document.addEventListener('keydown',ev=>{if(/INPUT|TEXTAREA|SELECT|BUTTON/.test(ev.target.tagName)||ev.ctrlKey||ev.altKey||ev.metaKey||!valid)return;if(ev.code==='Space'){ev.preventDefault();play();}else if(ev.key==='ArrowRight'){ev.preventDefault();step();}else if(ev.key==='ArrowLeft'){ev.preventDefault();seek(sim.edge-1);}});
+$('export').onclick=()=>{const data={description:'Channel-last conv_accelerator tiled layer teaching run',config:raw,inputNCHW:sim.layer.X,kernelKCRS:sim.layer.W,edge:sim.edge,cycles:sim.cycles,outputNKPQ:T.output(sim),expectedNKPQ:sim.layer.expected,transfers:{reads:sim.layer.reads,stores:sim.layer.stores},job:sim.layer.job,acceleratorState:sim.layer.state,check:T.check(sim)},url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='channel-last-run.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+$('provenance').textContent='Based on implementations/channel_last_centralized/rtl · hardware tiling checkpoint 08 · CRS groups / swizzled input banks · 16 October 2026. See README for hashes and validation scope.';
+setupTextMode();
+setupPanels();
+$('preset').value='all';preset('all');
+
+</script></body></html>

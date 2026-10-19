@@ -1,0 +1,1392 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2026.1 (win64) Build 6511674 Tue Jun 16 11:02:23 MDT 2026
+| Date         : Sat Oct 17 21:02:19 2026
+| Host         : root running 64-bit major release  (build 9200)
+| Command      : report_timing -of_objects [get_timing_paths -delay_type max -max_paths 1 -nworst 1] -file worst_path.rpt
+| Design       : conv_core
+| Device       : 7a200t-fbg676
+| Speed File   : -2  PRODUCTION 1.23 2018-06-13
+| Design State : Synthesized
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (VIOLATED) :        -69.071ns  (required time - arrival time)
+  Source:                 u_mmu/position_cnt_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            u_mmu/g_c_lanes[0].u_bank/u_input_sram/mem_reg/ADDRARDADDR[10]
+                            (rising edge-triggered cell RAMB36E1 clocked by clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            20.000ns  (clk rise@20.000ns - clk rise@0.000ns)
+  Data Path Delay:        88.506ns  (logic 62.774ns (70.926%)  route 25.732ns (29.074%))
+  Logic Levels:           342  (CARRY4=300 DSP48E1=3 LUT2=2 LUT3=32 LUT4=1 LUT5=2 LUT6=2)
+  Clock Path Skew:        -0.039ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.748ns = ( 20.748 - 20.000 ) 
+    Source Clock Delay      (SCD):    0.787ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  <hidden>
+                                                      0.000     0.000 r  clk
+                         net (fo=6745, unset)         0.787     0.787    u_mmu/clk
+                         FDRE                                         r  u_mmu/position_cnt_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+                         FDRE (Prop_fdre_C_Q)         0.433     1.220 r  u_mmu/position_cnt_reg[2]/Q
+                         net (fo=3, unplaced)         0.694     1.914    u_mmu/u_agen/position_cnt[1]
+                                                                      r  u_mmu/u_agen/position_cnt_reg[4]_i_1/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.549     2.463 r  u_mmu/u_agen/position_cnt_reg[4]_i_1/CO[3]
+                         net (fo=1, unplaced)         0.008     2.471    u_mmu/u_agen/position_cnt_reg[4]_i_1_n_0
+                                                                      r  u_mmu/u_agen/position_cnt_reg[8]_i_1/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     2.571 r  u_mmu/u_agen/position_cnt_reg[8]_i_1/CO[3]
+                         net (fo=1, unplaced)         0.000     2.571    u_mmu/u_agen/position_cnt_reg[8]_i_1_n_0
+                                                                      r  u_mmu/u_agen/position_cnt_reg[12]_i_1/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     2.671 r  u_mmu/u_agen/position_cnt_reg[12]_i_1/CO[3]
+                         net (fo=1, unplaced)         0.000     2.671    u_mmu/u_agen/position_cnt_reg[12]_i_1_n_0
+                                                                      r  u_mmu/u_agen/position_cnt_reg[16]_i_1/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     2.771 r  u_mmu/u_agen/position_cnt_reg[16]_i_1/CO[3]
+                         net (fo=1, unplaced)         0.000     2.771    u_mmu/u_agen/position_cnt_reg[16]_i_1_n_0
+                                                                      r  u_mmu/u_agen/position_cnt_reg[20]_i_1/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     2.871 r  u_mmu/u_agen/position_cnt_reg[20]_i_1/CO[3]
+                         net (fo=1, unplaced)         0.000     2.871    u_mmu/u_agen/position_cnt_reg[20]_i_1_n_0
+                                                                      r  u_mmu/u_agen/position_cnt_reg[24]_i_1/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     2.971 r  u_mmu/u_agen/position_cnt_reg[24]_i_1/CO[3]
+                         net (fo=1, unplaced)         0.000     2.971    u_mmu/u_agen/position_cnt_reg[24]_i_1_n_0
+                                                                      r  u_mmu/u_agen/position_cnt_reg[28]_i_1/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     3.071 r  u_mmu/u_agen/position_cnt_reg[28]_i_1/CO[3]
+                         net (fo=1, unplaced)         0.000     3.071    u_mmu/u_agen/position_cnt_reg[28]_i_1_n_0
+                                                                      r  u_mmu/u_agen/position_cnt_reg[31]_i_1/CI
+                         CARRY4 (Prop_carry4_CI_O[2])
+                                                      0.214     3.285 r  u_mmu/u_agen/position_cnt_reg[31]_i_1/O[2]
+                         net (fo=5, unplaced)         0.377     3.662    u_controller/position_next[30]
+                                                                      r  u_controller/h1__3_i_1275/I4
+                         LUT5 (Prop_lut5_I4_O)        0.244     3.906 r  u_controller/h1__3_i_1275/O
+                         net (fo=1, unplaced)         0.258     4.164    u_controller/h1__3_i_1275_n_0
+                                                                      r  u_controller/h1__3_i_1193/DI[0]
+                         CARRY4 (Prop_carry4_DI[0]_CO[3])
+                                                      0.457     4.621 r  u_controller/h1__3_i_1193/CO[3]
+                         net (fo=1, unplaced)         0.008     4.629    u_controller/h1__3_i_1193_n_0
+                                                                      r  u_controller/h1__3_i_1114/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     4.729 r  u_controller/h1__3_i_1114/CO[3]
+                         net (fo=1, unplaced)         0.000     4.729    u_controller/h1__3_i_1114_n_0
+                                                                      r  u_controller/h1__3_i_1035/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     4.829 r  u_controller/h1__3_i_1035/CO[3]
+                         net (fo=1, unplaced)         0.000     4.829    u_controller/h1__3_i_1035_n_0
+                                                                      r  u_controller/h1__3_i_956/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     4.929 r  u_controller/h1__3_i_956/CO[3]
+                         net (fo=1, unplaced)         0.000     4.929    u_controller/h1__3_i_956_n_0
+                                                                      r  u_controller/h1__3_i_877/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     5.029 r  u_controller/h1__3_i_877/CO[3]
+                         net (fo=1, unplaced)         0.000     5.029    u_controller/h1__3_i_877_n_0
+                                                                      r  u_controller/h1__3_i_798/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     5.129 r  u_controller/h1__3_i_798/CO[3]
+                         net (fo=1, unplaced)         0.000     5.129    u_controller/h1__3_i_798_n_0
+                                                                      r  u_controller/h1__3_i_719/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     5.229 r  u_controller/h1__3_i_719/CO[3]
+                         net (fo=1, unplaced)         0.000     5.229    u_controller/h1__3_i_719_n_0
+                                                                      r  u_controller/h1__3_i_676/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     5.329 r  u_controller/h1__3_i_676/CO[3]
+                         net (fo=1, unplaced)         0.000     5.329    u_controller/h1__3_i_676_n_0
+                                                                      r  u_controller/h1__3_i_615/CI
+                         CARRY4 (Prop_carry4_CI_CO[0])
+                                                      0.238     5.567 r  u_controller/h1__3_i_615/CO[0]
+                         net (fo=39, unplaced)        0.316     5.883    u_controller/u_mmu/u_agen/pix[31]
+                                                                      r  u_controller/w1__3_i_1556/I1
+                         LUT2 (Prop_lut2_I1_O)        0.297     6.180 r  u_controller/w1__3_i_1556/O
+                         net (fo=1, unplaced)         0.000     6.180    u_controller/w1__3_i_1556_n_0
+                                                                      r  u_controller/w1__3_i_1486/S[0]
+                         CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.423     6.603 r  u_controller/w1__3_i_1486/CO[3]
+                         net (fo=1, unplaced)         0.008     6.611    u_controller/w1__3_i_1486_n_0
+                                                                      r  u_controller/w1__3_i_1481/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     6.711 r  u_controller/w1__3_i_1481/CO[3]
+                         net (fo=1, unplaced)         0.000     6.711    u_controller/w1__3_i_1481_n_0
+                                                                      r  u_controller/w1__3_i_1476/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     6.811 r  u_controller/w1__3_i_1476/CO[3]
+                         net (fo=1, unplaced)         0.000     6.811    u_controller/w1__3_i_1476_n_0
+                                                                      r  u_controller/w1__3_i_1471/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     6.911 r  u_controller/w1__3_i_1471/CO[3]
+                         net (fo=1, unplaced)         0.000     6.911    u_controller/w1__3_i_1471_n_0
+                                                                      r  u_controller/w1__3_i_1466/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     7.011 r  u_controller/w1__3_i_1466/CO[3]
+                         net (fo=1, unplaced)         0.000     7.011    u_controller/w1__3_i_1466_n_0
+                                                                      r  u_controller/w1__3_i_1461/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     7.111 r  u_controller/w1__3_i_1461/CO[3]
+                         net (fo=1, unplaced)         0.000     7.111    u_controller/w1__3_i_1461_n_0
+                                                                      r  u_controller/w1__3_i_1456/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     7.211 r  u_controller/w1__3_i_1456/CO[3]
+                         net (fo=1, unplaced)         0.000     7.211    u_controller/w1__3_i_1456_n_0
+                                                                      r  u_controller/w1__3_i_1453/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     7.311 r  u_controller/w1__3_i_1453/CO[3]
+                         net (fo=1, unplaced)         0.000     7.311    u_controller/w1__3_i_1453_n_0
+                                                                      r  u_controller/w1__3_i_1452/CI
+                         CARRY4 (Prop_carry4_CI_CO[0])
+                                                      0.238     7.549 r  u_controller/w1__3_i_1452/CO[0]
+                         net (fo=35, unplaced)        0.435     7.984    u_controller/w1__3_i_1452_n_3
+                                                                      r  u_controller/w1__3_i_1493/I0
+                         LUT3 (Prop_lut3_I0_O)        0.297     8.281 r  u_controller/w1__3_i_1493/O
+                         net (fo=1, unplaced)         0.000     8.281    u_controller/w1__3_i_1493_n_0
+                                                                      r  u_controller/w1__3_i_1444/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444     8.725 r  u_controller/w1__3_i_1444/CO[3]
+                         net (fo=1, unplaced)         0.008     8.733    u_controller/w1__3_i_1444_n_0
+                                                                      r  u_controller/w1__3_i_1439/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     8.833 r  u_controller/w1__3_i_1439/CO[3]
+                         net (fo=1, unplaced)         0.000     8.833    u_controller/w1__3_i_1439_n_0
+                                                                      r  u_controller/w1__3_i_1434/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     8.933 r  u_controller/w1__3_i_1434/CO[3]
+                         net (fo=1, unplaced)         0.000     8.933    u_controller/w1__3_i_1434_n_0
+                                                                      r  u_controller/w1__3_i_1429/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     9.033 r  u_controller/w1__3_i_1429/CO[3]
+                         net (fo=1, unplaced)         0.000     9.033    u_controller/w1__3_i_1429_n_0
+                                                                      r  u_controller/w1__3_i_1424/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     9.133 r  u_controller/w1__3_i_1424/CO[3]
+                         net (fo=1, unplaced)         0.000     9.133    u_controller/w1__3_i_1424_n_0
+                                                                      r  u_controller/w1__3_i_1419/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     9.233 r  u_controller/w1__3_i_1419/CO[3]
+                         net (fo=1, unplaced)         0.000     9.233    u_controller/w1__3_i_1419_n_0
+                                                                      r  u_controller/w1__3_i_1414/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     9.333 r  u_controller/w1__3_i_1414/CO[3]
+                         net (fo=1, unplaced)         0.000     9.333    u_controller/w1__3_i_1414_n_0
+                                                                      r  u_controller/w1__3_i_1411/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100     9.433 r  u_controller/w1__3_i_1411/CO[3]
+                         net (fo=1, unplaced)         0.000     9.433    u_controller/w1__3_i_1411_n_0
+                                                                      r  u_controller/w1__3_i_1410/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150     9.583 r  u_controller/w1__3_i_1410/CO[1]
+                         net (fo=35, unplaced)        0.545    10.128    u_controller/w1__3_i_1410_n_2
+                                                                      r  u_controller/w1__3_i_1451/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    10.405 r  u_controller/w1__3_i_1451/O
+                         net (fo=1, unplaced)         0.000    10.405    u_controller/w1__3_i_1451_n_0
+                                                                      r  u_controller/w1__3_i_1402/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    10.849 r  u_controller/w1__3_i_1402/CO[3]
+                         net (fo=1, unplaced)         0.008    10.857    u_controller/w1__3_i_1402_n_0
+                                                                      r  u_controller/w1__3_i_1397/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    10.957 r  u_controller/w1__3_i_1397/CO[3]
+                         net (fo=1, unplaced)         0.000    10.957    u_controller/w1__3_i_1397_n_0
+                                                                      r  u_controller/w1__3_i_1392/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    11.057 r  u_controller/w1__3_i_1392/CO[3]
+                         net (fo=1, unplaced)         0.000    11.057    u_controller/w1__3_i_1392_n_0
+                                                                      r  u_controller/w1__3_i_1387/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    11.157 r  u_controller/w1__3_i_1387/CO[3]
+                         net (fo=1, unplaced)         0.000    11.157    u_controller/w1__3_i_1387_n_0
+                                                                      r  u_controller/w1__3_i_1382/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    11.257 r  u_controller/w1__3_i_1382/CO[3]
+                         net (fo=1, unplaced)         0.000    11.257    u_controller/w1__3_i_1382_n_0
+                                                                      r  u_controller/w1__3_i_1377/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    11.357 r  u_controller/w1__3_i_1377/CO[3]
+                         net (fo=1, unplaced)         0.000    11.357    u_controller/w1__3_i_1377_n_0
+                                                                      r  u_controller/w1__3_i_1372/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    11.457 r  u_controller/w1__3_i_1372/CO[3]
+                         net (fo=1, unplaced)         0.000    11.457    u_controller/w1__3_i_1372_n_0
+                                                                      r  u_controller/w1__3_i_1369/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    11.557 r  u_controller/w1__3_i_1369/CO[3]
+                         net (fo=1, unplaced)         0.000    11.557    u_controller/w1__3_i_1369_n_0
+                                                                      r  u_controller/w1__3_i_1368/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    11.707 r  u_controller/w1__3_i_1368/CO[1]
+                         net (fo=35, unplaced)        0.545    12.252    u_controller/w1__3_i_1368_n_2
+                                                                      r  u_controller/w1__3_i_1409/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    12.529 r  u_controller/w1__3_i_1409/O
+                         net (fo=1, unplaced)         0.000    12.529    u_controller/w1__3_i_1409_n_0
+                                                                      r  u_controller/w1__3_i_1360/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    12.973 r  u_controller/w1__3_i_1360/CO[3]
+                         net (fo=1, unplaced)         0.008    12.981    u_controller/w1__3_i_1360_n_0
+                                                                      r  u_controller/w1__3_i_1355/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    13.081 r  u_controller/w1__3_i_1355/CO[3]
+                         net (fo=1, unplaced)         0.000    13.081    u_controller/w1__3_i_1355_n_0
+                                                                      r  u_controller/w1__3_i_1350/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    13.181 r  u_controller/w1__3_i_1350/CO[3]
+                         net (fo=1, unplaced)         0.000    13.181    u_controller/w1__3_i_1350_n_0
+                                                                      r  u_controller/w1__3_i_1345/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    13.281 r  u_controller/w1__3_i_1345/CO[3]
+                         net (fo=1, unplaced)         0.000    13.281    u_controller/w1__3_i_1345_n_0
+                                                                      r  u_controller/w1__3_i_1340/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    13.381 r  u_controller/w1__3_i_1340/CO[3]
+                         net (fo=1, unplaced)         0.000    13.381    u_controller/w1__3_i_1340_n_0
+                                                                      r  u_controller/w1__3_i_1335/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    13.481 r  u_controller/w1__3_i_1335/CO[3]
+                         net (fo=1, unplaced)         0.000    13.481    u_controller/w1__3_i_1335_n_0
+                                                                      r  u_controller/w1__3_i_1330/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    13.581 r  u_controller/w1__3_i_1330/CO[3]
+                         net (fo=1, unplaced)         0.000    13.581    u_controller/w1__3_i_1330_n_0
+                                                                      r  u_controller/w1__3_i_1327/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    13.681 r  u_controller/w1__3_i_1327/CO[3]
+                         net (fo=1, unplaced)         0.000    13.681    u_controller/w1__3_i_1327_n_0
+                                                                      r  u_controller/w1__3_i_1326/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    13.831 r  u_controller/w1__3_i_1326/CO[1]
+                         net (fo=35, unplaced)        0.545    14.376    u_controller/w1__3_i_1326_n_2
+                                                                      r  u_controller/w1__3_i_1367/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    14.653 r  u_controller/w1__3_i_1367/O
+                         net (fo=1, unplaced)         0.000    14.653    u_controller/w1__3_i_1367_n_0
+                                                                      r  u_controller/w1__3_i_1318/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    15.097 r  u_controller/w1__3_i_1318/CO[3]
+                         net (fo=1, unplaced)         0.008    15.105    u_controller/w1__3_i_1318_n_0
+                                                                      r  u_controller/w1__3_i_1313/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    15.205 r  u_controller/w1__3_i_1313/CO[3]
+                         net (fo=1, unplaced)         0.000    15.205    u_controller/w1__3_i_1313_n_0
+                                                                      r  u_controller/w1__3_i_1308/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    15.305 r  u_controller/w1__3_i_1308/CO[3]
+                         net (fo=1, unplaced)         0.000    15.305    u_controller/w1__3_i_1308_n_0
+                                                                      r  u_controller/w1__3_i_1303/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    15.405 r  u_controller/w1__3_i_1303/CO[3]
+                         net (fo=1, unplaced)         0.000    15.405    u_controller/w1__3_i_1303_n_0
+                                                                      r  u_controller/w1__3_i_1298/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    15.505 r  u_controller/w1__3_i_1298/CO[3]
+                         net (fo=1, unplaced)         0.000    15.505    u_controller/w1__3_i_1298_n_0
+                                                                      r  u_controller/w1__3_i_1293/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    15.605 r  u_controller/w1__3_i_1293/CO[3]
+                         net (fo=1, unplaced)         0.000    15.605    u_controller/w1__3_i_1293_n_0
+                                                                      r  u_controller/w1__3_i_1288/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    15.705 r  u_controller/w1__3_i_1288/CO[3]
+                         net (fo=1, unplaced)         0.000    15.705    u_controller/w1__3_i_1288_n_0
+                                                                      r  u_controller/w1__3_i_1285/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    15.805 r  u_controller/w1__3_i_1285/CO[3]
+                         net (fo=1, unplaced)         0.000    15.805    u_controller/w1__3_i_1285_n_0
+                                                                      r  u_controller/w1__3_i_1284/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    15.955 r  u_controller/w1__3_i_1284/CO[1]
+                         net (fo=35, unplaced)        0.545    16.500    u_controller/w1__3_i_1284_n_2
+                                                                      r  u_controller/w1__3_i_1325/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    16.777 r  u_controller/w1__3_i_1325/O
+                         net (fo=1, unplaced)         0.000    16.777    u_controller/w1__3_i_1325_n_0
+                                                                      r  u_controller/w1__3_i_1276/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    17.221 r  u_controller/w1__3_i_1276/CO[3]
+                         net (fo=1, unplaced)         0.008    17.229    u_controller/w1__3_i_1276_n_0
+                                                                      r  u_controller/w1__3_i_1271/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    17.329 r  u_controller/w1__3_i_1271/CO[3]
+                         net (fo=1, unplaced)         0.000    17.329    u_controller/w1__3_i_1271_n_0
+                                                                      r  u_controller/w1__3_i_1266/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    17.429 r  u_controller/w1__3_i_1266/CO[3]
+                         net (fo=1, unplaced)         0.000    17.429    u_controller/w1__3_i_1266_n_0
+                                                                      r  u_controller/w1__3_i_1261/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    17.529 r  u_controller/w1__3_i_1261/CO[3]
+                         net (fo=1, unplaced)         0.000    17.529    u_controller/w1__3_i_1261_n_0
+                                                                      r  u_controller/w1__3_i_1256/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    17.629 r  u_controller/w1__3_i_1256/CO[3]
+                         net (fo=1, unplaced)         0.000    17.629    u_controller/w1__3_i_1256_n_0
+                                                                      r  u_controller/w1__3_i_1251/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    17.729 r  u_controller/w1__3_i_1251/CO[3]
+                         net (fo=1, unplaced)         0.000    17.729    u_controller/w1__3_i_1251_n_0
+                                                                      r  u_controller/w1__3_i_1246/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    17.829 r  u_controller/w1__3_i_1246/CO[3]
+                         net (fo=1, unplaced)         0.000    17.829    u_controller/w1__3_i_1246_n_0
+                                                                      r  u_controller/w1__3_i_1243/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    17.929 r  u_controller/w1__3_i_1243/CO[3]
+                         net (fo=1, unplaced)         0.000    17.929    u_controller/w1__3_i_1243_n_0
+                                                                      r  u_controller/w1__3_i_1242/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    18.079 r  u_controller/w1__3_i_1242/CO[1]
+                         net (fo=35, unplaced)        0.545    18.624    u_controller/w1__3_i_1242_n_2
+                                                                      r  u_controller/w1__3_i_1283/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    18.901 r  u_controller/w1__3_i_1283/O
+                         net (fo=1, unplaced)         0.000    18.901    u_controller/w1__3_i_1283_n_0
+                                                                      r  u_controller/w1__3_i_1234/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    19.345 r  u_controller/w1__3_i_1234/CO[3]
+                         net (fo=1, unplaced)         0.008    19.353    u_controller/w1__3_i_1234_n_0
+                                                                      r  u_controller/w1__3_i_1229/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    19.453 r  u_controller/w1__3_i_1229/CO[3]
+                         net (fo=1, unplaced)         0.000    19.453    u_controller/w1__3_i_1229_n_0
+                                                                      r  u_controller/w1__3_i_1224/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    19.553 r  u_controller/w1__3_i_1224/CO[3]
+                         net (fo=1, unplaced)         0.000    19.553    u_controller/w1__3_i_1224_n_0
+                                                                      r  u_controller/w1__3_i_1219/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    19.653 r  u_controller/w1__3_i_1219/CO[3]
+                         net (fo=1, unplaced)         0.000    19.653    u_controller/w1__3_i_1219_n_0
+                                                                      r  u_controller/w1__3_i_1214/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    19.753 r  u_controller/w1__3_i_1214/CO[3]
+                         net (fo=1, unplaced)         0.000    19.753    u_controller/w1__3_i_1214_n_0
+                                                                      r  u_controller/w1__3_i_1209/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    19.853 r  u_controller/w1__3_i_1209/CO[3]
+                         net (fo=1, unplaced)         0.000    19.853    u_controller/w1__3_i_1209_n_0
+                                                                      r  u_controller/w1__3_i_1204/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    19.953 r  u_controller/w1__3_i_1204/CO[3]
+                         net (fo=1, unplaced)         0.000    19.953    u_controller/w1__3_i_1204_n_0
+                                                                      r  u_controller/w1__3_i_1201/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    20.053 r  u_controller/w1__3_i_1201/CO[3]
+                         net (fo=1, unplaced)         0.000    20.053    u_controller/w1__3_i_1201_n_0
+                                                                      r  u_controller/w1__3_i_1200/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    20.203 r  u_controller/w1__3_i_1200/CO[1]
+                         net (fo=35, unplaced)        0.545    20.748    u_controller/w1__3_i_1200_n_2
+                                                                      r  u_controller/w1__3_i_1241/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    21.025 r  u_controller/w1__3_i_1241/O
+                         net (fo=1, unplaced)         0.000    21.025    u_controller/w1__3_i_1241_n_0
+                                                                      r  u_controller/w1__3_i_1192/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    21.469 r  u_controller/w1__3_i_1192/CO[3]
+                         net (fo=1, unplaced)         0.008    21.477    u_controller/w1__3_i_1192_n_0
+                                                                      r  u_controller/w1__3_i_1187/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    21.577 r  u_controller/w1__3_i_1187/CO[3]
+                         net (fo=1, unplaced)         0.000    21.577    u_controller/w1__3_i_1187_n_0
+                                                                      r  u_controller/w1__3_i_1182/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    21.677 r  u_controller/w1__3_i_1182/CO[3]
+                         net (fo=1, unplaced)         0.000    21.677    u_controller/w1__3_i_1182_n_0
+                                                                      r  u_controller/w1__3_i_1177/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    21.777 r  u_controller/w1__3_i_1177/CO[3]
+                         net (fo=1, unplaced)         0.000    21.777    u_controller/w1__3_i_1177_n_0
+                                                                      r  u_controller/w1__3_i_1172/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    21.877 r  u_controller/w1__3_i_1172/CO[3]
+                         net (fo=1, unplaced)         0.000    21.877    u_controller/w1__3_i_1172_n_0
+                                                                      r  u_controller/w1__3_i_1167/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    21.977 r  u_controller/w1__3_i_1167/CO[3]
+                         net (fo=1, unplaced)         0.000    21.977    u_controller/w1__3_i_1167_n_0
+                                                                      r  u_controller/w1__3_i_1162/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    22.077 r  u_controller/w1__3_i_1162/CO[3]
+                         net (fo=1, unplaced)         0.000    22.077    u_controller/w1__3_i_1162_n_0
+                                                                      r  u_controller/w1__3_i_1159/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    22.177 r  u_controller/w1__3_i_1159/CO[3]
+                         net (fo=1, unplaced)         0.000    22.177    u_controller/w1__3_i_1159_n_0
+                                                                      r  u_controller/w1__3_i_1158/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    22.327 r  u_controller/w1__3_i_1158/CO[1]
+                         net (fo=35, unplaced)        0.545    22.872    u_controller/w1__3_i_1158_n_2
+                                                                      r  u_controller/w1__3_i_1199/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    23.149 r  u_controller/w1__3_i_1199/O
+                         net (fo=1, unplaced)         0.000    23.149    u_controller/w1__3_i_1199_n_0
+                                                                      r  u_controller/w1__3_i_1150/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    23.593 r  u_controller/w1__3_i_1150/CO[3]
+                         net (fo=1, unplaced)         0.008    23.601    u_controller/w1__3_i_1150_n_0
+                                                                      r  u_controller/w1__3_i_1145/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    23.701 r  u_controller/w1__3_i_1145/CO[3]
+                         net (fo=1, unplaced)         0.000    23.701    u_controller/w1__3_i_1145_n_0
+                                                                      r  u_controller/w1__3_i_1140/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    23.801 r  u_controller/w1__3_i_1140/CO[3]
+                         net (fo=1, unplaced)         0.000    23.801    u_controller/w1__3_i_1140_n_0
+                                                                      r  u_controller/w1__3_i_1135/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    23.901 r  u_controller/w1__3_i_1135/CO[3]
+                         net (fo=1, unplaced)         0.000    23.901    u_controller/w1__3_i_1135_n_0
+                                                                      r  u_controller/w1__3_i_1130/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    24.001 r  u_controller/w1__3_i_1130/CO[3]
+                         net (fo=1, unplaced)         0.000    24.001    u_controller/w1__3_i_1130_n_0
+                                                                      r  u_controller/w1__3_i_1125/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    24.101 r  u_controller/w1__3_i_1125/CO[3]
+                         net (fo=1, unplaced)         0.000    24.101    u_controller/w1__3_i_1125_n_0
+                                                                      r  u_controller/w1__3_i_1120/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    24.201 r  u_controller/w1__3_i_1120/CO[3]
+                         net (fo=1, unplaced)         0.000    24.201    u_controller/w1__3_i_1120_n_0
+                                                                      r  u_controller/w1__3_i_1117/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    24.301 r  u_controller/w1__3_i_1117/CO[3]
+                         net (fo=1, unplaced)         0.000    24.301    u_controller/w1__3_i_1117_n_0
+                                                                      r  u_controller/w1__3_i_1116/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    24.451 r  u_controller/w1__3_i_1116/CO[1]
+                         net (fo=35, unplaced)        0.545    24.996    u_controller/w1__3_i_1116_n_2
+                                                                      r  u_controller/w1__3_i_1157/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    25.273 r  u_controller/w1__3_i_1157/O
+                         net (fo=1, unplaced)         0.000    25.273    u_controller/w1__3_i_1157_n_0
+                                                                      r  u_controller/w1__3_i_1108/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    25.717 r  u_controller/w1__3_i_1108/CO[3]
+                         net (fo=1, unplaced)         0.008    25.725    u_controller/w1__3_i_1108_n_0
+                                                                      r  u_controller/w1__3_i_1103/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    25.825 r  u_controller/w1__3_i_1103/CO[3]
+                         net (fo=1, unplaced)         0.000    25.825    u_controller/w1__3_i_1103_n_0
+                                                                      r  u_controller/w1__3_i_1098/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    25.925 r  u_controller/w1__3_i_1098/CO[3]
+                         net (fo=1, unplaced)         0.000    25.925    u_controller/w1__3_i_1098_n_0
+                                                                      r  u_controller/w1__3_i_1093/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    26.025 r  u_controller/w1__3_i_1093/CO[3]
+                         net (fo=1, unplaced)         0.000    26.025    u_controller/w1__3_i_1093_n_0
+                                                                      r  u_controller/w1__3_i_1088/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    26.125 r  u_controller/w1__3_i_1088/CO[3]
+                         net (fo=1, unplaced)         0.000    26.125    u_controller/w1__3_i_1088_n_0
+                                                                      r  u_controller/w1__3_i_1083/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    26.225 r  u_controller/w1__3_i_1083/CO[3]
+                         net (fo=1, unplaced)         0.000    26.225    u_controller/w1__3_i_1083_n_0
+                                                                      r  u_controller/w1__3_i_1078/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    26.325 r  u_controller/w1__3_i_1078/CO[3]
+                         net (fo=1, unplaced)         0.000    26.325    u_controller/w1__3_i_1078_n_0
+                                                                      r  u_controller/w1__3_i_1075/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    26.425 r  u_controller/w1__3_i_1075/CO[3]
+                         net (fo=1, unplaced)         0.000    26.425    u_controller/w1__3_i_1075_n_0
+                                                                      r  u_controller/w1__3_i_1074/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    26.575 r  u_controller/w1__3_i_1074/CO[1]
+                         net (fo=35, unplaced)        0.545    27.120    u_controller/w1__3_i_1074_n_2
+                                                                      r  u_controller/w1__3_i_1115/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    27.397 r  u_controller/w1__3_i_1115/O
+                         net (fo=1, unplaced)         0.000    27.397    u_controller/w1__3_i_1115_n_0
+                                                                      r  u_controller/w1__3_i_1066/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    27.841 r  u_controller/w1__3_i_1066/CO[3]
+                         net (fo=1, unplaced)         0.008    27.849    u_controller/w1__3_i_1066_n_0
+                                                                      r  u_controller/w1__3_i_1061/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    27.949 r  u_controller/w1__3_i_1061/CO[3]
+                         net (fo=1, unplaced)         0.000    27.949    u_controller/w1__3_i_1061_n_0
+                                                                      r  u_controller/w1__3_i_1056/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    28.049 r  u_controller/w1__3_i_1056/CO[3]
+                         net (fo=1, unplaced)         0.000    28.049    u_controller/w1__3_i_1056_n_0
+                                                                      r  u_controller/w1__3_i_1051/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    28.149 r  u_controller/w1__3_i_1051/CO[3]
+                         net (fo=1, unplaced)         0.000    28.149    u_controller/w1__3_i_1051_n_0
+                                                                      r  u_controller/w1__3_i_1046/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    28.249 r  u_controller/w1__3_i_1046/CO[3]
+                         net (fo=1, unplaced)         0.000    28.249    u_controller/w1__3_i_1046_n_0
+                                                                      r  u_controller/w1__3_i_1041/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    28.349 r  u_controller/w1__3_i_1041/CO[3]
+                         net (fo=1, unplaced)         0.000    28.349    u_controller/w1__3_i_1041_n_0
+                                                                      r  u_controller/w1__3_i_1036/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    28.449 r  u_controller/w1__3_i_1036/CO[3]
+                         net (fo=1, unplaced)         0.000    28.449    u_controller/w1__3_i_1036_n_0
+                                                                      r  u_controller/w1__3_i_1033/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    28.549 r  u_controller/w1__3_i_1033/CO[3]
+                         net (fo=1, unplaced)         0.000    28.549    u_controller/w1__3_i_1033_n_0
+                                                                      r  u_controller/w1__3_i_1032/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    28.699 r  u_controller/w1__3_i_1032/CO[1]
+                         net (fo=35, unplaced)        0.545    29.244    u_controller/w1__3_i_1032_n_2
+                                                                      r  u_controller/w1__3_i_1073/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    29.521 r  u_controller/w1__3_i_1073/O
+                         net (fo=1, unplaced)         0.000    29.521    u_controller/w1__3_i_1073_n_0
+                                                                      r  u_controller/w1__3_i_1024/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    29.965 r  u_controller/w1__3_i_1024/CO[3]
+                         net (fo=1, unplaced)         0.008    29.973    u_controller/w1__3_i_1024_n_0
+                                                                      r  u_controller/w1__3_i_1019/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    30.073 r  u_controller/w1__3_i_1019/CO[3]
+                         net (fo=1, unplaced)         0.000    30.073    u_controller/w1__3_i_1019_n_0
+                                                                      r  u_controller/w1__3_i_1014/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    30.173 r  u_controller/w1__3_i_1014/CO[3]
+                         net (fo=1, unplaced)         0.000    30.173    u_controller/w1__3_i_1014_n_0
+                                                                      r  u_controller/w1__3_i_1009/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    30.273 r  u_controller/w1__3_i_1009/CO[3]
+                         net (fo=1, unplaced)         0.000    30.273    u_controller/w1__3_i_1009_n_0
+                                                                      r  u_controller/w1__3_i_1004/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    30.373 r  u_controller/w1__3_i_1004/CO[3]
+                         net (fo=1, unplaced)         0.000    30.373    u_controller/w1__3_i_1004_n_0
+                                                                      r  u_controller/w1__3_i_999/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    30.473 r  u_controller/w1__3_i_999/CO[3]
+                         net (fo=1, unplaced)         0.000    30.473    u_controller/w1__3_i_999_n_0
+                                                                      r  u_controller/w1__3_i_994/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    30.573 r  u_controller/w1__3_i_994/CO[3]
+                         net (fo=1, unplaced)         0.000    30.573    u_controller/w1__3_i_994_n_0
+                                                                      r  u_controller/w1__3_i_991/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    30.673 r  u_controller/w1__3_i_991/CO[3]
+                         net (fo=1, unplaced)         0.000    30.673    u_controller/w1__3_i_991_n_0
+                                                                      r  u_controller/w1__3_i_990/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    30.823 r  u_controller/w1__3_i_990/CO[1]
+                         net (fo=35, unplaced)        0.545    31.368    u_controller/w1__3_i_990_n_2
+                                                                      r  u_controller/w1__3_i_1031/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    31.645 r  u_controller/w1__3_i_1031/O
+                         net (fo=1, unplaced)         0.000    31.645    u_controller/w1__3_i_1031_n_0
+                                                                      r  u_controller/w1__3_i_982/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    32.089 r  u_controller/w1__3_i_982/CO[3]
+                         net (fo=1, unplaced)         0.008    32.097    u_controller/w1__3_i_982_n_0
+                                                                      r  u_controller/w1__3_i_977/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    32.197 r  u_controller/w1__3_i_977/CO[3]
+                         net (fo=1, unplaced)         0.000    32.197    u_controller/w1__3_i_977_n_0
+                                                                      r  u_controller/w1__3_i_972/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    32.297 r  u_controller/w1__3_i_972/CO[3]
+                         net (fo=1, unplaced)         0.000    32.297    u_controller/w1__3_i_972_n_0
+                                                                      r  u_controller/w1__3_i_967/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    32.397 r  u_controller/w1__3_i_967/CO[3]
+                         net (fo=1, unplaced)         0.000    32.397    u_controller/w1__3_i_967_n_0
+                                                                      r  u_controller/w1__3_i_962/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    32.497 r  u_controller/w1__3_i_962/CO[3]
+                         net (fo=1, unplaced)         0.000    32.497    u_controller/w1__3_i_962_n_0
+                                                                      r  u_controller/w1__3_i_957/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    32.597 r  u_controller/w1__3_i_957/CO[3]
+                         net (fo=1, unplaced)         0.000    32.597    u_controller/w1__3_i_957_n_0
+                                                                      r  u_controller/w1__3_i_952/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    32.697 r  u_controller/w1__3_i_952/CO[3]
+                         net (fo=1, unplaced)         0.000    32.697    u_controller/w1__3_i_952_n_0
+                                                                      r  u_controller/w1__3_i_949/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    32.797 r  u_controller/w1__3_i_949/CO[3]
+                         net (fo=1, unplaced)         0.000    32.797    u_controller/w1__3_i_949_n_0
+                                                                      r  u_controller/w1__3_i_948/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    32.947 r  u_controller/w1__3_i_948/CO[1]
+                         net (fo=35, unplaced)        0.545    33.492    u_controller/w1__3_i_948_n_2
+                                                                      r  u_controller/w1__3_i_989/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    33.769 r  u_controller/w1__3_i_989/O
+                         net (fo=1, unplaced)         0.000    33.769    u_controller/w1__3_i_989_n_0
+                                                                      r  u_controller/w1__3_i_940/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    34.213 r  u_controller/w1__3_i_940/CO[3]
+                         net (fo=1, unplaced)         0.008    34.221    u_controller/w1__3_i_940_n_0
+                                                                      r  u_controller/w1__3_i_935/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    34.321 r  u_controller/w1__3_i_935/CO[3]
+                         net (fo=1, unplaced)         0.000    34.321    u_controller/w1__3_i_935_n_0
+                                                                      r  u_controller/w1__3_i_930/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    34.421 r  u_controller/w1__3_i_930/CO[3]
+                         net (fo=1, unplaced)         0.000    34.421    u_controller/w1__3_i_930_n_0
+                                                                      r  u_controller/w1__3_i_925/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    34.521 r  u_controller/w1__3_i_925/CO[3]
+                         net (fo=1, unplaced)         0.000    34.521    u_controller/w1__3_i_925_n_0
+                                                                      r  u_controller/w1__3_i_920/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    34.621 r  u_controller/w1__3_i_920/CO[3]
+                         net (fo=1, unplaced)         0.000    34.621    u_controller/w1__3_i_920_n_0
+                                                                      r  u_controller/w1__3_i_915/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    34.721 r  u_controller/w1__3_i_915/CO[3]
+                         net (fo=1, unplaced)         0.000    34.721    u_controller/w1__3_i_915_n_0
+                                                                      r  u_controller/w1__3_i_910/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    34.821 r  u_controller/w1__3_i_910/CO[3]
+                         net (fo=1, unplaced)         0.000    34.821    u_controller/w1__3_i_910_n_0
+                                                                      r  u_controller/w1__3_i_907/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    34.921 r  u_controller/w1__3_i_907/CO[3]
+                         net (fo=1, unplaced)         0.000    34.921    u_controller/w1__3_i_907_n_0
+                                                                      r  u_controller/w1__3_i_906/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    35.071 r  u_controller/w1__3_i_906/CO[1]
+                         net (fo=35, unplaced)        0.545    35.616    u_controller/w1__3_i_906_n_2
+                                                                      r  u_controller/w1__3_i_947/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    35.893 r  u_controller/w1__3_i_947/O
+                         net (fo=1, unplaced)         0.000    35.893    u_controller/w1__3_i_947_n_0
+                                                                      r  u_controller/w1__3_i_894/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    36.337 r  u_controller/w1__3_i_894/CO[3]
+                         net (fo=1, unplaced)         0.008    36.345    u_controller/w1__3_i_894_n_0
+                                                                      r  u_controller/w1__3_i_889/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    36.445 r  u_controller/w1__3_i_889/CO[3]
+                         net (fo=1, unplaced)         0.000    36.445    u_controller/w1__3_i_889_n_0
+                                                                      r  u_controller/w1__3_i_884/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    36.545 r  u_controller/w1__3_i_884/CO[3]
+                         net (fo=1, unplaced)         0.000    36.545    u_controller/w1__3_i_884_n_0
+                                                                      r  u_controller/w1__3_i_879/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    36.645 r  u_controller/w1__3_i_879/CO[3]
+                         net (fo=1, unplaced)         0.000    36.645    u_controller/w1__3_i_879_n_0
+                                                                      r  u_controller/w1__3_i_874/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    36.745 r  u_controller/w1__3_i_874/CO[3]
+                         net (fo=1, unplaced)         0.000    36.745    u_controller/w1__3_i_874_n_0
+                                                                      r  u_controller/w1__3_i_869/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    36.845 r  u_controller/w1__3_i_869/CO[3]
+                         net (fo=1, unplaced)         0.000    36.845    u_controller/w1__3_i_869_n_0
+                                                                      r  u_controller/w1__3_i_864/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    36.945 r  u_controller/w1__3_i_864/CO[3]
+                         net (fo=1, unplaced)         0.000    36.945    u_controller/w1__3_i_864_n_0
+                                                                      r  u_controller/w1__3_i_861/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    37.045 r  u_controller/w1__3_i_861/CO[3]
+                         net (fo=1, unplaced)         0.000    37.045    u_controller/w1__3_i_861_n_0
+                                                                      r  u_controller/w1__3_i_860/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    37.195 r  u_controller/w1__3_i_860/CO[1]
+                         net (fo=35, unplaced)        0.545    37.740    u_controller/w1__3_i_860_n_2
+                                                                      r  u_controller/w1__3_i_901/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    38.017 r  u_controller/w1__3_i_901/O
+                         net (fo=1, unplaced)         0.000    38.017    u_controller/w1__3_i_901_n_0
+                                                                      r  u_controller/w1__3_i_843/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    38.461 r  u_controller/w1__3_i_843/CO[3]
+                         net (fo=1, unplaced)         0.008    38.469    u_controller/w1__3_i_843_n_0
+                                                                      r  u_controller/w1__3_i_838/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    38.569 r  u_controller/w1__3_i_838/CO[3]
+                         net (fo=1, unplaced)         0.000    38.569    u_controller/w1__3_i_838_n_0
+                                                                      r  u_controller/w1__3_i_833/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    38.669 r  u_controller/w1__3_i_833/CO[3]
+                         net (fo=1, unplaced)         0.000    38.669    u_controller/w1__3_i_833_n_0
+                                                                      r  u_controller/w1__3_i_828/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    38.769 r  u_controller/w1__3_i_828/CO[3]
+                         net (fo=1, unplaced)         0.000    38.769    u_controller/w1__3_i_828_n_0
+                                                                      r  u_controller/w1__3_i_823/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    38.869 r  u_controller/w1__3_i_823/CO[3]
+                         net (fo=1, unplaced)         0.000    38.869    u_controller/w1__3_i_823_n_0
+                                                                      r  u_controller/w1__3_i_818/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    38.969 r  u_controller/w1__3_i_818/CO[3]
+                         net (fo=1, unplaced)         0.000    38.969    u_controller/w1__3_i_818_n_0
+                                                                      r  u_controller/w1__3_i_813/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    39.069 r  u_controller/w1__3_i_813/CO[3]
+                         net (fo=1, unplaced)         0.000    39.069    u_controller/w1__3_i_813_n_0
+                                                                      r  u_controller/w1__3_i_810/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    39.169 r  u_controller/w1__3_i_810/CO[3]
+                         net (fo=1, unplaced)         0.000    39.169    u_controller/w1__3_i_810_n_0
+                                                                      r  u_controller/w1__3_i_809/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    39.319 r  u_controller/w1__3_i_809/CO[1]
+                         net (fo=35, unplaced)        0.545    39.864    u_controller/w1__3_i_809_n_2
+                                                                      r  u_controller/w1__3_i_850/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    40.141 r  u_controller/w1__3_i_850/O
+                         net (fo=1, unplaced)         0.000    40.141    u_controller/w1__3_i_850_n_0
+                                                                      r  u_controller/w1__3_i_787/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    40.585 r  u_controller/w1__3_i_787/CO[3]
+                         net (fo=1, unplaced)         0.008    40.593    u_controller/w1__3_i_787_n_0
+                                                                      r  u_controller/w1__3_i_782/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    40.693 r  u_controller/w1__3_i_782/CO[3]
+                         net (fo=1, unplaced)         0.000    40.693    u_controller/w1__3_i_782_n_0
+                                                                      r  u_controller/w1__3_i_777/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    40.793 r  u_controller/w1__3_i_777/CO[3]
+                         net (fo=1, unplaced)         0.000    40.793    u_controller/w1__3_i_777_n_0
+                                                                      r  u_controller/w1__3_i_772/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    40.893 r  u_controller/w1__3_i_772/CO[3]
+                         net (fo=1, unplaced)         0.000    40.893    u_controller/w1__3_i_772_n_0
+                                                                      r  u_controller/w1__3_i_767/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    40.993 r  u_controller/w1__3_i_767/CO[3]
+                         net (fo=1, unplaced)         0.000    40.993    u_controller/w1__3_i_767_n_0
+                                                                      r  u_controller/w1__3_i_762/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    41.093 r  u_controller/w1__3_i_762/CO[3]
+                         net (fo=1, unplaced)         0.000    41.093    u_controller/w1__3_i_762_n_0
+                                                                      r  u_controller/w1__3_i_757/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    41.193 r  u_controller/w1__3_i_757/CO[3]
+                         net (fo=1, unplaced)         0.000    41.193    u_controller/w1__3_i_757_n_0
+                                                                      r  u_controller/w1__3_i_754/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    41.293 r  u_controller/w1__3_i_754/CO[3]
+                         net (fo=1, unplaced)         0.000    41.293    u_controller/w1__3_i_754_n_0
+                                                                      r  u_controller/w1__3_i_753/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    41.443 r  u_controller/w1__3_i_753/CO[1]
+                         net (fo=35, unplaced)        0.545    41.988    u_controller/w1__3_i_753_n_2
+                                                                      r  u_controller/w1__3_i_794/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    42.265 r  u_controller/w1__3_i_794/O
+                         net (fo=1, unplaced)         0.000    42.265    u_controller/w1__3_i_794_n_0
+                                                                      r  u_controller/w1__3_i_726/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    42.709 r  u_controller/w1__3_i_726/CO[3]
+                         net (fo=1, unplaced)         0.008    42.717    u_controller/w1__3_i_726_n_0
+                                                                      r  u_controller/w1__3_i_721/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    42.817 r  u_controller/w1__3_i_721/CO[3]
+                         net (fo=1, unplaced)         0.000    42.817    u_controller/w1__3_i_721_n_0
+                                                                      r  u_controller/w1__3_i_716/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    42.917 r  u_controller/w1__3_i_716/CO[3]
+                         net (fo=1, unplaced)         0.000    42.917    u_controller/w1__3_i_716_n_0
+                                                                      r  u_controller/w1__3_i_711/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    43.017 r  u_controller/w1__3_i_711/CO[3]
+                         net (fo=1, unplaced)         0.000    43.017    u_controller/w1__3_i_711_n_0
+                                                                      r  u_controller/w1__3_i_706/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    43.117 r  u_controller/w1__3_i_706/CO[3]
+                         net (fo=1, unplaced)         0.000    43.117    u_controller/w1__3_i_706_n_0
+                                                                      r  u_controller/w1__3_i_701/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    43.217 r  u_controller/w1__3_i_701/CO[3]
+                         net (fo=1, unplaced)         0.000    43.217    u_controller/w1__3_i_701_n_0
+                                                                      r  u_controller/w1__3_i_696/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    43.317 r  u_controller/w1__3_i_696/CO[3]
+                         net (fo=1, unplaced)         0.000    43.317    u_controller/w1__3_i_696_n_0
+                                                                      r  u_controller/w1__3_i_693/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    43.417 r  u_controller/w1__3_i_693/CO[3]
+                         net (fo=1, unplaced)         0.000    43.417    u_controller/w1__3_i_693_n_0
+                                                                      r  u_controller/w1__3_i_692/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    43.567 r  u_controller/w1__3_i_692/CO[1]
+                         net (fo=35, unplaced)        0.545    44.112    u_controller/w1__3_i_692_n_2
+                                                                      r  u_controller/w1__3_i_733/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    44.389 r  u_controller/w1__3_i_733/O
+                         net (fo=1, unplaced)         0.000    44.389    u_controller/w1__3_i_733_n_0
+                                                                      r  u_controller/w1__3_i_664/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    44.833 r  u_controller/w1__3_i_664/CO[3]
+                         net (fo=1, unplaced)         0.008    44.841    u_controller/w1__3_i_664_n_0
+                                                                      r  u_controller/w1__3_i_659/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    44.941 r  u_controller/w1__3_i_659/CO[3]
+                         net (fo=1, unplaced)         0.000    44.941    u_controller/w1__3_i_659_n_0
+                                                                      r  u_controller/w1__3_i_654/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    45.041 r  u_controller/w1__3_i_654/CO[3]
+                         net (fo=1, unplaced)         0.000    45.041    u_controller/w1__3_i_654_n_0
+                                                                      r  u_controller/w1__3_i_649/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    45.141 r  u_controller/w1__3_i_649/CO[3]
+                         net (fo=1, unplaced)         0.000    45.141    u_controller/w1__3_i_649_n_0
+                                                                      r  u_controller/w1__3_i_644/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    45.241 r  u_controller/w1__3_i_644/CO[3]
+                         net (fo=1, unplaced)         0.000    45.241    u_controller/w1__3_i_644_n_0
+                                                                      r  u_controller/w1__3_i_639/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    45.341 r  u_controller/w1__3_i_639/CO[3]
+                         net (fo=1, unplaced)         0.000    45.341    u_controller/w1__3_i_639_n_0
+                                                                      r  u_controller/w1__3_i_634/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    45.441 r  u_controller/w1__3_i_634/CO[3]
+                         net (fo=1, unplaced)         0.000    45.441    u_controller/w1__3_i_634_n_0
+                                                                      r  u_controller/w1__3_i_631/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    45.541 r  u_controller/w1__3_i_631/CO[3]
+                         net (fo=1, unplaced)         0.000    45.541    u_controller/w1__3_i_631_n_0
+                                                                      r  u_controller/w1__3_i_630/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    45.691 r  u_controller/w1__3_i_630/CO[1]
+                         net (fo=35, unplaced)        0.545    46.236    u_controller/w1__3_i_630_n_2
+                                                                      r  u_controller/w1__3_i_671/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    46.513 r  u_controller/w1__3_i_671/O
+                         net (fo=1, unplaced)         0.000    46.513    u_controller/w1__3_i_671_n_0
+                                                                      r  u_controller/w1__3_i_602/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    46.957 r  u_controller/w1__3_i_602/CO[3]
+                         net (fo=1, unplaced)         0.008    46.965    u_controller/w1__3_i_602_n_0
+                                                                      r  u_controller/w1__3_i_597/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    47.065 r  u_controller/w1__3_i_597/CO[3]
+                         net (fo=1, unplaced)         0.000    47.065    u_controller/w1__3_i_597_n_0
+                                                                      r  u_controller/w1__3_i_592/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    47.165 r  u_controller/w1__3_i_592/CO[3]
+                         net (fo=1, unplaced)         0.000    47.165    u_controller/w1__3_i_592_n_0
+                                                                      r  u_controller/w1__3_i_587/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    47.265 r  u_controller/w1__3_i_587/CO[3]
+                         net (fo=1, unplaced)         0.000    47.265    u_controller/w1__3_i_587_n_0
+                                                                      r  u_controller/w1__3_i_582/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    47.365 r  u_controller/w1__3_i_582/CO[3]
+                         net (fo=1, unplaced)         0.000    47.365    u_controller/w1__3_i_582_n_0
+                                                                      r  u_controller/w1__3_i_577/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    47.465 r  u_controller/w1__3_i_577/CO[3]
+                         net (fo=1, unplaced)         0.000    47.465    u_controller/w1__3_i_577_n_0
+                                                                      r  u_controller/w1__3_i_572/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    47.565 r  u_controller/w1__3_i_572/CO[3]
+                         net (fo=1, unplaced)         0.000    47.565    u_controller/w1__3_i_572_n_0
+                                                                      r  u_controller/w1__3_i_569/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    47.665 r  u_controller/w1__3_i_569/CO[3]
+                         net (fo=1, unplaced)         0.000    47.665    u_controller/w1__3_i_569_n_0
+                                                                      r  u_controller/w1__3_i_568/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    47.815 r  u_controller/w1__3_i_568/CO[1]
+                         net (fo=35, unplaced)        0.545    48.360    u_controller/w1__3_i_568_n_2
+                                                                      r  u_controller/w1__3_i_609/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    48.637 r  u_controller/w1__3_i_609/O
+                         net (fo=1, unplaced)         0.000    48.637    u_controller/w1__3_i_609_n_0
+                                                                      r  u_controller/w1__3_i_540/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    49.081 r  u_controller/w1__3_i_540/CO[3]
+                         net (fo=1, unplaced)         0.008    49.089    u_controller/w1__3_i_540_n_0
+                                                                      r  u_controller/w1__3_i_535/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    49.189 r  u_controller/w1__3_i_535/CO[3]
+                         net (fo=1, unplaced)         0.000    49.189    u_controller/w1__3_i_535_n_0
+                                                                      r  u_controller/w1__3_i_530/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    49.289 r  u_controller/w1__3_i_530/CO[3]
+                         net (fo=1, unplaced)         0.000    49.289    u_controller/w1__3_i_530_n_0
+                                                                      r  u_controller/w1__3_i_525/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    49.389 r  u_controller/w1__3_i_525/CO[3]
+                         net (fo=1, unplaced)         0.000    49.389    u_controller/w1__3_i_525_n_0
+                                                                      r  u_controller/w1__3_i_520/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    49.489 r  u_controller/w1__3_i_520/CO[3]
+                         net (fo=1, unplaced)         0.000    49.489    u_controller/w1__3_i_520_n_0
+                                                                      r  u_controller/w1__3_i_515/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    49.589 r  u_controller/w1__3_i_515/CO[3]
+                         net (fo=1, unplaced)         0.000    49.589    u_controller/w1__3_i_515_n_0
+                                                                      r  u_controller/w1__3_i_510/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    49.689 r  u_controller/w1__3_i_510/CO[3]
+                         net (fo=1, unplaced)         0.000    49.689    u_controller/w1__3_i_510_n_0
+                                                                      r  u_controller/w1__3_i_507/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    49.789 r  u_controller/w1__3_i_507/CO[3]
+                         net (fo=1, unplaced)         0.000    49.789    u_controller/w1__3_i_507_n_0
+                                                                      r  u_controller/w1__3_i_506/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    49.939 r  u_controller/w1__3_i_506/CO[1]
+                         net (fo=35, unplaced)        0.545    50.484    u_controller/w1__3_i_506_n_2
+                                                                      r  u_controller/w1__3_i_547/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    50.761 r  u_controller/w1__3_i_547/O
+                         net (fo=1, unplaced)         0.000    50.761    u_controller/w1__3_i_547_n_0
+                                                                      r  u_controller/w1__3_i_478/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    51.205 r  u_controller/w1__3_i_478/CO[3]
+                         net (fo=1, unplaced)         0.008    51.213    u_controller/w1__3_i_478_n_0
+                                                                      r  u_controller/w1__3_i_473/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    51.313 r  u_controller/w1__3_i_473/CO[3]
+                         net (fo=1, unplaced)         0.000    51.313    u_controller/w1__3_i_473_n_0
+                                                                      r  u_controller/w1__3_i_468/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    51.413 r  u_controller/w1__3_i_468/CO[3]
+                         net (fo=1, unplaced)         0.000    51.413    u_controller/w1__3_i_468_n_0
+                                                                      r  u_controller/w1__3_i_463/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    51.513 r  u_controller/w1__3_i_463/CO[3]
+                         net (fo=1, unplaced)         0.000    51.513    u_controller/w1__3_i_463_n_0
+                                                                      r  u_controller/w1__3_i_458/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    51.613 r  u_controller/w1__3_i_458/CO[3]
+                         net (fo=1, unplaced)         0.000    51.613    u_controller/w1__3_i_458_n_0
+                                                                      r  u_controller/w1__3_i_453/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    51.713 r  u_controller/w1__3_i_453/CO[3]
+                         net (fo=1, unplaced)         0.000    51.713    u_controller/w1__3_i_453_n_0
+                                                                      r  u_controller/w1__3_i_448/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    51.813 r  u_controller/w1__3_i_448/CO[3]
+                         net (fo=1, unplaced)         0.000    51.813    u_controller/w1__3_i_448_n_0
+                                                                      r  u_controller/w1__3_i_445/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    51.913 r  u_controller/w1__3_i_445/CO[3]
+                         net (fo=1, unplaced)         0.000    51.913    u_controller/w1__3_i_445_n_0
+                                                                      r  u_controller/w1__3_i_444/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    52.063 r  u_controller/w1__3_i_444/CO[1]
+                         net (fo=35, unplaced)        0.545    52.608    u_controller/w1__3_i_444_n_2
+                                                                      r  u_controller/w1__3_i_485/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    52.885 r  u_controller/w1__3_i_485/O
+                         net (fo=1, unplaced)         0.000    52.885    u_controller/w1__3_i_485_n_0
+                                                                      r  u_controller/w1__3_i_418/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    53.329 r  u_controller/w1__3_i_418/CO[3]
+                         net (fo=1, unplaced)         0.008    53.337    u_controller/w1__3_i_418_n_0
+                                                                      r  u_controller/w1__3_i_413/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    53.437 r  u_controller/w1__3_i_413/CO[3]
+                         net (fo=1, unplaced)         0.000    53.437    u_controller/w1__3_i_413_n_0
+                                                                      r  u_controller/w1__3_i_408/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    53.537 r  u_controller/w1__3_i_408/CO[3]
+                         net (fo=1, unplaced)         0.000    53.537    u_controller/w1__3_i_408_n_0
+                                                                      r  u_controller/w1__3_i_403/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    53.637 r  u_controller/w1__3_i_403/CO[3]
+                         net (fo=1, unplaced)         0.000    53.637    u_controller/w1__3_i_403_n_0
+                                                                      r  u_controller/w1__3_i_398/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    53.737 r  u_controller/w1__3_i_398/CO[3]
+                         net (fo=1, unplaced)         0.000    53.737    u_controller/w1__3_i_398_n_0
+                                                                      r  u_controller/w1__3_i_393/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    53.837 r  u_controller/w1__3_i_393/CO[3]
+                         net (fo=1, unplaced)         0.000    53.837    u_controller/w1__3_i_393_n_0
+                                                                      r  u_controller/w1__3_i_388/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    53.937 r  u_controller/w1__3_i_388/CO[3]
+                         net (fo=1, unplaced)         0.000    53.937    u_controller/w1__3_i_388_n_0
+                                                                      r  u_controller/w1__3_i_385/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    54.037 r  u_controller/w1__3_i_385/CO[3]
+                         net (fo=1, unplaced)         0.000    54.037    u_controller/w1__3_i_385_n_0
+                                                                      r  u_controller/w1__3_i_384/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    54.187 r  u_controller/w1__3_i_384/CO[1]
+                         net (fo=35, unplaced)        0.545    54.732    u_controller/w1__3_i_384_n_2
+                                                                      r  u_controller/w1__3_i_425/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    55.009 r  u_controller/w1__3_i_425/O
+                         net (fo=1, unplaced)         0.000    55.009    u_controller/w1__3_i_425_n_0
+                                                                      r  u_controller/w1__3_i_362/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    55.453 r  u_controller/w1__3_i_362/CO[3]
+                         net (fo=1, unplaced)         0.008    55.461    u_controller/w1__3_i_362_n_0
+                                                                      r  u_controller/w1__3_i_357/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    55.561 r  u_controller/w1__3_i_357/CO[3]
+                         net (fo=1, unplaced)         0.000    55.561    u_controller/w1__3_i_357_n_0
+                                                                      r  u_controller/w1__3_i_352/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    55.661 r  u_controller/w1__3_i_352/CO[3]
+                         net (fo=1, unplaced)         0.000    55.661    u_controller/w1__3_i_352_n_0
+                                                                      r  u_controller/w1__3_i_347/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    55.761 r  u_controller/w1__3_i_347/CO[3]
+                         net (fo=1, unplaced)         0.000    55.761    u_controller/w1__3_i_347_n_0
+                                                                      r  u_controller/w1__3_i_342/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    55.861 r  u_controller/w1__3_i_342/CO[3]
+                         net (fo=1, unplaced)         0.000    55.861    u_controller/w1__3_i_342_n_0
+                                                                      r  u_controller/w1__3_i_337/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    55.961 r  u_controller/w1__3_i_337/CO[3]
+                         net (fo=1, unplaced)         0.000    55.961    u_controller/w1__3_i_337_n_0
+                                                                      r  u_controller/w1__3_i_332/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    56.061 r  u_controller/w1__3_i_332/CO[3]
+                         net (fo=1, unplaced)         0.000    56.061    u_controller/w1__3_i_332_n_0
+                                                                      r  u_controller/w1__3_i_329/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    56.161 r  u_controller/w1__3_i_329/CO[3]
+                         net (fo=1, unplaced)         0.000    56.161    u_controller/w1__3_i_329_n_0
+                                                                      r  u_controller/w1__3_i_328/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    56.311 r  u_controller/w1__3_i_328/CO[1]
+                         net (fo=35, unplaced)        0.545    56.856    u_controller/w1__3_i_328_n_2
+                                                                      r  u_controller/w1__3_i_370/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    57.133 r  u_controller/w1__3_i_370/O
+                         net (fo=1, unplaced)         0.000    57.133    u_controller/w1__3_i_370_n_0
+                                                                      r  u_controller/w1__3_i_311/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    57.577 r  u_controller/w1__3_i_311/CO[3]
+                         net (fo=1, unplaced)         0.008    57.585    u_controller/w1__3_i_311_n_0
+                                                                      r  u_controller/w1__3_i_306/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    57.685 r  u_controller/w1__3_i_306/CO[3]
+                         net (fo=1, unplaced)         0.000    57.685    u_controller/w1__3_i_306_n_0
+                                                                      r  u_controller/w1__3_i_301/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    57.785 r  u_controller/w1__3_i_301/CO[3]
+                         net (fo=1, unplaced)         0.000    57.785    u_controller/w1__3_i_301_n_0
+                                                                      r  u_controller/w1__3_i_296/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    57.885 r  u_controller/w1__3_i_296/CO[3]
+                         net (fo=1, unplaced)         0.000    57.885    u_controller/w1__3_i_296_n_0
+                                                                      r  u_controller/w1__3_i_291/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    57.985 r  u_controller/w1__3_i_291/CO[3]
+                         net (fo=1, unplaced)         0.000    57.985    u_controller/w1__3_i_291_n_0
+                                                                      r  u_controller/w1__3_i_286/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    58.085 r  u_controller/w1__3_i_286/CO[3]
+                         net (fo=1, unplaced)         0.000    58.085    u_controller/w1__3_i_286_n_0
+                                                                      r  u_controller/w1__3_i_281/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    58.185 r  u_controller/w1__3_i_281/CO[3]
+                         net (fo=1, unplaced)         0.000    58.185    u_controller/w1__3_i_281_n_0
+                                                                      r  u_controller/w1__3_i_278/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    58.285 r  u_controller/w1__3_i_278/CO[3]
+                         net (fo=1, unplaced)         0.000    58.285    u_controller/w1__3_i_278_n_0
+                                                                      r  u_controller/w1__3_i_277/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    58.435 r  u_controller/w1__3_i_277/CO[1]
+                         net (fo=35, unplaced)        0.545    58.980    u_controller/w1__3_i_277_n_2
+                                                                      r  u_controller/w1__3_i_319/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    59.257 r  u_controller/w1__3_i_319/O
+                         net (fo=1, unplaced)         0.000    59.257    u_controller/w1__3_i_319_n_0
+                                                                      r  u_controller/w1__3_i_265/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    59.701 r  u_controller/w1__3_i_265/CO[3]
+                         net (fo=1, unplaced)         0.008    59.709    u_controller/w1__3_i_265_n_0
+                                                                      r  u_controller/w1__3_i_260/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    59.809 r  u_controller/w1__3_i_260/CO[3]
+                         net (fo=1, unplaced)         0.000    59.809    u_controller/w1__3_i_260_n_0
+                                                                      r  u_controller/w1__3_i_255/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    59.909 r  u_controller/w1__3_i_255/CO[3]
+                         net (fo=1, unplaced)         0.000    59.909    u_controller/w1__3_i_255_n_0
+                                                                      r  u_controller/w1__3_i_250/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    60.009 r  u_controller/w1__3_i_250/CO[3]
+                         net (fo=1, unplaced)         0.000    60.009    u_controller/w1__3_i_250_n_0
+                                                                      r  u_controller/w1__3_i_245/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    60.109 r  u_controller/w1__3_i_245/CO[3]
+                         net (fo=1, unplaced)         0.000    60.109    u_controller/w1__3_i_245_n_0
+                                                                      r  u_controller/w1__3_i_240/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    60.209 r  u_controller/w1__3_i_240/CO[3]
+                         net (fo=1, unplaced)         0.000    60.209    u_controller/w1__3_i_240_n_0
+                                                                      r  u_controller/w1__3_i_235/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    60.309 r  u_controller/w1__3_i_235/CO[3]
+                         net (fo=1, unplaced)         0.000    60.309    u_controller/w1__3_i_235_n_0
+                                                                      r  u_controller/w1__3_i_232/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    60.409 r  u_controller/w1__3_i_232/CO[3]
+                         net (fo=1, unplaced)         0.000    60.409    u_controller/w1__3_i_232_n_0
+                                                                      r  u_controller/w1__3_i_231/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    60.559 r  u_controller/w1__3_i_231/CO[1]
+                         net (fo=35, unplaced)        0.545    61.104    u_controller/w1__3_i_231_n_2
+                                                                      r  u_controller/w1__3_i_273/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    61.381 r  u_controller/w1__3_i_273/O
+                         net (fo=1, unplaced)         0.000    61.381    u_controller/w1__3_i_273_n_0
+                                                                      r  u_controller/w1__3_i_222/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    61.825 r  u_controller/w1__3_i_222/CO[3]
+                         net (fo=1, unplaced)         0.008    61.833    u_controller/w1__3_i_222_n_0
+                                                                      r  u_controller/w1__3_i_217/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    61.933 r  u_controller/w1__3_i_217/CO[3]
+                         net (fo=1, unplaced)         0.000    61.933    u_controller/w1__3_i_217_n_0
+                                                                      r  u_controller/w1__3_i_212/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    62.033 r  u_controller/w1__3_i_212/CO[3]
+                         net (fo=1, unplaced)         0.000    62.033    u_controller/w1__3_i_212_n_0
+                                                                      r  u_controller/w1__3_i_207/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    62.133 r  u_controller/w1__3_i_207/CO[3]
+                         net (fo=1, unplaced)         0.000    62.133    u_controller/w1__3_i_207_n_0
+                                                                      r  u_controller/w1__3_i_202/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    62.233 r  u_controller/w1__3_i_202/CO[3]
+                         net (fo=1, unplaced)         0.000    62.233    u_controller/w1__3_i_202_n_0
+                                                                      r  u_controller/w1__3_i_197/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    62.333 r  u_controller/w1__3_i_197/CO[3]
+                         net (fo=1, unplaced)         0.000    62.333    u_controller/w1__3_i_197_n_0
+                                                                      r  u_controller/w1__3_i_192/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    62.433 r  u_controller/w1__3_i_192/CO[3]
+                         net (fo=1, unplaced)         0.000    62.433    u_controller/w1__3_i_192_n_0
+                                                                      r  u_controller/w1__3_i_189/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    62.533 r  u_controller/w1__3_i_189/CO[3]
+                         net (fo=1, unplaced)         0.000    62.533    u_controller/w1__3_i_189_n_0
+                                                                      r  u_controller/w1__3_i_188/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    62.683 r  u_controller/w1__3_i_188/CO[1]
+                         net (fo=35, unplaced)        0.545    63.228    u_controller/w1__3_i_188_n_2
+                                                                      r  u_controller/w1__3_i_230/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    63.505 r  u_controller/w1__3_i_230/O
+                         net (fo=1, unplaced)         0.000    63.505    u_controller/w1__3_i_230_n_0
+                                                                      r  u_controller/w1__3_i_183/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    63.949 r  u_controller/w1__3_i_183/CO[3]
+                         net (fo=1, unplaced)         0.008    63.957    u_controller/w1__3_i_183_n_0
+                                                                      r  u_controller/w1__3_i_178/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    64.057 r  u_controller/w1__3_i_178/CO[3]
+                         net (fo=1, unplaced)         0.000    64.057    u_controller/w1__3_i_178_n_0
+                                                                      r  u_controller/w1__3_i_173/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    64.157 r  u_controller/w1__3_i_173/CO[3]
+                         net (fo=1, unplaced)         0.000    64.157    u_controller/w1__3_i_173_n_0
+                                                                      r  u_controller/w1__3_i_168/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    64.257 r  u_controller/w1__3_i_168/CO[3]
+                         net (fo=1, unplaced)         0.000    64.257    u_controller/w1__3_i_168_n_0
+                                                                      r  u_controller/w1__3_i_163/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    64.357 r  u_controller/w1__3_i_163/CO[3]
+                         net (fo=1, unplaced)         0.000    64.357    u_controller/w1__3_i_163_n_0
+                                                                      r  u_controller/w1__3_i_158/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    64.457 r  u_controller/w1__3_i_158/CO[3]
+                         net (fo=1, unplaced)         0.000    64.457    u_controller/w1__3_i_158_n_0
+                                                                      r  u_controller/w1__3_i_153/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    64.557 r  u_controller/w1__3_i_153/CO[3]
+                         net (fo=1, unplaced)         0.000    64.557    u_controller/w1__3_i_153_n_0
+                                                                      r  u_controller/w1__3_i_150/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    64.657 r  u_controller/w1__3_i_150/CO[3]
+                         net (fo=1, unplaced)         0.000    64.657    u_controller/w1__3_i_150_n_0
+                                                                      r  u_controller/w1__3_i_149/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    64.807 r  u_controller/w1__3_i_149/CO[1]
+                         net (fo=35, unplaced)        0.545    65.352    u_controller/w1__3_i_149_n_2
+                                                                      r  u_controller/w1__5_i_88/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    65.629 r  u_controller/w1__5_i_88/O
+                         net (fo=1, unplaced)         0.000    65.629    u_controller/w1__5_i_88_n_0
+                                                                      r  u_controller/w1__5_i_67/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    66.073 r  u_controller/w1__5_i_67/CO[3]
+                         net (fo=1, unplaced)         0.008    66.081    u_controller/w1__5_i_67_n_0
+                                                                      r  u_controller/w1__3_i_144/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    66.181 r  u_controller/w1__3_i_144/CO[3]
+                         net (fo=1, unplaced)         0.000    66.181    u_controller/w1__3_i_144_n_0
+                                                                      r  u_controller/w1__3_i_139/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    66.281 r  u_controller/w1__3_i_139/CO[3]
+                         net (fo=1, unplaced)         0.000    66.281    u_controller/w1__3_i_139_n_0
+                                                                      r  u_controller/w1__3_i_134/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    66.381 r  u_controller/w1__3_i_134/CO[3]
+                         net (fo=1, unplaced)         0.000    66.381    u_controller/w1__3_i_134_n_0
+                                                                      r  u_controller/w1__3_i_129/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    66.481 r  u_controller/w1__3_i_129/CO[3]
+                         net (fo=1, unplaced)         0.000    66.481    u_controller/w1__3_i_129_n_0
+                                                                      r  u_controller/w1__3_i_124/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    66.581 r  u_controller/w1__3_i_124/CO[3]
+                         net (fo=1, unplaced)         0.000    66.581    u_controller/w1__3_i_124_n_0
+                                                                      r  u_controller/w1__3_i_119/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    66.681 r  u_controller/w1__3_i_119/CO[3]
+                         net (fo=1, unplaced)         0.000    66.681    u_controller/w1__3_i_119_n_0
+                                                                      r  u_controller/w1__3_i_116/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    66.781 r  u_controller/w1__3_i_116/CO[3]
+                         net (fo=1, unplaced)         0.000    66.781    u_controller/w1__3_i_116_n_0
+                                                                      r  u_controller/w1__3_i_115/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    66.931 r  u_controller/w1__3_i_115/CO[1]
+                         net (fo=35, unplaced)        0.545    67.476    u_controller/w1__3_i_115_n_2
+                                                                      r  u_controller/w1__5_i_75/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    67.753 r  u_controller/w1__5_i_75/O
+                         net (fo=1, unplaced)         0.000    67.753    u_controller/w1__5_i_75_n_0
+                                                                      r  u_controller/w1__5_i_56/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    68.197 r  u_controller/w1__5_i_56/CO[3]
+                         net (fo=1, unplaced)         0.008    68.205    u_controller/w1__5_i_56_n_0
+                                                                      r  u_controller/w1__5_i_51/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    68.305 r  u_controller/w1__5_i_51/CO[3]
+                         net (fo=1, unplaced)         0.000    68.305    u_controller/w1__5_i_51_n_0
+                                                                      r  u_controller/w1__3_i_103/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    68.405 r  u_controller/w1__3_i_103/CO[3]
+                         net (fo=1, unplaced)         0.000    68.405    u_controller/w1__3_i_103_n_0
+                                                                      r  u_controller/w1__3_i_98/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    68.505 r  u_controller/w1__3_i_98/CO[3]
+                         net (fo=1, unplaced)         0.000    68.505    u_controller/w1__3_i_98_n_0
+                                                                      r  u_controller/w1__3_i_93/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    68.605 r  u_controller/w1__3_i_93/CO[3]
+                         net (fo=1, unplaced)         0.000    68.605    u_controller/w1__3_i_93_n_0
+                                                                      r  u_controller/w1__3_i_85/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    68.705 r  u_controller/w1__3_i_85/CO[3]
+                         net (fo=1, unplaced)         0.000    68.705    u_controller/w1__3_i_85_n_0
+                                                                      r  u_controller/w1__3_i_80/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    68.805 r  u_controller/w1__3_i_80/CO[3]
+                         net (fo=1, unplaced)         0.000    68.805    u_controller/w1__3_i_80_n_0
+                                                                      r  u_controller/w1__3_i_77/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    68.905 r  u_controller/w1__3_i_77/CO[3]
+                         net (fo=1, unplaced)         0.000    68.905    u_controller/w1__3_i_77_n_0
+                                                                      r  u_controller/w1__3_i_76/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    69.055 r  u_controller/w1__3_i_76/CO[1]
+                         net (fo=35, unplaced)        0.545    69.600    u_controller/w1__3_i_76_n_2
+                                                                      r  u_controller/w1__5_i_64/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    69.877 r  u_controller/w1__5_i_64/O
+                         net (fo=1, unplaced)         0.000    69.877    u_controller/w1__5_i_64_n_0
+                                                                      r  u_controller/w1__5_i_42/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    70.321 r  u_controller/w1__5_i_42/CO[3]
+                         net (fo=1, unplaced)         0.008    70.329    u_controller/w1__5_i_42_n_0
+                                                                      r  u_controller/w1__5_i_35/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    70.429 r  u_controller/w1__5_i_35/CO[3]
+                         net (fo=1, unplaced)         0.000    70.429    u_controller/w1__5_i_35_n_0
+                                                                      r  u_controller/w1__5_i_29/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    70.529 r  u_controller/w1__5_i_29/CO[3]
+                         net (fo=1, unplaced)         0.000    70.529    u_controller/w1__5_i_29_n_0
+                                                                      r  u_controller/w1__3_i_65/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    70.629 r  u_controller/w1__3_i_65/CO[3]
+                         net (fo=1, unplaced)         0.000    70.629    u_controller/w1__3_i_65_n_0
+                                                                      r  u_controller/w1__3_i_60/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    70.729 r  u_controller/w1__3_i_60/CO[3]
+                         net (fo=1, unplaced)         0.000    70.729    u_controller/w1__3_i_60_n_0
+                                                                      r  u_controller/w1__3_i_48/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    70.829 r  u_controller/w1__3_i_48/CO[3]
+                         net (fo=1, unplaced)         0.000    70.829    u_controller/w1__3_i_48_n_0
+                                                                      r  u_controller/w1__3_i_39/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    70.929 r  u_controller/w1__3_i_39/CO[3]
+                         net (fo=1, unplaced)         0.000    70.929    u_controller/w1__3_i_39_n_0
+                                                                      r  u_controller/w1__3_i_36/CI
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.100    71.029 r  u_controller/w1__3_i_36/CO[3]
+                         net (fo=1, unplaced)         0.000    71.029    u_controller/w1__3_i_36_n_0
+                                                                      r  u_controller/w1__3_i_35/CI
+                         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.150    71.179 r  u_controller/w1__3_i_35/CO[1]
+                         net (fo=35, unplaced)        0.545    71.724    u_controller/w1__3_i_35_n_2
+                                                                      r  u_controller/w1__5_i_50/I0
+                         LUT3 (Prop_lut3_I0_O)        0.277    72.001 r  u_controller/w1__5_i_50/O
+                         net (fo=1, unplaced)         0.000    72.001    u_controller/w1__5_i_50_n_0
+                                                                      r  u_controller/w1__5_i_27/S[1]
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.444    72.445 r  u_controller/w1__5_i_27/CO[3]
+                         net (fo=1, unplaced)         0.008    72.453    u_controller/w1__5_i_27_n_0
+                                                                      r  u_controller/w1__5_i_24/CI
+                         CARRY4 (Prop_carry4_CI_O[2])
+                                                      0.214    72.667 r  u_controller/w1__5_i_24/O[2]
+                         net (fo=4, unplaced)         0.373    73.040    u_controller/w1__5_i_24_n_5
+                                                                      r  u_controller/w1__5_i_41/I1
+                         LUT2 (Prop_lut2_I1_O)        0.244    73.284 f  u_controller/w1__5_i_41/O
+                         net (fo=2, unplaced)         0.949    74.233    u_controller/w1__5_i_41_n_0
+                                                                      f  u_controller/w1__3_i_71/I0
+                         LUT6 (Prop_lut6_I0_O)        0.105    74.338 r  u_controller/w1__3_i_71/O
+                         net (fo=1, unplaced)         0.938    75.276    u_controller/w1__3_i_71_n_0
+                                                                      r  u_controller/w1__3_i_34/I1
+                         LUT6 (Prop_lut6_I1_O)        0.105    75.381 r  u_controller/w1__3_i_34/O
+                         net (fo=6, unplaced)         0.360    75.741    u_controller/w1__3_i_34_n_0
+                                                                      r  u_controller/w1__5_i_1/I1
+                         LUT4 (Prop_lut4_I1_O)        0.105    75.846 r  u_controller/w1__5_i_1/O
+                         net (fo=1, unplaced)         0.646    76.491    u_mmu/u_agen/q_signed[16]
+                                                                      r  u_mmu/u_agen/w1__5/A[16]
+                         DSP48E1 (Prop_dsp48e1_A[16]_P[4])
+                                                      3.230    79.721 r  u_mmu/u_agen/w1__5/P[4]
+                         net (fo=3, unplaced)         0.646    80.367    u_mmu/u_agen/w1__5_n_101
+                                                                      r  u_mmu/u_agen/linear_byte2_i_40/I2
+                         LUT3 (Prop_lut3_I2_O)        0.105    80.472 r  u_mmu/u_agen/linear_byte2_i_40/O
+                         net (fo=1, unplaced)         0.537    81.009    u_mmu/u_agen/linear_byte2_i_40_n_0
+                                                                      r  u_mmu/u_agen/linear_byte2_i_5/DI[1]
+                         CARRY4 (Prop_carry4_DI[1]_CO[3])
+                                                      0.430    81.439 r  u_mmu/u_agen/linear_byte2_i_5/CO[3]
+                         net (fo=1, unplaced)         0.000    81.439    u_mmu/u_agen/linear_byte2_i_5_n_0
+                                                                      r  u_mmu/u_agen/linear_byte2_i_4/CI
+                         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.269    81.708 r  u_mmu/u_agen/linear_byte2_i_4/O[1]
+                         net (fo=3, unplaced)         0.646    82.354    u_mmu/u_agen/linear_byte2_i_4_n_6
+                                                                      r  u_mmu/u_agen/linear_byte2/C[9]
+                         DSP48E1 (Prop_dsp48e1_C[9]_P[10])
+                                                      1.668    84.022 r  u_mmu/u_agen/linear_byte2/P[10]
+                         net (fo=1, unplaced)         0.646    84.667    u_mmu/u_agen/linear_byte2_n_95
+                                                                      r  u_mmu/u_agen/linear_byte0/A[10]
+                         DSP48E1 (Prop_dsp48e1_A[10]_P[7])
+                                                      3.230    87.897 r  u_mmu/u_agen/linear_byte0/P[7]
+                         net (fo=10, unplaced)        0.646    88.543    u_mmu/u_agen/P[7]
+                                                                      r  u_mmu/u_agen/mem_reg_i_1/I4
+                         LUT5 (Prop_lut5_I4_O)        0.105    88.648 r  u_mmu/u_agen/mem_reg_i_1/O
+                         net (fo=1, unplaced)         0.646    89.293    u_mmu/g_c_lanes[0].u_bank/u_input_sram/ADDRARDADDR[4]
+                         RAMB36E1                                     r  u_mmu/g_c_lanes[0].u_bank/u_input_sram/mem_reg/ADDRARDADDR[10]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)       20.000    20.000 r  <hidden>
+                                                      0.000    20.000 r  clk
+                         net (fo=6745, unset)         0.748    20.748    u_mmu/g_c_lanes[0].u_bank/u_input_sram/clk
+                         RAMB36E1                                     r  u_mmu/g_c_lanes[0].u_bank/u_input_sram/mem_reg/CLKARDCLK
+                         clock pessimism              0.000    20.748    <hidden>
+                         clock uncertainty           -0.035    20.712    <hidden>
+                         RAMB36E1 (Setup_ramb36e1_CLKARDCLK_ADDRARDADDR[10])
+                                                     -0.490    20.222    u_mmu/g_c_lanes[0].u_bank/u_input_sram/mem_reg
+  -------------------------------------------------------------------
+                         required time                         20.222    <hidden>
+                         arrival time                         -89.293    <hidden>
+  -------------------------------------------------------------------
+                         slack                                -69.071    <hidden>
+
+
+
+

@@ -1,0 +1,165 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2026.1 (win64) Build 6511674 Tue Jun 16 11:02:23 MDT 2026
+| Date         : Sat Oct 17 20:52:23 2026
+| Host         : root running 64-bit major release  (build 9200)
+| Command      : report_utilization -hierarchical -file utilization_hierarchy.rpt
+| Design       : conv_core
+| Device       : xc7a200tfbg676-2
+| Speed File   : -2
+| Design State : Synthesized
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Utilization Design Information
+
+Table of Contents
+-----------------
+1. Utilization by Hierarchy
+
+1. Utilization by Hierarchy
+---------------------------
+
++---------------------------+---------------------------------------+------------+------------+---------+------+------+--------+--------+------------+
+|          Instance         |                 Module                | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | DSP Blocks |
++---------------------------+---------------------------------------+------------+------------+---------+------+------+--------+--------+------------+
+| conv_core                 |                                 (top) |      64021 |      64021 |       0 |    0 | 7846 |    160 |     30 |        254 |
+|   (conv_core)             |                                 (top) |          0 |          0 |       0 |    0 |  672 |      0 |      0 |          0 |
+|   u_controller            |                       conv_controller |       1474 |       1474 |       0 |    0 |  102 |      0 |      0 |          6 |
+|   u_mmu                   |                                   MMU |      62452 |      62452 |       0 |    0 | 7065 |    160 |     20 |        248 |
+|     u_array               |                        systolic_array |       9613 |       9613 |       0 |    0 | 5440 |      0 |      0 |          0 |
+|       (u_array)           |                        systolic_array |          0 |          0 |       0 |    0 |  260 |      0 |      0 |          0 |
+|       g_c[0].g_k[0].u_MAC |                                   MAC |        101 |        101 |       0 |    0 |   48 |      0 |      0 |          0 |
+|       g_c[0].g_k[1].u_MAC |                                 MAC_9 |         94 |         94 |       0 |    0 |   48 |      0 |      0 |          0 |
+|       g_c[0].g_k[2].u_MAC |                                MAC_10 |         96 |         96 |       0 |    0 |   48 |      0 |      0 |          0 |
+|       g_c[0].g_k[3].u_MAC |                                MAC_11 |         93 |         93 |       0 |    0 |   48 |      0 |      0 |          0 |
+|       g_c[0].g_k[4].u_MAC |                                MAC_12 |         94 |         94 |       0 |    0 |   48 |      0 |      0 |          0 |
+|       g_c[0].g_k[5].u_MAC |                                MAC_13 |         93 |         93 |       0 |    0 |   48 |      0 |      0 |          0 |
+|       g_c[0].g_k[6].u_MAC |                                MAC_14 |         93 |         93 |       0 |    0 |   48 |      0 |      0 |          0 |
+|       g_c[0].g_k[7].u_MAC |                                MAC_15 |         95 |         95 |       0 |    0 |   48 |      0 |      0 |          0 |
+|       g_c[0].g_k[8].u_MAC |                                MAC_16 |         94 |         94 |       0 |    0 |   48 |      0 |      0 |          0 |
+|       g_c[0].g_k[9].u_MAC |                                MAC_17 |         89 |         89 |       0 |    0 |   40 |      0 |      0 |          0 |
+|       g_c[1].g_k[0].u_MAC |                                MAC_18 |        102 |        102 |       0 |    0 |   50 |      0 |      0 |          0 |
+|       g_c[1].g_k[1].u_MAC |                                MAC_19 |         97 |         97 |       0 |    0 |   50 |      0 |      0 |          0 |
+|       g_c[1].g_k[2].u_MAC |                                MAC_20 |         99 |         99 |       0 |    0 |   50 |      0 |      0 |          0 |
+|       g_c[1].g_k[3].u_MAC |                                MAC_21 |         97 |         97 |       0 |    0 |   50 |      0 |      0 |          0 |
+|       g_c[1].g_k[4].u_MAC |                                MAC_22 |         96 |         96 |       0 |    0 |   50 |      0 |      0 |          0 |
+|       g_c[1].g_k[5].u_MAC |                                MAC_23 |         98 |         98 |       0 |    0 |   50 |      0 |      0 |          0 |
+|       g_c[1].g_k[6].u_MAC |                                MAC_24 |         96 |         96 |       0 |    0 |   50 |      0 |      0 |          0 |
+|       g_c[1].g_k[7].u_MAC |                                MAC_25 |         97 |         97 |       0 |    0 |   50 |      0 |      0 |          0 |
+|       g_c[1].g_k[8].u_MAC |                                MAC_26 |         97 |         97 |       0 |    0 |   50 |      0 |      0 |          0 |
+|       g_c[1].g_k[9].u_MAC |                                MAC_27 |         87 |         87 |       0 |    0 |   42 |      0 |      0 |          0 |
+|       g_c[2].g_k[0].u_MAC |                                MAC_28 |        101 |        101 |       0 |    0 |   51 |      0 |      0 |          0 |
+|       g_c[2].g_k[1].u_MAC |                                MAC_29 |         96 |         96 |       0 |    0 |   51 |      0 |      0 |          0 |
+|       g_c[2].g_k[2].u_MAC |                                MAC_30 |         96 |         96 |       0 |    0 |   51 |      0 |      0 |          0 |
+|       g_c[2].g_k[3].u_MAC |                                MAC_31 |         96 |         96 |       0 |    0 |   51 |      0 |      0 |          0 |
+|       g_c[2].g_k[4].u_MAC |                                MAC_32 |         96 |         96 |       0 |    0 |   51 |      0 |      0 |          0 |
+|       g_c[2].g_k[5].u_MAC |                                MAC_33 |         96 |         96 |       0 |    0 |   51 |      0 |      0 |          0 |
+|       g_c[2].g_k[6].u_MAC |                                MAC_34 |         96 |         96 |       0 |    0 |   51 |      0 |      0 |          0 |
+|       g_c[2].g_k[7].u_MAC |                                MAC_35 |         96 |         96 |       0 |    0 |   51 |      0 |      0 |          0 |
+|       g_c[2].g_k[8].u_MAC |                                MAC_36 |         96 |         96 |       0 |    0 |   51 |      0 |      0 |          0 |
+|       g_c[2].g_k[9].u_MAC |                                MAC_37 |         87 |         87 |       0 |    0 |   43 |      0 |      0 |          0 |
+|       g_c[3].g_k[0].u_MAC |                                MAC_38 |         99 |         99 |       0 |    0 |   52 |      0 |      0 |          0 |
+|       g_c[3].g_k[1].u_MAC |                                MAC_39 |         97 |         97 |       0 |    0 |   52 |      0 |      0 |          0 |
+|       g_c[3].g_k[2].u_MAC |                                MAC_40 |         97 |         97 |       0 |    0 |   52 |      0 |      0 |          0 |
+|       g_c[3].g_k[3].u_MAC |                                MAC_41 |         97 |         97 |       0 |    0 |   52 |      0 |      0 |          0 |
+|       g_c[3].g_k[4].u_MAC |                                MAC_42 |         97 |         97 |       0 |    0 |   52 |      0 |      0 |          0 |
+|       g_c[3].g_k[5].u_MAC |                                MAC_43 |         97 |         97 |       0 |    0 |   52 |      0 |      0 |          0 |
+|       g_c[3].g_k[6].u_MAC |                                MAC_44 |         97 |         97 |       0 |    0 |   52 |      0 |      0 |          0 |
+|       g_c[3].g_k[7].u_MAC |                                MAC_45 |         97 |         97 |       0 |    0 |   52 |      0 |      0 |          0 |
+|       g_c[3].g_k[8].u_MAC |                                MAC_46 |         97 |         97 |       0 |    0 |   52 |      0 |      0 |          0 |
+|       g_c[3].g_k[9].u_MAC |                                MAC_47 |         88 |         88 |       0 |    0 |   44 |      0 |      0 |          0 |
+|       g_c[4].g_k[0].u_MAC |                                MAC_48 |        101 |        101 |       0 |    0 |   53 |      0 |      0 |          0 |
+|       g_c[4].g_k[1].u_MAC |                                MAC_49 |         98 |         98 |       0 |    0 |   53 |      0 |      0 |          0 |
+|       g_c[4].g_k[2].u_MAC |                                MAC_50 |         98 |         98 |       0 |    0 |   53 |      0 |      0 |          0 |
+|       g_c[4].g_k[3].u_MAC |                                MAC_51 |         98 |         98 |       0 |    0 |   53 |      0 |      0 |          0 |
+|       g_c[4].g_k[4].u_MAC |                                MAC_52 |         98 |         98 |       0 |    0 |   53 |      0 |      0 |          0 |
+|       g_c[4].g_k[5].u_MAC |                                MAC_53 |         98 |         98 |       0 |    0 |   53 |      0 |      0 |          0 |
+|       g_c[4].g_k[6].u_MAC |                                MAC_54 |         98 |         98 |       0 |    0 |   53 |      0 |      0 |          0 |
+|       g_c[4].g_k[7].u_MAC |                                MAC_55 |         98 |         98 |       0 |    0 |   53 |      0 |      0 |          0 |
+|       g_c[4].g_k[8].u_MAC |                                MAC_56 |         98 |         98 |       0 |    0 |   53 |      0 |      0 |          0 |
+|       g_c[4].g_k[9].u_MAC |                                MAC_57 |         89 |         89 |       0 |    0 |   45 |      0 |      0 |          0 |
+|       g_c[5].g_k[0].u_MAC |                                MAC_58 |        101 |        101 |       0 |    0 |   54 |      0 |      0 |          0 |
+|       g_c[5].g_k[1].u_MAC |                                MAC_59 |         99 |         99 |       0 |    0 |   54 |      0 |      0 |          0 |
+|       g_c[5].g_k[2].u_MAC |                                MAC_60 |         99 |         99 |       0 |    0 |   54 |      0 |      0 |          0 |
+|       g_c[5].g_k[3].u_MAC |                                MAC_61 |         99 |         99 |       0 |    0 |   54 |      0 |      0 |          0 |
+|       g_c[5].g_k[4].u_MAC |                                MAC_62 |         99 |         99 |       0 |    0 |   54 |      0 |      0 |          0 |
+|       g_c[5].g_k[5].u_MAC |                                MAC_63 |         99 |         99 |       0 |    0 |   54 |      0 |      0 |          0 |
+|       g_c[5].g_k[6].u_MAC |                                MAC_64 |         99 |         99 |       0 |    0 |   54 |      0 |      0 |          0 |
+|       g_c[5].g_k[7].u_MAC |                                MAC_65 |         99 |         99 |       0 |    0 |   54 |      0 |      0 |          0 |
+|       g_c[5].g_k[8].u_MAC |                                MAC_66 |         99 |         99 |       0 |    0 |   54 |      0 |      0 |          0 |
+|       g_c[5].g_k[9].u_MAC |                                MAC_67 |         90 |         90 |       0 |    0 |   46 |      0 |      0 |          0 |
+|       g_c[6].g_k[0].u_MAC |                                MAC_68 |        102 |        102 |       0 |    0 |   55 |      0 |      0 |          0 |
+|       g_c[6].g_k[1].u_MAC |                                MAC_69 |        100 |        100 |       0 |    0 |   55 |      0 |      0 |          0 |
+|       g_c[6].g_k[2].u_MAC |                                MAC_70 |        100 |        100 |       0 |    0 |   55 |      0 |      0 |          0 |
+|       g_c[6].g_k[3].u_MAC |                                MAC_71 |        100 |        100 |       0 |    0 |   55 |      0 |      0 |          0 |
+|       g_c[6].g_k[4].u_MAC |                                MAC_72 |        100 |        100 |       0 |    0 |   55 |      0 |      0 |          0 |
+|       g_c[6].g_k[5].u_MAC |                                MAC_73 |        100 |        100 |       0 |    0 |   55 |      0 |      0 |          0 |
+|       g_c[6].g_k[6].u_MAC |                                MAC_74 |        100 |        100 |       0 |    0 |   55 |      0 |      0 |          0 |
+|       g_c[6].g_k[7].u_MAC |                                MAC_75 |        100 |        100 |       0 |    0 |   55 |      0 |      0 |          0 |
+|       g_c[6].g_k[8].u_MAC |                                MAC_76 |        100 |        100 |       0 |    0 |   55 |      0 |      0 |          0 |
+|       g_c[6].g_k[9].u_MAC |                                MAC_77 |         94 |         94 |       0 |    0 |   47 |      0 |      0 |          0 |
+|       g_c[7].g_k[0].u_MAC |                                MAC_78 |        104 |        104 |       0 |    0 |   56 |      0 |      0 |          0 |
+|       g_c[7].g_k[1].u_MAC |                                MAC_79 |        101 |        101 |       0 |    0 |   56 |      0 |      0 |          0 |
+|       g_c[7].g_k[2].u_MAC |                                MAC_80 |        101 |        101 |       0 |    0 |   56 |      0 |      0 |          0 |
+|       g_c[7].g_k[3].u_MAC |                                MAC_81 |        101 |        101 |       0 |    0 |   56 |      0 |      0 |          0 |
+|       g_c[7].g_k[4].u_MAC |                                MAC_82 |        101 |        101 |       0 |    0 |   56 |      0 |      0 |          0 |
+|       g_c[7].g_k[5].u_MAC |                                MAC_83 |        101 |        101 |       0 |    0 |   56 |      0 |      0 |          0 |
+|       g_c[7].g_k[6].u_MAC |                                MAC_84 |        101 |        101 |       0 |    0 |   56 |      0 |      0 |          0 |
+|       g_c[7].g_k[7].u_MAC |                                MAC_85 |        101 |        101 |       0 |    0 |   56 |      0 |      0 |          0 |
+|       g_c[7].g_k[8].u_MAC |                                MAC_86 |        101 |        101 |       0 |    0 |   56 |      0 |      0 |          0 |
+|       g_c[7].g_k[9].u_MAC |                                MAC_87 |         97 |         97 |       0 |    0 |   48 |      0 |      0 |          0 |
+|       g_c[8].g_k[0].u_MAC |                                MAC_88 |        106 |        106 |       0 |    0 |   57 |      0 |      0 |          0 |
+|       g_c[8].g_k[1].u_MAC |                                MAC_89 |        102 |        102 |       0 |    0 |   57 |      0 |      0 |          0 |
+|       g_c[8].g_k[2].u_MAC |                                MAC_90 |        102 |        102 |       0 |    0 |   57 |      0 |      0 |          0 |
+|       g_c[8].g_k[3].u_MAC |                                MAC_91 |        102 |        102 |       0 |    0 |   57 |      0 |      0 |          0 |
+|       g_c[8].g_k[4].u_MAC |                                MAC_92 |        102 |        102 |       0 |    0 |   57 |      0 |      0 |          0 |
+|       g_c[8].g_k[5].u_MAC |                                MAC_93 |        102 |        102 |       0 |    0 |   57 |      0 |      0 |          0 |
+|       g_c[8].g_k[6].u_MAC |                                MAC_94 |        102 |        102 |       0 |    0 |   57 |      0 |      0 |          0 |
+|       g_c[8].g_k[7].u_MAC |                                MAC_95 |        102 |        102 |       0 |    0 |   57 |      0 |      0 |          0 |
+|       g_c[8].g_k[8].u_MAC |                                MAC_96 |        102 |        102 |       0 |    0 |   57 |      0 |      0 |          0 |
+|       g_c[8].g_k[9].u_MAC |                                MAC_97 |         93 |         93 |       0 |    0 |   49 |      0 |      0 |          0 |
+|       g_c[9].g_k[0].u_MAC |                                MAC_98 |         88 |         88 |       0 |    0 |   50 |      0 |      0 |          0 |
+|       g_c[9].g_k[1].u_MAC |                                MAC_99 |         80 |         80 |       0 |    0 |   50 |      0 |      0 |          0 |
+|       g_c[9].g_k[2].u_MAC |                               MAC_100 |         80 |         80 |       0 |    0 |   50 |      0 |      0 |          0 |
+|       g_c[9].g_k[3].u_MAC |                               MAC_101 |         81 |         81 |       0 |    0 |   50 |      0 |      0 |          0 |
+|       g_c[9].g_k[4].u_MAC |                               MAC_102 |         80 |         80 |       0 |    0 |   50 |      0 |      0 |          0 |
+|       g_c[9].g_k[5].u_MAC |                               MAC_103 |         81 |         81 |       0 |    0 |   50 |      0 |      0 |          0 |
+|       g_c[9].g_k[6].u_MAC |                               MAC_104 |         83 |         83 |       0 |    0 |   50 |      0 |      0 |          0 |
+|       g_c[9].g_k[7].u_MAC |                               MAC_105 |         85 |         85 |       0 |    0 |   50 |      0 |      0 |          0 |
+|       g_c[9].g_k[8].u_MAC |                               MAC_106 |         80 |         80 |       0 |    0 |   50 |      0 |      0 |          0 |
+|       g_c[9].g_k[9].u_MAC |                               MAC_107 |         71 |         71 |       0 |    0 |   42 |      0 |      0 |          0 |
+|     g_c[0].u_bank         |                          channel_bank |       5281 |       5281 |       0 |    0 |  144 |     16 |      2 |         24 |
+|       u_im2col_writer     |            explicit_im2col_writer_149 |       5171 |       5171 |       0 |    0 |  102 |      0 |      0 |         24 |
+|       u_output            |                    output_accumulator |         74 |         74 |       0 |    0 |   41 |      0 |      0 |          0 |
+|     g_c[1].u_bank         |          channel_bank__parameterized0 |       5271 |       5271 |       0 |    0 |  161 |     16 |      2 |         24 |
+|       u_im2col_writer     |            explicit_im2col_writer_145 |       5171 |       5171 |       0 |    0 |  102 |      0 |      0 |         24 |
+|       u_output            |    output_accumulator__parameterized0 |         69 |         69 |       0 |    0 |   41 |      0 |      0 |          0 |
+|     g_c[2].u_bank         |          channel_bank__parameterized1 |       5306 |       5306 |       0 |    0 |  161 |     16 |      2 |         24 |
+|       u_activation        | activation_feeder__parameterized0_138 |         61 |         61 |       0 |    0 |   18 |      0 |      0 |          0 |
+|       u_im2col_writer     |            explicit_im2col_writer_140 |       5170 |       5170 |       0 |    0 |  102 |      0 |      0 |         24 |
+|       u_output            |    output_accumulator__parameterized1 |         74 |         74 |       0 |    0 |   41 |      0 |      0 |          0 |
+|     g_c[3].u_bank         |          channel_bank__parameterized2 |       5275 |       5275 |       0 |    0 |  161 |     16 |      2 |         24 |
+|       u_im2col_writer     |            explicit_im2col_writer_135 |       5170 |       5170 |       0 |    0 |  102 |      0 |      0 |         24 |
+|       u_output            |    output_accumulator__parameterized2 |         74 |         74 |       0 |    0 |   41 |      0 |      0 |          0 |
+|     g_c[4].u_bank         |          channel_bank__parameterized3 |       5275 |       5275 |       0 |    0 |  161 |     16 |      2 |         24 |
+|       u_im2col_writer     |            explicit_im2col_writer_130 |       5171 |       5171 |       0 |    0 |  102 |      0 |      0 |         24 |
+|       u_output            |    output_accumulator__parameterized3 |         73 |         73 |       0 |    0 |   41 |      0 |      0 |          0 |
+|     g_c[5].u_bank         |          channel_bank__parameterized4 |       5277 |       5277 |       0 |    0 |  161 |     16 |      2 |         24 |
+|       u_im2col_writer     |            explicit_im2col_writer_125 |       5170 |       5170 |       0 |    0 |  102 |      0 |      0 |         24 |
+|       u_output            |    output_accumulator__parameterized4 |         76 |         76 |       0 |    0 |   41 |      0 |      0 |          0 |
+|     g_c[6].u_bank         |          channel_bank__parameterized5 |       5278 |       5278 |       0 |    0 |  161 |     16 |      2 |         24 |
+|       u_im2col_writer     |            explicit_im2col_writer_120 |       5171 |       5171 |       0 |    0 |  102 |      0 |      0 |         24 |
+|       u_output            |    output_accumulator__parameterized5 |         76 |         76 |       0 |    0 |   41 |      0 |      0 |          0 |
+|     g_c[7].u_bank         |          channel_bank__parameterized6 |       5276 |       5276 |       0 |    0 |  161 |     16 |      2 |         24 |
+|       u_im2col_writer     |            explicit_im2col_writer_115 |       5170 |       5170 |       0 |    0 |  102 |      0 |      0 |         24 |
+|       u_output            |    output_accumulator__parameterized6 |         75 |         75 |       0 |    0 |   41 |      0 |      0 |          0 |
+|     g_c[8].u_bank         |          channel_bank__parameterized7 |       5278 |       5278 |       0 |    0 |  161 |     16 |      2 |         24 |
+|       u_im2col_writer     |            explicit_im2col_writer_110 |       5171 |       5171 |       0 |    0 |  102 |      0 |      0 |         24 |
+|       u_output            |    output_accumulator__parameterized7 |         75 |         75 |       0 |    0 |   41 |      0 |      0 |          0 |
+|     g_c[9].u_bank         |          channel_bank__parameterized8 |       5305 |       5305 |       0 |    0 |  161 |     16 |      2 |         24 |
+|       u_im2col_writer     |                explicit_im2col_writer |       5212 |       5212 |       0 |    0 |  102 |      0 |      0 |         24 |
+|       u_output            |    output_accumulator__parameterized8 |         75 |         75 |       0 |    0 |   41 |      0 |      0 |          0 |
+|   u_weight_loader         |                         weight_loader |         74 |         74 |       0 |    0 |    7 |      0 |      0 |          0 |
++---------------------------+---------------------------------------+------------+------------+---------+------+------+--------+--------+------------+
+
+
