@@ -310,15 +310,121 @@ module tb_conv_core;
     start = 1;
     @(negedge clk);
     start = 0;
+    if($test$plusargs("RESET_DURING_JOB")) begin
+      repeat(20) @(negedge clk);
+      nrst=0;
+      repeat(2) @(negedge clk);
+      nrst=1;
+      @(negedge clk);start=1;
+      @(negedge clk);start=0;
+    end
     wait (done);
     #1;
 
     $display("[METRIC] Run cycles (start accepted to done): %0d", clock_cycles - run_start_cycle);
+    if (cycle_im2col+cycle_weights+cycle_advances+cycle_stalls+cycle_transitions != clock_cycles-run_start_cycle)
+      $fatal(1,"Phase sum differs from start-to-done total");
+    $display("[CYCLES] total=%0d im2col=%0d weights=%0d advances=%0d stalls=%0d transitions=%0d retries=%0d",
+      clock_cycles-run_start_cycle,cycle_im2col,cycle_weights,cycle_advances,cycle_stalls,cycle_transitions,cycle_retries);
+    $display("[PACKETS] reads=%0d values=%0d padding=%0d pushes=%0d full_waits=%0d overlap=%0d",packet_reads,packet_values,packet_padding,packet_pushes,producer_full_waits,overlap_cycles);
+    if(packet_values+packet_padding != C*R*S*N*P*Q) $fatal(1,"Activation count mismatch");
+    if(packet_pushes != R*S*((N*P*Q+7)/8)) $fatal(1,"Packet count mismatch");
+
     $display("[METRIC] Useful MAC utilization (channels only): %0.2f%% (%0d/%0d PEs; C=%0d K=%0d)",
              100.0 * C * K / (ARRAY_SIZE * ARRAY_SIZE), C*K, ARRAY_SIZE*ARRAY_SIZE, C, K);
     dump_sram_layout;
     check_and_dump_output;
     $finish;
+  end
+
+
+  // Presentation accounting; simulation only. Count pre-edge busy phases, including the done edge.
+  reg [63:0] cycle_im2col=0, cycle_weights=0, cycle_advances=0, cycle_stalls=0, cycle_transitions=0, cycle_retries=0;
+  always @(posedge clk) begin
+    if (!nrst || (start && !busy)) begin
+      cycle_im2col<=0; cycle_weights<=0; cycle_advances<=0;
+      cycle_stalls<=0; cycle_transitions<=0; cycle_retries<=0;
+    end else if (busy) begin
+      if (1'b0) cycle_im2col<=cycle_im2col+1;
+      else if (UUT.prime || UUT.initial_load) cycle_weights<=cycle_weights+1;
+      else if (UUT.running) begin
+        if (UUT.advance) cycle_advances<=cycle_advances+1;
+        else cycle_stalls<=cycle_stalls+1;
+        if (1'b0) cycle_retries<=cycle_retries+1;
+      end else if (UUT.u_controller.state == UUT.u_controller.SWITCH_TAP) cycle_transitions<=cycle_transitions+1;
+      else $fatal(1,"Unclassified busy cycle");
+    end
+  end
+
+
+  reg [63:0] packet_reads=0,packet_values=0,packet_pushes=0,producer_full_waits=0,overlap_cycles=0;
+  reg [63:0] packet_padding=0;
+  integer mon_pos,mon_n,mon_p,mon_q,mon_h,mon_w,mon_c,mon_j;
+  reg [BIT_WIDTH-1:0] expected_activation;
+  always @(posedge clk) begin
+    if(!nrst || (start && !busy)) begin
+      packet_reads<=0;packet_values<=0;packet_pushes<=0;producer_full_waits<=0;overlap_cycles<=0;packet_padding<=0;
+    end else if(busy) begin
+      if(UUT.u_mmu.fetch_word) packet_reads<=packet_reads+C;
+      if(UUT.u_mmu.push_packet) packet_pushes<=packet_pushes+1;
+      if(UUT.u_mmu.complete && !UUT.u_mmu.all_space && UUT.u_mmu.producer_position<N*P*Q)
+        producer_full_waits<=producer_full_waits+1;
+      if(UUT.u_mmu.consume && (UUT.u_mmu.fetch_word || UUT.u_mmu.push_packet || |UUT.u_mmu.collect_mask))
+        overlap_cycles<=overlap_cycles+1;
+      if(UUT.u_mmu.consume) begin
+        mon_pos=UUT.u_mmu.step_count;
+        mon_n=mon_pos%N;mon_p=(mon_pos/N)/Q;mon_q=(mon_pos/N)%Q;
+        mon_h=mon_p*stride_i+UUT.r*dilation_i-pad_i;
+        mon_w=mon_q*stride_j+UUT.s*dilation_j-pad_j;
+        if(mon_h>=0 && mon_h<H && mon_w>=0 && mon_w<W) packet_values<=packet_values+C;
+        else packet_padding<=packet_padding+C;
+        for(mon_c=0;mon_c<C;mon_c=mon_c+1) begin
+          expected_activation=(mon_h>=0 && mon_h<H && mon_w>=0 && mon_w<W)
+            ? input_tensor[(mon_n*C+mon_c)*H*W+mon_h*W+mon_w] : 0;
+          if(UUT.u_mmu.scalar_values[mon_c] !== expected_activation)
+            $fatal(1,"Packet activation mismatch at tap=%0d,%0d position=%0d channel=%0d",UUT.r,UUT.s,mon_pos,mon_c);
+          if(UUT.u_mmu.head_count[mon_c] !== UUT.u_mmu.head_count[0])
+            $fatal(1,"Lane packet counts diverged");
+        end
+      end
+    end
+  end
+
+
+  // Directed hold test: the producer continues and must honor queue fullness.
+  initial begin
+    if($test$plusargs("HOLD_ARRAY")) begin
+      wait(nrst && UUT.running && UUT.u_mmu.step_count==3);
+      @(negedge clk);
+      force UUT.u_mmu.advance=1'b0;
+      repeat(12) @(negedge clk);
+      release UUT.u_mmu.advance;
+    end
+  end
+  reg [BIT_WIDTH-1:0] held_data [0:ARRAY_SIZE-1][0:ARRAY_SIZE-1];
+  reg [ACC_WIDTH-1:0] held_sums [0:ARRAY_SIZE-1][0:ARRAY_SIZE-1];
+  reg [ARRAY_SIZE-1:0][ACC_WIDTH-1:0] held_columns;
+  integer hr,hk;
+  always @(posedge clk) begin
+    if(nrst && UUT.running && !UUT.advance) begin
+      held_columns=acc_col_out;
+      for(hr=0;hr<ARRAY_SIZE;hr=hr+1)
+        for(hk=0;hk<ARRAY_SIZE;hk=hk+1) begin
+          held_data[hr][hk]=UUT.u_mmu.u_array.mac_data_out[hr][hk];
+          held_sums[hr][hk]=UUT.u_mmu.u_array.mac_acc_out[hr][hk];
+        end
+      #1;
+      if(acc_col_out !== held_columns) $fatal(1,"Columns changed while held");
+      for(hr=0;hr<ARRAY_SIZE;hr=hr+1)
+        for(hk=0;hk<ARRAY_SIZE;hk=hk+1)
+          if(UUT.u_mmu.u_array.mac_data_out[hr][hk] !== held_data[hr][hk] ||
+             UUT.u_mmu.u_array.mac_acc_out[hr][hk] !== held_sums[hr][hk])
+            $fatal(1,"PE pipeline changed while held");
+    end
+  end
+  initial begin
+    repeat(1000000) @(posedge clk);
+    $fatal(1,"Packet feeder watchdog");
   end
 
 endmodule

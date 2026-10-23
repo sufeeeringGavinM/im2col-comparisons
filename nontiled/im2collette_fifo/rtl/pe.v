@@ -5,6 +5,7 @@ module pe #(
     parameter ACC_WIDTH = 32
 ) (
     input  wire                         clk,
+    input wire advance,
     input  wire                         nrst,
     input  wire                         clear_acc,
     input  wire                         load_weights,
@@ -40,7 +41,7 @@ module pe #(
             if (clear_acc) begin
                 acc_out  <= {ACC_WIDTH{1'b0}};
                 data_out <= {BIT_WIDTH{1'b0}};
-            end else begin
+            end else if (advance) begin
                 data_out <= data_in;
                 acc_out  <= acc_in + product;
             end

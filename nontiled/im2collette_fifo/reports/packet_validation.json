@@ -1,0 +1,153 @@
+{
+  "cases": 34,
+  "passed": 34,
+  "outputs_checked": 16462,
+  "checks": [
+    "Every consumed activation checked against tensor position",
+    "Actual PE/writeback SRAM matches Verilog and Python references",
+    "Phase, advance, packet and activation counts reconcile",
+    "All 17 presentation tensor hashes match the baseline",
+    "Natural and forced holds preserve PE/column pipeline state",
+    "Full queues backpressure without losing data",
+    "12 forced holds add exactly 12 cycles",
+    "Mid-job reset/restart recovers correct outputs and read count",
+    "All-padding case uses zero activation reads",
+    "ARRAY_SIZE=1 passes"
+  ],
+  "limitations": "Simulation only; conservative producer increases many layer cycle counts; no synthesis or timing closure",
+  "capacity_baseline": {
+    "activations": 2560,
+    "enabled_bank_reads": 320,
+    "values_per_read": 8,
+    "cycles": 287,
+    "scalar_fifo_cycles": 288
+  },
+  "presentation_suite": {
+    "layers": 17,
+    "scalar_fifo_cycles": 8974,
+    "packet_cycles": 10047
+  },
+  "source_sha256": {
+    "rtl/weight_loader.v": "fc22e44429d37c46fccb834463a734d7589ba993849bbd46637b82f25499db76",
+    "rtl/systolic_array.v": "654ddbef47d30a09ba2d873fe0727b057fd3c38bf3684f32b10feb896f811393",
+    "rtl/sync_fifo.v": "2fe80070e63db7c8c4180f0d943b46295af29b88928231bfeb28a172a0729bd3",
+    "rtl/row_sram.v": "fcca1912adb795bf2b8377a166ce2f17ee7bd1af5183d51c9956ea9f3cc5f67c",
+    "rtl/pe.v": "23ea762fb3e50e85d4fdfa52022ca2121da7301a4d10fc90017a1eb357bdc154",
+    "rtl/output_accumulator.v": "d6c6c438cf68814a5e462e39c7951d97fc3b1f84617a744af6f5e892c5ddd16f",
+    "rtl/kernel_bank.v": "5693aba9cd0e4cc73ee34545a605533e649844cd9bbf130c830690eca0a32ac3",
+    "rtl/im2col_addr_gen.v": "2e9671a4f5b76fff411fb2280eed8bd57b81563663490078fdd02b9391c685df",
+    "rtl/feed_lane.v": "949c0cd0843a0f861b7f066ef5d1c5a9308e22601caf59db2ccc9477b11accb1",
+    "rtl/conv_core.v": "0bb5a25f5dfa91e666786aabfcc9cf0a92fb1977cdf1d4d8300e14c79542956a",
+    "rtl/conv_controller.v": "031e123381d1841ace2803823429309717373bd846e500eec32b25fc056ba6bc",
+    "rtl/channel_bank.v": "aef321c6d77d4de9ebdc0b084f59c17df3f0db2596718c0dc8d71c0f9d95e2cf",
+    "rtl/MMU.v": "2efbd5c42636193ef98cf24c0f0099c8e7d0f40ae2b760f5539e78243363696b",
+    "sim/tb_conv_core.v": "0df036d4503020de318ee8e0aaf32c457bd21c375138d788506dd138ee761eef"
+  },
+  "packaged_runner_checks": [
+    {
+      "status": "PASS",
+      "config": {
+        "N": 1,
+        "C": 4,
+        "H": 6,
+        "W": 6,
+        "K": 2,
+        "R": 3,
+        "S": 3,
+        "pad_i": 0,
+        "pad_j": 0,
+        "stride_i": 1,
+        "stride_j": 1,
+        "dilation_i": 1,
+        "dilation_j": 1
+      },
+      "output_shape": [
+        1,
+        2,
+        4,
+        4
+      ],
+      "outputs": 32,
+      "checks": [
+        "Verilog reference task",
+        "Python golden model"
+      ],
+      "metrics": [
+        "[METRIC] Run cycles (start accepted to done): 402",
+        "[CYCLES] total=402 im2col=0 weights=11 advances=324 stalls=59 transitions=8 retries=0",
+        "[PACKETS] reads=128 values=576 padding=0 pushes=18 full_waits=0 overlap=37",
+        "[METRIC] Useful MAC utilization (channels only): 8.00% (8/100 PEs; C=4 K=2)"
+      ]
+    },
+    {
+      "status": "PASS",
+      "config": {
+        "N": 1,
+        "C": 10,
+        "H": 16,
+        "W": 16,
+        "K": 10,
+        "R": 1,
+        "S": 1,
+        "pad_i": 0,
+        "pad_j": 0,
+        "stride_i": 1,
+        "stride_j": 1,
+        "dilation_i": 1,
+        "dilation_j": 1
+      },
+      "output_shape": [
+        1,
+        10,
+        16,
+        16
+      ],
+      "outputs": 2560,
+      "checks": [
+        "Verilog reference task",
+        "Python golden model"
+      ],
+      "metrics": [
+        "[METRIC] Run cycles (start accepted to done): 287",
+        "[CYCLES] total=287 im2col=0 weights=11 advances=276 stalls=0 transitions=0 retries=0",
+        "[PACKETS] reads=320 values=2560 padding=0 pushes=32 full_waits=76 overlap=88",
+        "[METRIC] Useful MAC utilization (channels only): 100.00% (100/100 PEs; C=10 K=10)"
+      ]
+    },
+    {
+      "status": "PASS",
+      "config": {
+        "N": 3,
+        "C": 2,
+        "H": 3,
+        "W": 5,
+        "K": 4,
+        "R": 1,
+        "S": 1,
+        "pad_i": 1,
+        "pad_j": 2,
+        "stride_i": 2,
+        "stride_j": 3,
+        "dilation_i": 1,
+        "dilation_j": 1
+      },
+      "output_shape": [
+        3,
+        4,
+        3,
+        3
+      ],
+      "outputs": 108,
+      "checks": [
+        "Verilog reference task",
+        "Python golden model"
+      ],
+      "metrics": [
+        "[METRIC] Run cycles (start accepted to done): 58",
+        "[CYCLES] total=58 im2col=0 weights=11 advances=47 stalls=0 transitions=0 retries=0",
+        "[PACKETS] reads=4 values=12 padding=42 pushes=4 full_waits=0 overlap=3",
+        "[METRIC] Useful MAC utilization (channels only): 8.00% (8/100 PEs; C=2 K=4)"
+      ]
+    }
+  ]
+}

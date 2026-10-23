@@ -9,6 +9,7 @@ module conv_controller #(
     input  wire                 nrst,
     input  wire                 start,
     input  wire                 initial_done,
+    input wire advance,
     input  wire [CFG_WIDTH-1:0] N, P, Q, R, S,
     output wire                 busy,
     output reg                  done,
@@ -32,7 +33,7 @@ module conv_controller #(
 
     reg [2:0] state;
     reg [CFG_WIDTH:0] run_count;
-    wire [CFG_WIDTH:0] run_cycles = (CFG_WIDTH+1)'(N) * P * Q + 2*ARRAY_SIZE + 1;
+    wire [CFG_WIDTH:0] run_cycles = (CFG_WIDTH+1)'(N) * P * Q + 2*ARRAY_SIZE;
 
     assign busy = (state != IDLE);
     assign clear_pass = !nrst || (state != RUN);
@@ -46,7 +47,7 @@ module conv_controller #(
     assign running = (state == RUN);
     assign accumulate = (r != 0) || (s != 0);
     assign restart_weights = (state == IDLE && start) ||
-                             (state == RUN && run_count == run_cycles - 1 && has_next_tap);
+                             (state == RUN && advance && run_count == run_cycles - 1 && has_next_tap);
 
     always @(posedge clk) begin
         if (!nrst) begin
@@ -85,7 +86,7 @@ module conv_controller #(
                     state     <= RUN;
                 end
 
-                RUN: begin
+                RUN: if (advance) begin
                     if (run_count == run_cycles - 1) begin
                         run_count <= {(CFG_WIDTH+1){1'b0}};
                         if ((s == S - 1) && (r == R - 1)) begin

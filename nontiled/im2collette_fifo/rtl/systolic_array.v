@@ -8,6 +8,7 @@ module systolic_array #(
     parameter integer CFG_WIDTH  = 32
 ) (
     input  wire                                           clk,
+    input wire advance,
     input  wire                                           nrst,
     input  wire                                           clear_pass,
     input  wire                                           load_weights,
@@ -55,6 +56,7 @@ module systolic_array #(
                     .clk(clk),
                     .nrst(nrst),
                     .clear_acc(clear_pass),
+                    .advance(advance),
                     .load_weights(load_weights),
                     .weight_write_buffer(weight_write_buffer),
                     .weight_read_buffer(weight_read_buffer),
@@ -75,7 +77,7 @@ module systolic_array #(
             always @(posedge clk) begin
                 if (!nrst) begin
                     acc_col_out[k] <= {ACC_WIDTH{1'b0}};
-                end else begin
+                end else if (advance) begin
                     acc_col_out[k] <= mac_acc_out[ARRAY_SIZE-1][k];
                 end
             end

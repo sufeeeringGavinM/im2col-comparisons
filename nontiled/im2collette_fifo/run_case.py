@@ -146,7 +146,7 @@ def main():
     observed,_=read_tensor(actual,32)
     if observed!=expected:
         raise RuntimeError('RTL output differs from Python golden output')
-    record=dict(status='PASS',implementation=metadata['implementation'],mode=metadata['mode'],config={name:getattr(args,name) for name,_ in TENSOR_ARGUMENTS},output_shape=[args.N,args.K,height,width],outputs=len(expected),checks=['Verilog reference task','Python golden model'],metrics=[line for line in log.splitlines() if '[METRIC]' in line],actual_file=str(actual))
+    record=dict(status='PASS',implementation=metadata['implementation'],mode=metadata['mode'],config={name:getattr(args,name) for name,_ in TENSOR_ARGUMENTS},output_shape=[args.N,args.K,height,width],outputs=len(expected),checks=['Verilog reference task','Python golden model'],metrics=[line for line in log.splitlines() if any(tag in line for tag in ['[METRIC]','[CYCLES]','[PACKETS]'])],actual_file=str(actual))
     (output/'result.json').write_text(json.dumps(record,indent=2)+'\n')
     print(f"PASS: {len(expected)} outputs match Verilog and Python references. Results: {output}")
 

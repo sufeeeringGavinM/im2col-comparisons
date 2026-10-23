@@ -11,6 +11,7 @@ module output_accumulator #(
 ) (
     input  wire                     clk,
     input  wire                     clear,
+    input  wire                     advance,
     input  wire                     writeback_active,
     input  wire                     stream_enable,
     input  wire                     accumulate,
@@ -28,10 +29,10 @@ module output_accumulator #(
     reg [WB_CNT_WIDTH-1:0] writeback_cnt;
     always @(posedge clk) begin
         if (clear) writeback_cnt <= {WB_CNT_WIDTH{1'b0}};
-        else       writeback_cnt <= writeback_cnt + 1'b1;
+        else if (advance) writeback_cnt <= writeback_cnt + 1'b1;
     end
 
-    assign wb_valid = writeback_active && stream_enable &&
+    assign wb_valid = advance && writeback_active && stream_enable &&
                       (writeback_cnt >= WB_START_CYCLE) &&
                       (writeback_cnt - WB_START_CYCLE < output_pixels);
 

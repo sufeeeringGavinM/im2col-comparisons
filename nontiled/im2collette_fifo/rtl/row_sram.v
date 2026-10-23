@@ -8,6 +8,7 @@ module row_sram #(
 ) (
     input  wire                  clk,
     input  wire                  we,
+    input  wire                  read_enable,
     input  wire [ADDR_WIDTH-1:0] waddr,
     input  wire [DATA_WIDTH-1:0] wdata,
     input  wire [ADDR_WIDTH-1:0] raddr,
@@ -20,7 +21,7 @@ module row_sram #(
         if (we) begin
             mem[waddr] <= wdata;
         end
-        rdata <= mem[raddr];
+        if (read_enable) rdata <= mem[raddr];
     end
 
 endmodule

@@ -41,6 +41,7 @@ module conv_core #(
 
     wire [CFG_WIDTH-1:0] r, s, next_r, next_s;
     wire clear_pass, prime, initial_load, running, preload_next, restart_weights;
+    wire advance;
     wire accumulate, active_weight_buffer;
     wire load_weights, weight_write_buffer, initial_done, kernel_read_enable;
     wire [CFG_WIDTH-1:0] c_read;
@@ -71,6 +72,7 @@ module conv_core #(
         .nrst(nrst),
         .start(start),
         .initial_done(initial_done),
+        .advance(advance),
         .N(N), .P(P), .Q(Q), .R(R), .S(S),
         .busy(busy),
         .done(done),
@@ -142,6 +144,8 @@ module conv_core #(
         .clk(clk),
         .nrst(nrst),
         .clear_pass(clear_pass),
+        .producer_enable(prime || initial_load || running),
+        .running(running), .advance(advance),
         .load_weights(load_weights),
         .weight_write_buffer(weight_write_buffer),
         .weight_read_buffer(active_weight_buffer),
