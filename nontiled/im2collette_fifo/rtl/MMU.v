@@ -5,7 +5,7 @@ module MMU #(parameter ARRAY_SIZE=10,BIT_WIDTH=8,BUS_WORDS=8,ACC_WIDTH=32,
     COUNT_WIDTH=$clog2(PACKET_WORDS+1),OFFSET_WIDTH=(BUS_WORDS>1?$clog2(BUS_WORDS):1)) (
     input clk,nrst,clear_pass,producer_enable,running,load_weights,
     input weight_write_buffer,weight_read_buffer,accumulate,
-    input [CFG_WIDTH-1:0] cfg_N,cfg_C,cfg_K,cfg_H,cfg_W,cfg_P,cfg_Q,
+    input [CFG_WIDTH-1:0] cfg_N,cfg_C,cfg_K,cfg_R,cfg_S,cfg_H,cfg_W,cfg_P,cfg_Q,
     input [CFG_WIDTH-1:0] cfg_pad_i,cfg_pad_j,cfg_stride_i,cfg_stride_j,cfg_dilation_i,cfg_dilation_j,r,s,
     input [ARRAY_SIZE-1:0] sram_we_ext,
     input [ARRAY_SIZE-1:0][ADDR_WIDTH-1:0] sram_waddr_ext,
@@ -18,9 +18,16 @@ module MMU #(parameter ARRAY_SIZE=10,BIT_WIDTH=8,BUS_WORDS=8,ACC_WIDTH=32,
   wire producer_clear=!nrst || !producer_enable;
   wire [CFG_WIDTH-1:0] output_pixels=cfg_N*cfg_P*cfg_Q;
   reg [CFG_WIDTH-1:0] producer_position;
+  // Queued packets stay ordered across taps; the producer may run one tap ahead.
+  reg [CFG_WIDTH-1:0] producer_r,producer_s;
+  wire producer_on_current_tap=producer_r==r && producer_s==s;
+  wire producer_has_next=producer_r!=cfg_R-1 || producer_s!=cfg_S-1;
   reg [PACKET_WORDS-1:0] filled;
   reg cache_valid,waiting;
   reg [ADDR_WIDTH-1:0] cache_addr,pending_addr;
+  // A synchronous read return can supply this cycle's selectors directly.
+  wire available_word_valid=waiting || cache_valid;
+  wire [ADDR_WIDTH-1:0] available_word_addr=waiting ? pending_addr : cache_addr;
   wire [COUNT_WIDTH-1:0] packet_count=COUNT_WIDTH'(
     output_pixels-producer_position<PACKET_WORDS ? output_pixels-producer_position : PACKET_WORDS);
   wire [PACKET_WORDS-1:0] padding_valid;
@@ -30,7 +37,8 @@ module MMU #(parameter ARRAY_SIZE=10,BIT_WIDTH=8,BUS_WORDS=8,ACC_WIDTH=32,
     .PACKET_WORDS(PACKET_WORDS)) u_agen (
     .cfg_N(cfg_N),.cfg_H(cfg_H),.cfg_W(cfg_W),.cfg_Q(cfg_Q),
     .cfg_pad_i(cfg_pad_i),.cfg_pad_j(cfg_pad_j),.cfg_stride_i(cfg_stride_i),.cfg_stride_j(cfg_stride_j),
-    .cfg_dilation_i(cfg_dilation_i),.cfg_dilation_j(cfg_dilation_j),.r(r),.s(s),.position(producer_position),
+    .cfg_dilation_i(cfg_dilation_i),.cfg_dilation_j(cfg_dilation_j),
+    .r(producer_r),.s(producer_s),.position(producer_position),
     .valid(padding_valid),.word_addr(word_addr),.word_offset(word_offset));
   wire [ARRAY_SIZE-1:0] packet_ready,packet_space;
   wire [ARRAY_SIZE-1:0][COUNT_WIDTH-1:0] head_count;
@@ -47,22 +55,35 @@ module MMU #(parameter ARRAY_SIZE=10,BIT_WIDTH=8,BUS_WORDS=8,ACC_WIDTH=32,
     for(j=0;j<PACKET_WORDS;j=j+1)
       if(j<packet_count && !filled[j]) begin
         complete=0;
-        if(!padding_valid[j] || (cache_valid && word_addr[j]==cache_addr)) collect_mask[j]=1;
+        if(!padding_valid[j] || (available_word_valid && word_addr[j]==available_word_addr)) collect_mask[j]=1;
         else if(!have_request) begin have_request=1;request_addr=word_addr[j];end
       end
-    if(producer_clear || producer_position>=output_pixels || waiting) collect_mask=0;
+    if(producer_clear || producer_position>=output_pixels) collect_mask=0;
   end
-  wire fetch_word=!producer_clear && producer_position<output_pixels && !waiting
-    && !complete && collect_mask==0 && have_request;
+  // Collect the available word and issue the next missing address together.
+  wire fetch_word=!producer_clear && producer_position<output_pixels && !complete && have_request;
   wire capture_word=!producer_clear && waiting;
   wire push_packet=!producer_clear && producer_position<output_pixels && complete && all_space;
+  wire advance_producer_tap=!producer_clear && producer_on_current_tap && producer_has_next
+    && (producer_position>=output_pixels || (push_packet && producer_position+packet_count==output_pixels));
   always @(posedge clk) begin
-    if(producer_clear) begin producer_position<=0;filled<=0;cache_valid<=0;waiting<=0;cache_addr<=0;pending_addr<=0;end
+    if(producer_clear) begin
+      producer_position<=0;producer_r<=0;producer_s<=0;
+      filled<=0;cache_valid<=0;waiting<=0;cache_addr<=0;pending_addr<=0;
+    end
     else begin
-      if(fetch_word) begin waiting<=1;pending_addr<=request_addr;end
-      if(waiting) begin waiting<=0;cache_valid<=1;cache_addr<=pending_addr;end
+      waiting<=fetch_word;
+      if(fetch_word) pending_addr<=request_addr;
+      if(waiting) begin cache_valid<=1;cache_addr<=pending_addr;end
       filled<=filled|collect_mask;
       if(push_packet) begin producer_position<=producer_position+packet_count;filled<=0;end
+      if(advance_producer_tap) begin
+        producer_position<=0;
+        producer_r<=producer_s==cfg_S-1 ? producer_r+1'b1 : producer_r;
+        producer_s<=producer_s==cfg_S-1 ? 0 : producer_s+1'b1;
+        // Keep the per-tap read profile; only packet preparation moves earlier.
+        cache_valid<=0;
+      end
     end
   end
   reg [CFG_WIDTH:0] step_count;

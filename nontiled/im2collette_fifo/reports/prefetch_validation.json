@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-24",
+  "fresh_cases": 37,
+  "passed": 37,
+  "outputs_checked": 16785,
+  "inherited_cases": 34,
+  "new_directed_cases": [
+    "tiny_taps",
+    "prefetch_hold",
+    "prefetch_reset"
+  ],
+  "integration_cases": 1,
+  "integration_outputs": 32,
+  "comparison_cases": 68,
+  "fresh_comparison_cases": 17,
+  "reused_comparison_cases": 51,
+  "comparison_outputs": 33416,
+  "source_seed": "checkpoints/00_source_seed",
+  "validated_checkpoint": "checkpoints/01_validated_prefetch",
+  "changed_rtl": [
+    "rtl/MMU.v",
+    "rtl/conv_core.v"
+  ],
+  "checks": [
+    "Every consumed activation and actual output SRAM checked against logical tensor/Verilog/Python references",
+    "All 34 inherited tensor hashes, read/value/padding/packet/advance/weight/transition counts unchanged",
+    "No inherited case regresses in total cycles",
+    "All exclusive cycle components reconcile",
+    "Producer always on current or next tap; queue not cleared during SWITCH_TAP",
+    "Every SRAM return collected and no enqueue with outstanding read",
+    "All 128 later presentation tap starts have data ready; zero presentation execution stalls",
+    "One-output taps and partial packets preserve ordering",
+    "Forced holds add exactly 12 cycles; reset with next-tap read in flight reproduces full-array baseline",
+    "Packaged supplied-tensor runner passes 32 outputs and captures PREFETCH metrics"
+  ],
+  "presentation_totals": {
+    "previous_pipeline_fifo": 9393,
+    "next_tap_prefetch_fifo": 8829,
+    "nhwc": 8829,
+    "centralized_two_slots": 11347,
+    "explicit": 20253
+  },
+  "prefetch_coverage": {
+    "bank_reads": 8311,
+    "packets": 661,
+    "later_tap_starts": 128,
+    "ready_starts": 128
+  },
+  "read_efficiency": {
+    "enabled_bank_reads": 9762,
+    "valid_values": 45313
+  },
+  "storage": "Unchanged eight packets of eight activation slots per channel (64 elements); two shared CFG_WIDTH tap registers added (8 bytes at CFG32)",
+  "harness_correction": "All 37 simulations passed on first attempt; final postprocessing initially required a physical prefetched read in every multitap case. Wide-padding case correctly prefetched padding-zero packets without reading SRAM. Corrected requirement checks prefetched packets per multitap case and physical prefetch coverage across suite; reran final acceptance on retained successful results. Original assertion source/note preserved under attempts/00_padding_read_expectation.",
+  "limitations": "Non-tiled local-core simulation only. No synthesis, frequency, physical timing, power or external-memory result."
+}

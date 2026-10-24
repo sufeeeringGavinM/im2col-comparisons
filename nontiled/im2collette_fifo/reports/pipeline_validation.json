@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-24",
+  "fresh_cases": 34,
+  "passed": 34,
+  "outputs_checked": 16462,
+  "integration_cases": 1,
+  "integration_outputs": 32,
+  "comparison_cases": 68,
+  "fresh_comparison_cases": 17,
+  "reused_comparison_cases": 51,
+  "comparison_outputs": 33416,
+  "source_seed": "checkpoints/00_source_seed",
+  "validated_checkpoint": "checkpoints/01_validated_pipeline",
+  "changed_rtl": [
+    "rtl/MMU.v",
+    "rtl/feed_lane.v"
+  ],
+  "checks": [
+    "Every consumed activation matches logical tensor coordinate",
+    "Actual output SRAM matches Verilog/Python references",
+    "All five exclusive cycle phases reconcile for every case",
+    "All 34 tensor hashes match pre-pipeline fixed FIFO tests",
+    "All 34 read, activation, packet, weight, advance and transition counts unchanged",
+    "No test regresses in total cycles",
+    "Every SRAM return collected; no packet enqueued with outstanding read",
+    "446 overlapping SRAM issue/return cycles across 17 presentation layers",
+    "Natural FIFO fullness and starvation; forced array holds; reset/restart; all padding; ARRAY_SIZE=1",
+    "Packaged supplied-tensor runner checks 32 outputs and captures new pipeline metrics"
+  ],
+  "presentation_totals": {
+    "previous_fixed_fifo": 10047,
+    "pipelined_fifo": 9393,
+    "nhwc": 8829,
+    "centralized_two_slots": 11347,
+    "explicit": 20253
+  },
+  "pipeline_overlap": 446,
+  "read_efficiency": {
+    "enabled_bank_reads": 9762,
+    "valid_values": 45313
+  },
+  "limitations": "Non-tiled local-core simulation only; no synthesis, timing, power or next-tap prefetch"
+}

@@ -310,8 +310,12 @@ module tb_conv_core;
     start = 1;
     @(negedge clk);
     start = 0;
-    if($test$plusargs("RESET_DURING_JOB")) begin
-      repeat(20) @(negedge clk);
+    if($test$plusargs("RESET_DURING_JOB") || $test$plusargs("RESET_DURING_PREFETCH")) begin
+      if($test$plusargs("RESET_DURING_PREFETCH")) begin
+        wait(UUT.u_mmu.capture_word && !UUT.u_mmu.producer_on_current_tap);
+        @(negedge clk);
+        $display("[PREFETCH_RESET] Reset with a next-tap read in flight");
+      end else repeat(20) @(negedge clk);
       nrst=0;
       repeat(2) @(negedge clk);
       nrst=1;
@@ -327,6 +331,8 @@ module tb_conv_core;
     $display("[CYCLES] total=%0d im2col=%0d weights=%0d advances=%0d stalls=%0d transitions=%0d retries=%0d",
       clock_cycles-run_start_cycle,cycle_im2col,cycle_weights,cycle_advances,cycle_stalls,cycle_transitions,cycle_retries);
     $display("[PACKETS] reads=%0d values=%0d padding=%0d pushes=%0d full_waits=%0d overlap=%0d",packet_reads,packet_values,packet_padding,packet_pushes,producer_full_waits,overlap_cycles);
+    $display("[PIPELINE] issue_return_overlap=%0d returned_word_collect=%0d",issue_return_overlap,returned_word_collect);
+    $display("[PREFETCH] reads=%0d packets=%0d tap_starts=%0d ready_starts=%0d",prefetch_reads,prefetch_packets,tap_starts,ready_starts);
     if(packet_values+packet_padding != C*R*S*N*P*Q) $fatal(1,"Activation count mismatch");
     if(packet_pushes != R*S*((N*P*Q+7)/8)) $fatal(1,"Packet count mismatch");
 
@@ -359,12 +365,39 @@ module tb_conv_core;
 
   reg [63:0] packet_reads=0,packet_values=0,packet_pushes=0,producer_full_waits=0,overlap_cycles=0;
   reg [63:0] packet_padding=0;
+  reg [63:0] issue_return_overlap=0,returned_word_collect=0;
+  reg [63:0] prefetch_reads=0,prefetch_packets=0,tap_starts=0,ready_starts=0;
+  reg was_running=0;
   integer mon_pos,mon_n,mon_p,mon_q,mon_h,mon_w,mon_c,mon_j;
   reg [BIT_WIDTH-1:0] expected_activation;
   always @(posedge clk) begin
     if(!nrst || (start && !busy)) begin
       packet_reads<=0;packet_values<=0;packet_pushes<=0;producer_full_waits<=0;overlap_cycles<=0;packet_padding<=0;
+      issue_return_overlap<=0;returned_word_collect<=0;
+      prefetch_reads<=0;prefetch_packets<=0;tap_starts<=0;ready_starts<=0;was_running<=0;
     end else if(busy) begin
+      was_running<=UUT.running;
+      if(UUT.running && !was_running && (UUT.r!=0 || UUT.s!=0)) begin
+        tap_starts<=tap_starts+1;
+        if(UUT.u_mmu.all_ready) ready_starts<=ready_starts+1;
+      end
+      if(UUT.u_mmu.producer_r*S+UUT.u_mmu.producer_s < UUT.r*S+UUT.s ||
+         UUT.u_mmu.producer_r*S+UUT.u_mmu.producer_s > UUT.r*S+UUT.s+1)
+        $fatal(1,"Producer is outside the current/next tap");
+      if(UUT.u_controller.state==UUT.u_controller.SWITCH_TAP && UUT.u_mmu.producer_clear)
+        $fatal(1,"Packet queue cleared at tap switch");
+      if(!UUT.u_mmu.producer_on_current_tap) begin
+        if(UUT.u_mmu.fetch_word) prefetch_reads<=prefetch_reads+C;
+        if(UUT.u_mmu.push_packet) prefetch_packets<=prefetch_packets+1;
+      end
+      if(UUT.u_mmu.fetch_word && UUT.u_mmu.capture_word)
+        issue_return_overlap<=issue_return_overlap+1;
+      if(UUT.u_mmu.capture_word) begin
+        if(UUT.u_mmu.collect_mask==0) $fatal(1,"SRAM return was not collected");
+        returned_word_collect<=returned_word_collect+1;
+      end
+      if(UUT.u_mmu.push_packet && UUT.u_mmu.waiting)
+        $fatal(1,"Packet enqueued with an outstanding read");
       if(UUT.u_mmu.fetch_word) packet_reads<=packet_reads+C;
       if(UUT.u_mmu.push_packet) packet_pushes<=packet_pushes+1;
       if(UUT.u_mmu.complete && !UUT.u_mmu.all_space && UUT.u_mmu.producer_position<N*P*Q)
